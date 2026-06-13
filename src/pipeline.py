@@ -422,10 +422,7 @@ def run_pipeline():
         voice_tag = os.path.join(config.ASSETS_DIR, "voice_tag.wav")
         video_generator.compile_preview_audio(showcase, audio_path, voice_tag)
         
-        # 4. Generate Video Visuals
-        video_generator.create_tracklist_overlay(rebranded_name, genre, [m for m in showcase], overlay_path)
-        
-        # Create SRT Subtitles file
+        # Create SRT Subtitles file and markers list
         markers = []
         current_time = 0.0
         for fpath, cat in showcase:
@@ -441,6 +438,9 @@ def run_pipeline():
             })
             current_time += duration
         video_generator.create_srt_file(markers, srt_path)
+        
+        # 4. Generate Video Visuals Tracklist Overlay (using dict markers)
+        video_generator.create_tracklist_overlay(rebranded_name, genre, markers, overlay_path)
         
         # Compile video files
         video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, genre, markers, srt_path)

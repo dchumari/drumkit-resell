@@ -50,7 +50,9 @@ temp_*.mp4
 temp_*.mp3
 temp_*.srt
 *.log
+test_output/
 
 # System files
 .DS_Store
 Thumbs.db
+

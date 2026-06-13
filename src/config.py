@@ -5,6 +5,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
+# Inject WinGet links path at runtime to ensure newly installed FFmpeg is found
+winget_path = os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\WinGet\Links")
+if os.path.exists(winget_path) and winget_path not in os.environ.get("PATH", ""):
+    os.environ["PATH"] = os.environ.get("PATH", "") + os.path.pathsep + winget_path
+
+# Dynamic check inside WinGet package directories (self-healing)
+import glob
+user_local = os.getenv("LOCALAPPDATA", "")
+if user_local:
+    winget_packages = os.path.join(user_local, "Microsoft", "WinGet", "Packages")
+    if os.path.exists(winget_packages):
+        ffmpeg_bins = glob.glob(os.path.join(winget_packages, "Gyan.FFmpeg*", "*", "bin"))
+        for bin_dir in ffmpeg_bins:
+            if os.path.isdir(bin_dir) and bin_dir not in os.environ.get("PATH", ""):
+                os.environ["PATH"] = bin_dir + os.path.pathsep + os.environ.get("PATH", "")
+
 def load_env_file():
     """Manually parses a local .env file in the root directory if it exists."""
     env_path = os.path.join(BASE_DIR, ".env")
