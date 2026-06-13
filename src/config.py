@@ -66,11 +66,13 @@ GENRE_TOPICS_A = {
 }
 
 GENRE_TOPICS_B = {
-    "Trap": int(os.getenv("TOPIC_B_TRAP", "2")),
-    "RnB": int(os.getenv("TOPIC_B_RNB", "3")),
-    "Lofi": int(os.getenv("TOPIC_B_LOFI", "4")),
-    "Phonk": int(os.getenv("TOPIC_B_PHONK", "5")),
-    "Hip-Hop": int(os.getenv("TOPIC_B_HIPHOP", "6")),
+    "Trap": int(os.getenv("TOPIC_B_TRAP_HIPHOP", "2")),
+    "Hip-Hop": int(os.getenv("TOPIC_B_TRAP_HIPHOP", "2")),
+    "RnB": int(os.getenv("TOPIC_B_RNB", "8")),
+    "Lofi": int(os.getenv("TOPIC_B_LOFI", "13")),
+    "Phonk": int(os.getenv("TOPIC_B_PHONK", "11")),
+    "Reggaeton": int(os.getenv("TOPIC_B_REGGAETON", "6")),
+    "House": int(os.getenv("TOPIC_B_HOUSE_MUSIC", "4")),
     "Default": int(os.getenv("TOPIC_B_DEFAULT", "1"))
 }
 
@@ -106,6 +108,18 @@ GENRE_COLORS = {
         "border_color": (200, 170, 30),
         "overlay": "grid.png"
     },
+    "Reggaeton": {
+        "bg_gradient": ((40, 20, 10), (100, 40, 20)),      # Dark amber to warm orange
+        "text_color": (255, 180, 0),                       # Bright Gold/Orange
+        "border_color": (220, 150, 10),
+        "overlay": "vinyl.png"
+    },
+    "House": {
+        "bg_gradient": ((10, 10, 30), (20, 30, 90)),       # Deep space blue to electric blue
+        "text_color": (0, 255, 180),                       # Neon Teal
+        "border_color": (10, 220, 150),
+        "overlay": "grid.png"
+    },
     "Default": {
         "bg_gradient": ((10, 8, 14), (60, 50, 70)),        # Original Arqive theme colors
         "text_color": (255, 160, 30),
@@ -121,6 +135,8 @@ AFFILIATE_LINKS = {
     "Lofi": "📼 Vintage Tape Machine Emulator: https://affiliate.example.com/tape-emu\n🎸 Lo-Fi Guitar Chords MIDI: https://affiliate.example.com/lofi-midi",
     "Phonk": "🎛️ Hard Clipper Maximizer: https://affiliate.example.com/clipper\n🥁 Aggressive Cowbell Samples: https://affiliate.example.com/cowbell-kit",
     "Hip-Hop": "🎧 Vintage MPC Sampler emulation: https://affiliate.example.com/mpc-sampler\n🎹 BoomBap Chord Progression MIDI: https://affiliate.example.com/boombap-midi",
+    "Reggaeton": "💃 Premium Reggaeton VST & MIDI: https://affiliate.example.com/reggaeton",
+    "House": "🎧 Electro/House Synth Plugin: https://affiliate.example.com/house-synth",
     "Default": "🎹 Best All-in-One DAW Controller: https://affiliate.example.com/daw-midi"
 }
 

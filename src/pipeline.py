@@ -8,7 +8,7 @@ import datetime
 import subprocess
 import urllib.request
 import urllib.parse
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import config
 import notifier
@@ -148,7 +148,7 @@ def query_deepseek_rebrand(title: str, desc: str) -> Tuple[str, str]:
         f"Generate a rebranded identity for this drumkit. Original title: '{title}'. Description: '{desc}'.\n"
         f"Instructions:\n"
         f"1. Generate a single-word or short, premium, unique name (e.g. 'Vortex', 'Apex', 'Ember').\n"
-        f"2. Classify the genre as one of: Trap, RnB, Lofi, Phonk, Hip-Hop. Default to Trap.\n"
+        f"2. Classify the genre as one of: Trap, RnB, Lofi, Phonk, Hip-Hop, Reggaeton, House. Default to Trap.\n"
         f"Output MUST be in strict JSON format like this: {{\"name\": \"Apex\", \"genre\": \"Trap\"}}"
     )
     
@@ -178,6 +178,10 @@ def get_fallback_rebrand(title: str) -> Tuple[str, str]:
         genre = "Phonk"
     elif "hiphop" in title_lower or "hip hop" in title_lower or "boom" in title_lower:
         genre = "Hip-Hop"
+    elif "reggaeton" in title_lower or "afrobeats" in title_lower or "latin" in title_lower:
+        genre = "Reggaeton"
+    elif "house" in title_lower or "edm" in title_lower or "electronic" in title_lower or "techno" in title_lower:
+        genre = "House"
         
     # Generate random name
     prefix_names = ["Vortex", "Apex", "Aura", "Dusk", "Dawn", "Static", "Cinder", "Pulse", "Eon", "Nova"]

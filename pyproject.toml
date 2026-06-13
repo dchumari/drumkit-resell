@@ -7,4 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "aiogram>=3.28.2",
     "requests>=2.34.2",
+    "pillow",
+    "gdown",
+    "mega.py",
 ]
