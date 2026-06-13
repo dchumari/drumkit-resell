@@ -231,7 +231,6 @@ def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, out
 
     cmd = [
         "ffmpeg", "-y",
-        "-t", str(total_duration),
         *bg_input.split(),
         "-i", audio_path,
         "-i", mockup_path,
@@ -241,6 +240,7 @@ def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, out
         "-map", "1:a",
         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast",
         "-c:a", "aac", "-b:a", "192000",
+        "-t", str(total_duration),
         output_video_path
     ]
     
@@ -313,7 +313,6 @@ def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_pa
 
     cmd = [
         "ffmpeg", "-y",
-        "-t", str(duration),
         *bg_input.split(),
         "-i", audio_path,
         "-i", mockup_path,
@@ -323,6 +322,7 @@ def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_pa
         "-map", "1:a",
         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast",
         "-c:a", "aac", "-b:a", "192000",
+        "-t", str(duration),
         output_video_path
     ]
     

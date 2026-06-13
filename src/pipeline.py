@@ -203,7 +203,7 @@ def commit_git_changes(message: str):
     except Exception as e:
         print(f"Git push failed: {e}")
 
-def run_throwback_release():
+def run_throwback_release(upload: bool = False):
     """Runs a Vault/Throwback release using a highly rated old pack."""
     print("Scraped queue is empty. Running Throwback Release workflow...")
     packs = load_packs()
@@ -283,6 +283,29 @@ def run_throwback_release():
         video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, old_pack["genre"], markers, srt_path)
         video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, old_pack["genre"], rebranded_name)
         
+        if not upload:
+            print("\n[Local Analysis Mode] Copying generated Vault throwback files to output folder...")
+            output_dir = os.path.join(config.BASE_DIR, "output", clean_filename_for_zip(rebranded_name))
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Copy visuals/audio files
+            copy_targets = [
+                (cover_path, "rebranded_cover.png"),
+                (mockup_path, "rebranded_mockup.png"),
+                (overlay_path, "tracklist_overlay.png"),
+                (audio_path, "preview_showcase.mp3"),
+                (srt_path, "subtitles.srt"),
+                (video_path, "showcase_video_16_9.mp4"),
+                (shorts_path, "showcase_shorts_9_16.mp4")
+            ]
+            for src, dest_name in copy_targets:
+                if os.path.exists(src):
+                    shutil.copy(src, os.path.join(output_dir, dest_name))
+                    
+            print(f"[SUCCESS] Vault pack processed locally. Files are saved in: {output_dir}")
+            print("Skipped YouTube uploads and Telegram publishing.")
+            return
+            
         # 3. Publish to YouTube
         yt_token = youtube_uploader.get_access_token()
         yt_tags = youtube_uploader.generate_tags_with_deepseek(rebranded_name, old_pack["genre"])
@@ -323,7 +346,7 @@ def run_throwback_release():
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir)
 
-def run_pipeline():
+def run_pipeline(upload: bool = False):
     """Main pipeline routine."""
     # First, scrape Reddit for any new posts
     scrape_reddit_links()
@@ -331,7 +354,7 @@ def run_pipeline():
     queue = load_queue()
     if not queue:
         # If queue is empty, trigger Vault/Throwback Release
-        run_throwback_release()
+        run_throwback_release(upload=upload)
         return
 
     tried_urls = set()
@@ -450,6 +473,35 @@ def run_pipeline():
         zip_base_name = os.path.join(temp_dir, clean_filename_for_zip(rebranded_name))
         zip_files = audio_processor.zip_pack(extracted_dir, zip_base_name)
         
+        if not upload:
+            print("\n[Local Analysis Mode] Copying generated files to output folder...")
+            output_dir = os.path.join(config.BASE_DIR, "output", clean_filename_for_zip(rebranded_name))
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # File copy mappings: (src, dest_name)
+            copy_targets = [
+                (cover_path, "rebranded_cover.png"),
+                (mockup_path, "rebranded_mockup.png"),
+                (overlay_path, "tracklist_overlay.png"),
+                (audio_path, "preview_showcase.mp3"),
+                (srt_path, "subtitles.srt"),
+                (video_path, "showcase_video_16_9.mp4"),
+                (shorts_path, "showcase_shorts_9_16.mp4")
+            ]
+            
+            for src, dest_name in copy_targets:
+                if os.path.exists(src):
+                    shutil.copy(src, os.path.join(output_dir, dest_name))
+                    
+            # Copy all generated volumes
+            for idx, zf in enumerate(zip_files, 1):
+                if os.path.exists(zf):
+                    shutil.copy(zf, os.path.join(output_dir, os.path.basename(zf)))
+                    
+            print(f"[SUCCESS] Pack processed locally. Files are saved in: {output_dir}")
+            print("Skipped all remote uploads and database updates.")
+            return
+            
         # 6. Upload rebranded files to Telegram using local Bot API (supports up to 2GB)
         # We upload all volumes and store their file_ids
         file_ids = []
@@ -586,4 +638,8 @@ def clean_filename_for_zip(name: str) -> str:
     return re.sub(r'[^a-zA-Z0-9_-]', '', cleaned)
 
 if __name__ == "__main__":
-    run_pipeline()
+    import argparse
+    parser = argparse.ArgumentParser(description="Drumkit Reseller Scraper & Processing Pipeline")
+    parser.add_argument("--upload", action="store_true", help="Upload processed pack to Telegram and YouTube, update registries, and push to Git.")
+    args = parser.parse_args()
+    run_pipeline(upload=args.upload)

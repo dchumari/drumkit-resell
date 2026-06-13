@@ -51,8 +51,10 @@ temp_*.mp3
 temp_*.srt
 *.log
 test_output/
+output/
 
 # System files
+
 .DS_Store
 Thumbs.db
 
