@@ -11,6 +11,14 @@ import urllib.parse
 from typing import List, Optional, Tuple
 
 import config
+
+if sys.platform.startswith("win"):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
+
 import notifier
 import downloader
 import audio_processor
@@ -66,53 +74,106 @@ def save_packs(packs: List[dict]):
     with open(PACKS_FILE, "w", encoding="utf-8") as f:
         json.dump(packs, f, indent=4)
 
-def scrape_reddit_links() -> int:
+def scrape_reddit_links(subreddit: str = "Drumkits", rss_url: Optional[str] = None) -> int:
     """
-    Scrapes r/drumkit hot page and appends new Drive/Mega/Mediafire links 
+    Scrapes a subreddit's RSS Atom feed (falling back to JSON) and appends new Drive/Mega/Mediafire links 
     to scraped_queue.json if not already processed.
     Returns the number of new links added.
     """
-    print("Scraping r/drumkit for download links...")
-    url = "https://www.reddit.com/r/drumkit/hot.json?limit=30"
+    import xml.etree.ElementTree as ET
+    import html
     
+    print(f"Scraping r/{subreddit} for download links...")
+    if rss_url:
+        url = rss_url
+    else:
+        url = f"https://www.reddit.com/r/{subreddit}/.rss"
+        
+    posts = []
+    
+    # 1. Try RSS Atom Feed
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": config.REDDIT_USER_AGENT})
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"}
+        req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=15) as response:
-            res_data = json.loads(response.read().decode("utf-8"))
+            xml_data = response.read()
+            
+        root = ET.fromstring(xml_data)
+        ns = {"atom": "http://www.w3.org/2005/Atom"}
+        
+        for entry in root.findall("atom:entry", ns):
+            entry_id_elem = entry.find("atom:id", ns)
+            entry_id = entry_id_elem.text if entry_id_elem is not None else ""
+            if "t3_" in entry_id:
+                pid = entry_id.split("t3_")[-1]
+            else:
+                pid = entry_id.split("/")[-1] if entry_id else ""
+                
+            title_elem = entry.find("atom:title", ns)
+            title = title_elem.text if title_elem is not None else ""
+            
+            content_elem = entry.find("atom:content", ns)
+            content_html = content_elem.text if content_elem is not None else ""
+            content_text = html.unescape(content_html)
+            
+            link_elem = entry.find("atom:link", ns)
+            link_url = link_elem.attrib.get("href", "") if link_elem is not None else ""
+            
+            posts.append({
+                "id": pid,
+                "title": title,
+                "selftext": content_text,
+                "url": link_url
+            })
+        print(f"Successfully fetched {len(posts)} posts from RSS feed.")
     except Exception as e:
-        print(f"Failed to fetch Reddit hot page: {e}")
-        return 0
-
+        print(f"RSS feed fetch failed: {e}. Trying JSON fallback...")
+        
+        # 2. Try JSON Feed Fallback
+        try:
+            json_url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=30"
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"}
+            req = urllib.request.Request(json_url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as response:
+                res_data = json.loads(response.read().decode("utf-8"))
+                
+            posts_json = res_data.get("data", {}).get("children", [])
+            for post in posts_json:
+                pdata = post.get("data", {})
+                posts.append({
+                    "id": pdata.get("id"),
+                    "title": pdata.get("title", ""),
+                    "selftext": pdata.get("selftext", ""),
+                    "url": pdata.get("url", "")
+                })
+            print(f"Successfully fetched {len(posts)} posts from JSON feed.")
+        except Exception as json_err:
+            print(f"JSON feed fetch failed: {json_err}")
+            return 0
+            
     processed = load_processed_links()
     queue = load_queue()
     queued_urls = {item["url"] for item in queue}
     
     new_adds = 0
-    posts = res_data.get("data", {}).get("children", [])
-    
     for post in posts:
-        pdata = post.get("data", {})
-        pid = pdata.get("id")
-        title = pdata.get("title", "")
-        selftext = pdata.get("selftext", "")
-        post_url = pdata.get("url", "")
+        pid = post["id"]
+        title = post["title"]
+        selftext = post["selftext"]
+        post_url = post["url"]
         
         if pid in processed:
             continue
             
-        # Scan selftext and URL for download links
         found_links = []
         for text in [selftext, post_url]:
-            # Regex find url patterns
-            links = re.findall(r'https?://[^\s()<>]+', text)
+            links = re.findall(r'https?://[^\s()<>"]+', text)
             for link in links:
                 ltype = downloader.get_link_type(link)
                 if ltype != "unsupported" and link not in queued_urls:
                     found_links.append((link, ltype))
                     
-        # If we found any valid link, add the post to the queue
         if found_links:
-            # We take the first found link for simplicity
             target_link, ltype = found_links[0]
             queue.append({
                 "reddit_id": pid,
@@ -131,6 +192,7 @@ def scrape_reddit_links() -> int:
         
     print(f"Scrape completed. Added {new_adds} new links to queue.")
     return new_adds
+
 
 def query_deepseek_rebrand(title: str, desc: str) -> Tuple[str, str]:
     """Queries OpenRouter to generate a unique single-word rebranded name and genre."""
@@ -346,63 +408,81 @@ def run_throwback_release(upload: bool = False):
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir)
 
-def run_pipeline(upload: bool = False):
-    """Main pipeline routine."""
-    # First, scrape Reddit for any new posts
-    scrape_reddit_links()
-    
-    queue = load_queue()
-    if not queue:
-        # If queue is empty, trigger Vault/Throwback Release
-        run_throwback_release(upload=upload)
-        return
+def generate_sine_wave(filepath: str, duration: float, freq: float):
+    """Generates a simple mono sine wave WAV file using only the standard library wave module."""
+    import wave
+    import struct
+    import math
+    sample_rate = 44100
+    num_samples = int(duration * sample_rate)
+    os.makedirs(os.path.dirname(os.path.abspath(filepath)), exist_ok=True)
+    with wave.open(filepath, 'w') as w:
+        w.setnchannels(1)  # Mono
+        w.setsampwidth(2)  # 16-bit
+        w.setframerate(sample_rate)
+        for i in range(num_samples):
+            t = float(i) / sample_rate
+            value = int(25000.0 * math.sin(2.0 * math.pi * freq * t))
+            data = struct.pack('<h', value)
+            w.writeframesraw(data)
 
-    tried_urls = set()
-    item = None
-    url = ""
-    title = ""
-    reddit_id = ""
-    description = ""
-    size = 0
-    ltype = ""
+def create_mock_zip(output_zip_path: str):
+    """Creates a temporary mock ZIP folder containing audio samples of various categories."""
+    import zipfile
+    temp_dir = os.path.join(config.BASE_DIR, "temp_mock_files")
+    if os.path.exists(temp_dir):
+        shutil.rmtree(temp_dir)
+    os.makedirs(temp_dir, exist_ok=True)
     
-    while True:
-        candidates = [q for q in queue if q["url"] not in tried_urls]
-        if not candidates:
-            print("All links in queue were checked and were either invalid or quota-exceeded.")
-            run_throwback_release()
-            return
-            
-        item = random.choice(candidates)
-        url = item["url"]
-        title = item["title"]
-        reddit_id = item["reddit_id"]
-        description = item["description"]
-        tried_urls.add(url)
+    mock_files = [
+        ("Cymatics_808_Sub_C.wav", 5.0, 60.0),
+        ("Wavgrind_Kick_Punchy.wav", 1.5, 90.0),
+        ("Decap_Snare_Classic.wav", 1.5, 180.0),
+        ("Splice_Hat_Closed.wav", 1.0, 800.0),
+        ("Lofi_Melody_Loop_140BPM_Am.wav", 12.0, 440.0),
+        ("SFX_Sweep_Down.wav", 3.0, 300.0),
+        ("Perc_Rim_Shot.wav", 1.2, 500.0)
+    ]
+    
+    for filename, dur, freq in mock_files:
+        generate_sine_wave(os.path.join(temp_dir, filename), dur, freq)
         
-        print(f"Selected link to process: {url} (Title: {title})")
-        
-        # Verify link access & size
-        is_valid, ltype, size = downloader.check_link(url)
-        
-        if not is_valid:
-            print("Link is dead or invalid. Removing from queue.")
-            queue.remove(item)
-            save_queue(queue)
-            save_processed_link(reddit_id)  # Mark processed so we don't scrape it again
-            continue
+    with zipfile.ZipFile(output_zip_path, 'w', zipfile.ZIP_DEFLATED) as zip_ref:
+        for f in os.listdir(temp_dir):
+            zip_ref.write(os.path.join(temp_dir, f), f)
             
-        if ltype == "gdrive_quota":
-            print("Google Drive quota exceeded. Re-queueing link to back and picking another.")
-            queue.remove(item)
-            queue.append(item)
-            save_queue(queue)
-            continue
-            
-        break
+    shutil.rmtree(temp_dir)
+    print(f"[OK] Generated mock source ZIP file at: {output_zip_path}")
 
-    # Proceed with download and processing
+def clean_filename_for_zip(name: str) -> str:
+    """Gets a clean filename for zipping."""
+    cleaned = name.replace(" ", "_").replace("[", "").replace("]", "")
+    return re.sub(r'[^a-zA-Z0-9_-]', '', cleaned)
+
+def process_item(
+    url: Optional[str],
+    title: str,
+    reddit_id: Optional[str],
+    description: str,
+    upload: bool,
+    zip_path: Optional[str] = None,
+    mock: bool = False,
+    force_name: Optional[str] = None,
+    force_genre: Optional[str] = None,
+    item_in_queue: Optional[dict] = None,
+    size: int = 0
+) -> bool:
+    """
+    Downloads/prepares the ZIP, extracts, rebrands, compiles audio/video, packages,
+    and either copies to local output directory (if upload=False) or uploads to
+    Telegram/YouTube and updates databases (if upload=True).
+    """
     temp_dir = os.path.join(config.BASE_DIR, "temp_pipeline")
+    if os.path.exists(temp_dir):
+        try:
+            shutil.rmtree(temp_dir)
+        except Exception:
+            pass
     os.makedirs(temp_dir, exist_ok=True)
     
     try:
@@ -416,26 +496,55 @@ def run_pipeline(upload: bool = False):
         video_path = os.path.join(temp_dir, "video.mp4")
         shorts_path = os.path.join(temp_dir, "shorts.mp4")
         
-        # 1. Download ZIP
-        success = downloader.download_file(url, download_zip)
-        if not success:
-            raise ValueError(f"Failed to download file from link: {url}")
+        # 1. Download or copy or generate ZIP
+        if mock:
+            print("Generating mock drumkit ZIP...")
+            create_mock_zip(download_zip)
+        elif zip_path:
+            print(f"Using local ZIP: {zip_path}")
+            shutil.copy(zip_path, download_zip)
+        elif url:
+            print(f"Downloading ZIP from: {url}")
+            success = downloader.download_file(url, download_zip)
+            if not success:
+                raise ValueError(f"Failed to download file from link: {url}")
+        else:
+            raise ValueError("No source ZIP source (mock, zip_path, or url) was provided to process_item.")
             
         # 2. Extract & Rebrand
         audio_processor.unzip_pack(download_zip, extracted_dir)
         cats, all_files = audio_processor.process_and_rename_kit(extracted_dir)
         
-        # Query OpenRouter for Rebranding Name and Genre
-        try:
-            rebranded_name, genre = query_deepseek_rebrand(title, description)
+        # Rebrand name & genre resolution
+        if force_name and force_genre:
+            rebranded_name = force_name
+            genre = force_genre
+            if not rebranded_name.startswith("Arqive "):
+                rebranded_name = f"Arqive {rebranded_name}"
+            print(f"Using forced Name: '{rebranded_name}', Genre: '{genre}'")
+        elif force_name:
+            rebranded_name = force_name
+            if not rebranded_name.startswith("Arqive "):
+                rebranded_name = f"Arqive {rebranded_name}"
+            _, genre = get_fallback_rebrand(title)
+            print(f"Using forced Name: '{rebranded_name}' and fallback Genre: '{genre}'")
+        elif force_genre:
+            genre = force_genre
+            rebranded_name, _ = get_fallback_rebrand(title)
             rebranded_name = f"Arqive {rebranded_name}"
-            print(f"DeepSeek Rebrand Successful: Name: '{rebranded_name}', Genre: '{genre}'")
-        except Exception as e:
-            print(f"DeepSeek rebrand failed: {e}. Using local fallback.")
-            rebranded_name, genre = get_fallback_rebrand(title)
-            rebranded_name = f"Arqive {rebranded_name}"
-            notifier.send_telegram_message(f"⚠️ **DeepSeek Rebrand API Failed**: Used local fallback '{rebranded_name}' for pack.")
-            
+            print(f"Using forced Genre: '{genre}' and fallback Name: '{rebranded_name}'")
+        else:
+            try:
+                rebranded_name, genre = query_deepseek_rebrand(title, description)
+                rebranded_name = f"Arqive {rebranded_name}"
+                print(f"DeepSeek Rebrand Successful: Name: '{rebranded_name}', Genre: '{genre}'")
+            except Exception as e:
+                print(f"DeepSeek rebrand failed: {e}. Using local fallback.")
+                rebranded_name, genre = get_fallback_rebrand(title)
+                rebranded_name = f"Arqive {rebranded_name}"
+                if upload:
+                    notifier.send_telegram_message(f"⚠️ **DeepSeek Rebrand API Failed**: Used local fallback '{rebranded_name}' for pack.")
+                    
         # Generate cover and mockup art
         cover_generator.generate_cover_art(rebranded_name, genre, cover_path)
         mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre)
@@ -443,6 +552,10 @@ def run_pipeline(upload: bool = False):
         # 3. Create Audio Showcase
         showcase = audio_processor.select_preview_showcase(cats)
         voice_tag = os.path.join(config.ASSETS_DIR, "voice_tag.wav")
+        if not os.path.exists(voice_tag):
+            print("Note: voice_tag.wav not found in assets/. Compiling preview without watermarks.")
+            voice_tag = ""
+            
         video_generator.compile_preview_audio(showcase, audio_path, voice_tag)
         
         # Create SRT Subtitles file and markers list
@@ -462,7 +575,7 @@ def run_pipeline(upload: bool = False):
             current_time += duration
         video_generator.create_srt_file(markers, srt_path)
         
-        # 4. Generate Video Visuals Tracklist Overlay (using dict markers)
+        # 4. Generate Video Visuals Tracklist Overlay
         video_generator.create_tracklist_overlay(rebranded_name, genre, markers, overlay_path)
         
         # Compile video files
@@ -493,17 +606,15 @@ def run_pipeline(upload: bool = False):
                 if os.path.exists(src):
                     shutil.copy(src, os.path.join(output_dir, dest_name))
                     
-            # Copy all generated volumes
             for idx, zf in enumerate(zip_files, 1):
                 if os.path.exists(zf):
                     shutil.copy(zf, os.path.join(output_dir, os.path.basename(zf)))
                     
             print(f"[SUCCESS] Pack processed locally. Files are saved in: {output_dir}")
             print("Skipped all remote uploads and database updates.")
-            return
+            return True
             
-        # 6. Upload rebranded files to Telegram using local Bot API (supports up to 2GB)
-        # We upload all volumes and store their file_ids
+        # 6. Upload rebranded files to Telegram
         file_ids = []
         for zf in zip_files:
             fid = telegram_publisher.upload_document_local(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, zf)
@@ -512,7 +623,7 @@ def run_pipeline(upload: bool = False):
             file_ids.append(fid)
             
         # Determine pricing bracket based on total size
-        total_size_mb = size / 1024 / 1024 if size > 0 else os.path.getsize(download_zip) / 1024 / 1024
+        total_size_mb = size / 1024 / 1024 if (not mock and not zip_path and size > 0) else os.path.getsize(download_zip) / 1024 / 1024
         stars_price = 500  # default
         for bracket in config.PRICE_BRACKETS:
             if total_size_mb <= bracket["max_size_mb"]:
@@ -541,20 +652,14 @@ def run_pipeline(upload: bool = False):
         if is_free_day:
             print("Today is Free Campaign Day! Publishing raw ZIP directly to Channel B.")
             free_caption = f"🎁 [FREE UNLOCKED] {rebranded_name}\n\n📂 CONTENTS:\n{contents_text}\n\nEnjoy this 100% free pack! No Stars or subscriptions required today!"
-            # On Free days, we post the raw ZIP file directly to Channel B so anyone can click and download
             for fid in file_ids:
                 telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_B_CHAT_ID, fid, free_caption, thread_id=topic_b)
             tg_invoice_link = f"https://t.me/c/{str(config.CHANNEL_B_CHAT_ID).replace('-100', '')}/{topic_b}"
         else:
-            # Standard paid day: Post Invoice on Channel B, post raw ZIP on Channel A
             invoice_desc = f"💳 NEW RELEASE: {rebranded_name}\n\n📂 CONTENTS:\n{contents_text}\n\nDownload immediately by paying Stars below, or subscribe to our Premium Channel for free access!"
-            
-            # Post raw ZIP on private Channel A for premium members
             for fid in file_ids:
                 telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, fid, f"📦 PREMIUM RELEASE: {rebranded_name}\n\n{contents_text}", thread_id=None)
                 
-            # Post invoice on Channel B
-            # If multiple parts, we post the first part and link the others
             invoice_msg_id = telegram_publisher.publish_invoice(
                 config.TELEGRAM_BOT_TOKEN, 
                 config.CHANNEL_B_CHAT_ID, 
@@ -566,7 +671,6 @@ def run_pipeline(upload: bool = False):
                 thread_id=topic_b
             )
             if invoice_msg_id:
-                # Link format to invoice post
                 tg_invoice_link = f"https://t.me/c/{str(config.CHANNEL_B_CHAT_ID).replace('-100', '')}/{invoice_msg_id}"
 
         # 8. Upload to YouTube
@@ -585,11 +689,9 @@ def run_pipeline(upload: bool = False):
             affiliate_recommendations=config.AFFILIATE_LINKS.get(genre, "")
         )
         
-        # Upload main video and Shorts
         yt_video_id = youtube_uploader.upload_video(video_path, yt_title, desc, yt_tags, yt_token)
         youtube_uploader.upload_video(shorts_path, f"{rebranded_name} #shorts #{genre.lower()}", desc, [genre.lower(), "shorts"], yt_token)
         
-        # Pin top comment on main video
         comment_text = f"📥 Direct Download Link (No payment on Free Friday / Checkout Invoice): {tg_invoice_link if tg_invoice_link else tg_subscription_link}"
         youtube_uploader.add_comment_to_video(yt_video_id, comment_text, yt_token)
 
@@ -611,35 +713,165 @@ def run_pipeline(upload: bool = False):
         })
         save_packs(packs)
         
-        # Remove from scraped queue and save links registry
-        queue.remove(item)
-        save_queue(queue)
-        save_processed_link(reddit_id)
-        
+        if item_in_queue:
+            queue = load_queue()
+            queue = [q for q in queue if q["url"] != item_in_queue["url"]]
+            save_queue(queue)
+            
+        if reddit_id:
+            save_processed_link(reddit_id)
+            
         notifier.send_log(
             f"Successfully processed & uploaded: **{rebranded_name}** ({genre})\n"
             f"YouTube ID: {yt_video_id}\n"
             f"Telegram Store Post: {tg_invoice_link if tg_invoice_link else 'Raw ZIP posted (Free Day)'}"
         )
         
-        # Git commit and sync updates
         commit_git_changes(f"Auto-commit: Published {rebranded_name}")
-        
-    except Exception as e:
-        notifier.send_error(e, f"process_link: {url}")
-    finally:
-        # Cleanup
-        if os.path.exists(temp_dir):
-            shutil.rmtree(temp_dir)
+        return True
 
-def clean_filename_for_zip(name: str) -> str:
-    """Gets a clean filename for zipping."""
-    cleaned = name.replace(" ", "_").replace("[", "").replace("]", "")
-    return re.sub(r'[^a-zA-Z0-9_-]', '', cleaned)
+    except Exception as e:
+        if upload:
+            notifier.send_error(e, f"process_item: {url if url else title}")
+        else:
+            print(f"Error processing item locally: {e}")
+            import traceback
+            traceback.print_exc()
+        raise e
+    finally:
+        if os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception:
+                pass
+
+def run_pipeline(
+    upload: bool = False,
+    zip_path: Optional[str] = None,
+    url: Optional[str] = None,
+    mock: bool = False,
+    force_name: Optional[str] = None,
+    force_genre: Optional[str] = None,
+    subreddit: str = "Drumkits",
+    rss_url: Optional[str] = None
+):
+    """Main pipeline routine."""
+    # If explicit inputs are given, process directly
+    if zip_path or url or mock:
+        title = "Mock Test Pack" if mock else (os.path.splitext(os.path.basename(zip_path))[0] if zip_path else "Custom Link Pack")
+        desc = "Local processed pack."
+        process_item(
+            url=url,
+            title=title,
+            reddit_id=None,
+            description=desc,
+            upload=upload,
+            zip_path=zip_path,
+            mock=mock,
+            force_name=force_name,
+            force_genre=force_genre
+        )
+        return
+
+    # Normal flow: scrape Reddit for any new posts
+    scrape_reddit_links(subreddit=subreddit, rss_url=rss_url)
+    
+    queue = load_queue()
+    if not queue:
+        # If queue is empty, trigger Vault/Throwback Release if possible, otherwise explain how to run mock
+        packs = load_packs()
+        if not packs:
+            print("\nScraped queue is empty, and no completed packs exist in registry to run a Throwback Release.")
+            print("To generate a mock release or process a local zip, try running:")
+            print("  uv run python src/pipeline.py --mock")
+            print("Or with a local ZIP file:")
+            print("  uv run python src/pipeline.py --zip <path_to_zip>\n")
+            return
+        run_throwback_release(upload=upload)
+        return
+
+    tried_urls = set()
+    item = None
+    url = ""
+    title = ""
+    reddit_id = ""
+    description = ""
+    size = 0
+    ltype = ""
+    
+    while True:
+        candidates = [q for q in queue if q["url"] not in tried_urls]
+        if not candidates:
+            print("All links in queue were checked and were either invalid or quota-exceeded.")
+            packs = load_packs()
+            if not packs:
+                print("No completed packs available for Throwback Release. Skipping run.")
+                return
+            run_throwback_release(upload=upload)
+            return
+            
+        item = random.choice(candidates)
+        url = item["url"]
+        title = item["title"]
+        reddit_id = item["reddit_id"]
+        description = item["description"]
+        tried_urls.add(url)
+        
+        print(f"Selected link to process: {url} (Title: {title})")
+        
+        # Verify link access & size
+        is_valid, ltype, size = downloader.check_link(url)
+        
+        if not is_valid:
+            print("Link is dead or invalid. Removing from queue.")
+            queue.remove(item)
+            save_queue(queue)
+            save_processed_link(reddit_id)  # Mark processed so we don't scrape it again
+            continue
+            
+        if ltype == "gdrive_quota":
+            print("Google Drive quota exceeded. Re-queueing link to back and picking another.")
+            queue.remove(item)
+            queue.append(item)
+            save_queue(queue)
+            continue
+            
+        break
+
+    # Process queue item
+    process_item(
+        url=url,
+        title=title,
+        reddit_id=reddit_id,
+        description=description,
+        upload=upload,
+        item_in_queue=item,
+        size=size,
+        force_name=force_name,
+        force_genre=force_genre
+    )
 
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Drumkit Reseller Scraper & Processing Pipeline")
     parser.add_argument("--upload", action="store_true", help="Upload processed pack to Telegram and YouTube, update registries, and push to Git.")
+    parser.add_argument("--zip", type=str, help="Path to a real local .zip drumkit to process.")
+    parser.add_argument("--url", type=str, help="Process a specific download URL directly.")
+    parser.add_argument("--mock", action="store_true", help="Generate a mock drumkit and process it (useful for local offline testing).")
+    parser.add_argument("--name", type=str, help="Force rebranded name (e.g. Apex)")
+    parser.add_argument("--genre", type=str, help="Force genre (e.g. Trap)")
+    parser.add_argument("--subreddit", type=str, default="Drumkits", help="Subreddit name to scrape (default: Drumkits).")
+    parser.add_argument("--rss-url", type=str, help="Specify a custom RSS feed URL to scrape directly.")
     args = parser.parse_args()
-    run_pipeline(upload=args.upload)
+    
+    run_pipeline(
+        upload=args.upload,
+        zip_path=args.zip,
+        url=args.url,
+        mock=args.mock,
+        force_name=args.name,
+        force_genre=args.genre,
+        subreddit=args.subreddit,
+        rss_url=args.rss_url
+    )
+
