@@ -1,0 +1,69 @@
+name: Drumkit Reseller Pipeline
+
+on:
+  schedule:
+    # Runs 3 times a day: 12 AM, 8 AM, 4 PM UTC
+    - cron: '0 0,8,16 * * *'
+  workflow_dispatch:
+    # Allows manual runs from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # Fetch all history for proper git pushes
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg p7zip-full
+
+    - name: Install Python Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install gdown mega.py pillow aiogram
+
+    - name: Start Local Telegram Bot API Server
+      run: |
+        docker run -d -p 8081:8081 \
+          -e TELEGRAM_API_ID=${{ secrets.TELEGRAM_API_ID }} \
+          -e TELEGRAM_API_HASH=${{ secrets.TELEGRAM_API_HASH }} \
+          aiogram/telegram-bot-api:latest
+        # Give the container a few seconds to spin up and bind port 8081
+        sleep 5
+
+    - name: Configure Git Credentials
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Run Pipeline
+      env:
+        REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+        REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        LOGGING_BOT_TOKEN: ${{ secrets.LOGGING_BOT_TOKEN }}
+        ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}
+        OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+        YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+        YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        CHANNEL_A_CHAT_ID: ${{ secrets.CHANNEL_A_CHAT_ID }}
+        CHANNEL_B_CHAT_ID: ${{ secrets.CHANNEL_B_CHAT_ID }}
+        TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+        TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+      run: |
+        python src/pipeline.py
