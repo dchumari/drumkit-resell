@@ -11,6 +11,12 @@ from aiogram.types import PreCheckoutQuery, Message, LabeledPrice, InlineKeyboar
 import config
 
 # Initialize Bot and Dispatcher
+if not config.TELEGRAM_BOT_TOKEN:
+    import sys
+    print("[ERROR] TELEGRAM_BOT_TOKEN is not configured!")
+    print("Please set the TELEGRAM_BOT_TOKEN environment variable or create a '.env' file in the repository root directory.")
+    sys.exit(1)
+
 bot = Bot(token=config.TELEGRAM_BOT_TOKEN)
 dp = Dispatcher()
 

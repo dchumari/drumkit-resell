@@ -495,7 +495,7 @@ def run_pipeline():
             
             # Post raw ZIP on private Channel A for premium members
             for fid in file_ids:
-                telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, fid, f"📦 PREMIUM RELEASE: {rebranded_name}\n\n{contents_text}", thread_id=topic_a)
+                telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, fid, f"📦 PREMIUM RELEASE: {rebranded_name}\n\n{contents_text}", thread_id=None)
                 
             # Post invoice on Channel B
             # If multiple parts, we post the first part and link the others
