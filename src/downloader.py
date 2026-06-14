@@ -168,12 +168,16 @@ def download_file(url: str, output_path: str) -> bool:
             print(f"Downloading from Google Drive via gdown: {url}")
             # If it is a folder, use gdown's download_folder
             is_folder = "folders" in url
-            if is_folder:
-                res = gdown.download_folder(url, output=output_path, quiet=False, use_cookies=False)
-                return res is not None
-            else:
-                res = gdown.download(url, output=output_path, quiet=False, fuzzy=True)
-                return res is not None
+            try:
+                if is_folder:
+                    res = gdown.download_folder(url, output=output_path, quiet=False, use_cookies=False)
+                    return res is not None
+                else:
+                    res = gdown.download(url, output=output_path, quiet=False)
+                    return res is not None
+            except Exception as err:
+                print(f"gdown library download failed with error: {err}")
+                return False
         except ImportError:
             # Fallback to CLI
             print("gdown python library not found. Falling back to CLI.")

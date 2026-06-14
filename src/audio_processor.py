@@ -15,11 +15,29 @@ BRAND_KEYWORDS = [
 AUDIO_EXTENSIONS = (".wav", ".mp3", ".aif", ".aiff", ".flac")
 
 def unzip_pack(zip_path: str, extract_to: str):
-    """Unzips the drumkit archive to the target folder."""
+    """Unzips the drumkit archive or copies directory contents to the target folder."""
     os.makedirs(extract_to, exist_ok=True)
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        zip_ref.extractall(extract_to)
-    print(f"Extracted {zip_path} to {extract_to}")
+    if os.path.isdir(zip_path):
+        print(f"Path {zip_path} is a directory. Moving contents to {extract_to}")
+        for item in os.listdir(zip_path):
+            s = os.path.join(zip_path, item)
+            d = os.path.join(extract_to, item)
+            shutil.move(s, d)
+    else:
+        # Try standard zipfile first
+        try:
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_to)
+            print(f"Extracted {zip_path} to {extract_to} using standard zipfile.")
+        except Exception as zip_err:
+            print(f"Standard zipfile extraction failed: {zip_err}. Trying 7z fallback...")
+            cmd = ["7z", "x", zip_path, f"-o{extract_to}", "-y"]
+            try:
+                subprocess.run(cmd, check=True, capture_output=True, text=True)
+                print(f"Extracted {zip_path} to {extract_to} using 7z.")
+            except Exception as e7z:
+                print(f"7z extraction failed: {e7z}")
+                raise zip_err
 
 def clean_text(text: str) -> str:
     """Removes branding words, BPM/Key annotations, and cleans up spacing/dashes."""

@@ -623,7 +623,17 @@ def process_item(
             file_ids.append(fid)
             
         # Determine pricing bracket based on total size
-        total_size_mb = size / 1024 / 1024 if (not mock and not zip_path and size > 0) else os.path.getsize(download_zip) / 1024 / 1024
+        if os.path.isdir(download_zip):
+            total_bytes = sum(
+                os.path.getsize(os.path.join(dirpath, f))
+                for dirpath, _, filenames in os.walk(download_zip)
+                for f in filenames
+            )
+            total_size_mb = total_bytes / 1024 / 1024
+        elif not mock and not zip_path and size > 0:
+            total_size_mb = size / 1024 / 1024
+        else:
+            total_size_mb = os.path.getsize(download_zip) / 1024 / 1024
         stars_price = 500  # default
         for bracket in config.PRICE_BRACKETS:
             if total_size_mb <= bracket["max_size_mb"]:
@@ -800,6 +810,7 @@ def run_pipeline(
     ltype = ""
     
     while True:
+        queue = load_queue()
         candidates = [q for q in queue if q["url"] not in tried_urls]
         if not candidates:
             print("All links in queue were checked and were either invalid or quota-exceeded.")
@@ -836,20 +847,33 @@ def run_pipeline(
             save_queue(queue)
             continue
             
-        break
-
-    # Process queue item
-    process_item(
-        url=url,
-        title=title,
-        reddit_id=reddit_id,
-        description=description,
-        upload=upload,
-        item_in_queue=item,
-        size=size,
-        force_name=force_name,
-        force_genre=force_genre
-    )
+        # Process queue item
+        try:
+            process_item(
+                url=url,
+                title=title,
+                reddit_id=reddit_id,
+                description=description,
+                upload=upload,
+                item_in_queue=item,
+                size=size,
+                force_name=force_name,
+                force_genre=force_genre
+            )
+            break
+        except Exception as e:
+            print(f"Error occurred during pipeline processing for '{title}': {e}")
+            if item:
+                print("Removing failing item from queue to prevent deadlock, and trying another link.")
+                try:
+                    queue = load_queue()
+                    queue = [q for q in queue if q["url"] != item["url"]]
+                    save_queue(queue)
+                    if reddit_id:
+                        save_processed_link(reddit_id)
+                except Exception as q_err:
+                    print(f"Failed to remove item from queue: {q_err}")
+            continue
 
 if __name__ == "__main__":
     import argparse
