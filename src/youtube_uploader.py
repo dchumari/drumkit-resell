@@ -3,7 +3,7 @@ import json
 import urllib.request
 import urllib.parse
 from typing import List, Optional
-from config import YOUTUBE_CLIENT_ID, YOUTUBE_CLIENT_SECRET, YOUTUBE_REFRESH_TOKEN, OPENROUTER_API_KEY, OPENROUTER_URL
+from config import YOUTUBE_CLIENT_ID, YOUTUBE_CLIENT_SECRET, YOUTUBE_REFRESH_TOKEN, OPENROUTER_API_KEY, OPENROUTER_URL, OPENROUTER_MODEL
 
 def get_access_token() -> str:
     """Uses the OAuth2 refresh token to retrieve a fresh access token from Google."""
@@ -48,7 +48,7 @@ def generate_tags_with_deepseek(pack_name: str, genre: str) -> List[str]:
     )
     
     payload = {
-        "model": "deepseek/deepseek-v4-flash",
+        "model": OPENROUTER_MODEL if 'OPENROUTER_MODEL' in globals() or 'OPENROUTER_MODEL' in locals() else "deepseek/deepseek-v4-flash",
         "messages": [{"role": "user", "content": prompt}]
     }
     

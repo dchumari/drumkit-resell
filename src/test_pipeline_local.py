@@ -66,6 +66,7 @@ def main():
     parser.add_argument("--zip", type=str, help="Path to a real local .zip drumkit to process. (If omitted, a mock zip is generated)")
     parser.add_argument("--name", type=str, default="Apex", help="Rebranded name to use (default: Apex)")
     parser.add_argument("--genre", type=str, default="Trap", choices=["Trap", "RnB", "Lofi", "Phonk", "Hip-Hop", "Reggaeton", "House"], help="Genre category (default: Trap)")
+    parser.add_argument("--ai-naming", type=str, choices=["true", "false"], help="Override AI sample naming ('true' or 'false').")
     args = parser.parse_args()
 
     # Define output folder
@@ -91,10 +92,13 @@ def main():
     srt_path = os.path.join(output_dir, "subtitles.srt")
     video_path = os.path.join(output_dir, "showcase_video_16_9.mp4")
     shorts_path = os.path.join(output_dir, "showcase_shorts_9_16.mp4")
-    rebranded_zip_base = os.path.join(output_dir, f"Arqive_{args.name}")
+    clean_rebranded = args.name.replace("Arqive", "").replace("[AQ]", "").strip()
+    target_root_name = f"{clean_rebranded.upper()} {args.genre.upper()} PACK (Produced by Arqive)"
+    rebranded_zip_base = os.path.join(output_dir, target_root_name)
+    zip_to_clean = rebranded_zip_base + ".zip"
     
     # Clean up old output files
-    for p in [temp_extract, cover_path, mockup_path, overlay_path, audio_path, srt_path, video_path, shorts_path]:
+    for p in [temp_extract, cover_path, mockup_path, overlay_path, audio_path, srt_path, video_path, shorts_path, zip_to_clean]:
         if os.path.exists(p):
             if os.path.isdir(p):
                 shutil.rmtree(p)
@@ -113,7 +117,17 @@ def main():
         
         # Step 2: Brand whitewashing & categorization
         print("Step 2: Scanning & rebranding files (whitewashing metadata)...")
-        cats, all_files = audio_processor.process_and_rename_kit(temp_extract)
+        ai_naming_val = None
+        if args.ai_naming is not None:
+            ai_naming_val = args.ai_naming.lower() == "true"
+        cats, all_files = audio_processor.process_and_rename_kit(temp_extract, rebranded_name=rebranded_full_name, genre=args.genre, ai_naming=ai_naming_val)
+        
+        # Verify file count threshold
+        total_samples = len(all_files)
+        min_samples = getattr(config, "MIN_PACK_SAMPLES", 5)
+        if total_samples < min_samples:
+            raise ValueError(f"Pack contains too few samples ({total_samples}). Minimum required is {min_samples}. Skipping.")
+            
         print(f"Found {len(all_files)} audio samples. Categorized:")
         for cat, files in cats.items():
             if files:
@@ -133,26 +147,10 @@ def main():
             print("  Note: voice_tag.wav not found in assets/. Compiling preview without watermarks.")
             voice_tag = ""
             
-        video_generator.compile_preview_audio(showcase, audio_path, voice_tag)
+        audio_path, markers = video_generator.compile_preview_audio(showcase, audio_path, voice_tag)
         
         # Step 5: Generate video overlays and SRT subtitles
         print("\nStep 5: Creating visual overlay graphic and subtitles.srt...")
-        
-        # Build SRT marker timings and dict markers first
-        markers = []
-        current_time = 0.0
-        for fpath, cat in showcase:
-            duration = 12.0 if cat in ["Loops", "808s"] else 2.5
-            fname = os.path.basename(fpath).replace("[AQ] ", "")
-            for suffix in [".wav", ".mp3", ".aif", ".aiff"]:
-                fname = fname.replace(suffix, "")
-            markers.append({
-                "name": video_generator.re_strip_meta(fname),
-                "category": cat,
-                "start": current_time,
-                "end": current_time + duration
-            })
-            current_time += duration
         video_generator.create_srt_file(markers, srt_path)
         
         # Now create overlay image using markers dict list

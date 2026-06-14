@@ -7,11 +7,31 @@ from PIL import Image, ImageDraw, ImageFont
 from typing import List, Tuple, Dict
 from config import GENRE_COLORS, ASSETS_DIR
 
+def get_wav_duration(filepath: str) -> float:
+    """Attempts to read the duration of an audio file using wave first, then ffprobe fallback."""
+    import wave
+    try:
+        with wave.open(filepath, 'rb') as w:
+            frames = w.getnframes()
+            rate = w.getframerate()
+            return frames / float(rate)
+    except Exception:
+        try:
+            import json
+            import subprocess
+            cmd = ["ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", filepath]
+            res = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            data = json.loads(res.stdout)
+            return float(data["format"]["duration"])
+        except Exception:
+            return 2.5
+
 def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_path: str, voice_tag_path: str) -> Tuple[str, List[dict]]:
     """
     Trims, concatenates, and mixes voice tag watermarks into the showcase audio.
     Returns (output_audio_path, markers)
     """
+    import config
     temp_concat = "temp_concat.wav"
     inputs = []
     filter_parts = []
@@ -21,17 +41,33 @@ def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_pa
     
     # 1. Build trim and concat filter
     for idx, (fpath, cat) in enumerate(showcase_files):
-        # Loops and 808s play for 12s, others for 2.5s
-        duration = 12.0 if cat in ["Loops", "808s"] else 2.5
+        actual_dur = get_wav_duration(fpath)
+        
+        cat_caps = cat.upper()
+        if "LOOP" in cat_caps or cat_caps == "808S" or actual_dur >= 5.0:
+            duration = min(actual_dur, getattr(config, "PREVIEW_LOOP_DURATION", 12.0))
+        else:
+            min_dur = getattr(config, "PREVIEW_ONESHOT_MIN_DURATION", 1.0)
+            max_dur = getattr(config, "PREVIEW_ONESHOT_MAX_DURATION", 2.5)
+            if actual_dur < min_dur:
+                duration = min_dur
+            else:
+                duration = min(actual_dur, max_dur)
+                
         inputs.extend(["-i", fpath])
-        filter_parts.append(f"[{idx}:a]atrim=end={duration},asetpts=PTS-STARTPTS[a{idx}]")
+        filter_parts.append(f"[{idx}:a]apad,atrim=end={duration},asetpts=PTS-STARTPTS[a{idx}]")
         concat_parts.append(f"[a{idx}]")
         
         fname = os.path.basename(fpath)
-        # Clean title for markers
-        display_name = fname.replace("[AQ] ", "")
-        for suffix in [".wav", ".mp3", ".aif", ".aiff"]:
-            display_name = display_name.replace(suffix, "")
+        display_name = fname
+        for prefix in ["[AQ]", "[AQ] "]:
+            if display_name.startswith(prefix):
+                display_name = display_name[len(prefix):]
+                
+        for suffix in [".wav", ".mp3", ".aif", ".aiff", ".flac"]:
+            if display_name.lower().endswith(suffix):
+                display_name = display_name[:-len(suffix)]
+                
         display_name = re_strip_meta(display_name)
         
         markers.append({
@@ -43,6 +79,9 @@ def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_pa
         })
         current_time += duration
 
+    if not showcase_files:
+        return output_audio_path, []
+
     filter_str = "; ".join(filter_parts) + "; " + "".join(concat_parts) + f"concat=n={len(showcase_files)}:v=0:a=1[aout]"
     cmd_concat = ["ffmpeg", "-y"] + inputs + ["-filter_complex", filter_str, "-map", "[aout]", temp_concat]
     
@@ -50,7 +89,6 @@ def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_pa
         subprocess.run(cmd_concat, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception as e:
         print(f"Error concatenating showcase audio: {e}")
-        # Return fallback if fails
         if len(showcase_files) > 0:
             shutil.copy(showcase_files[0][0], output_audio_path)
         return output_audio_path, markers
@@ -201,6 +239,9 @@ def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, out
         bg_input = f"-stream_loop -1 -i {bg_video_path}"
 
     # Calculate total duration
+    if not markers:
+        print("Error: No markers provided for video compilation.")
+        return False
     total_duration = markers[-1]["end"]
     
     # FFmpeg Filter Complex:

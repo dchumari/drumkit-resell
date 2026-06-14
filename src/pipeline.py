@@ -215,7 +215,7 @@ def query_deepseek_rebrand(title: str, desc: str) -> Tuple[str, str]:
     )
     
     payload = {
-        "model": "deepseek/deepseek-v4-flash",
+        "model": getattr(config, "OPENROUTER_MODEL", "deepseek/deepseek-v4-flash"),
         "response_format": {"type": "json_object"},
         "messages": [{"role": "user", "content": prompt}]
     }
@@ -299,25 +299,7 @@ def run_throwback_release(upload: bool = False):
         cover_generator.generate_cover_art(rebranded_name, old_pack["genre"], cover_path)
         mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, old_pack["genre"])
         
-        # 2. Extract mock preview markers from the old pack if saved, otherwise mock it
-        markers = old_pack.get("markers", [])
-        if not markers:
-            markers = [{"name": "Premium Loops", "category": "Loops", "start": 0.0, "end": 15.0}]
-            
-        # Draw tracklist overlay image
-        video_generator.create_tracklist_overlay(rebranded_name, old_pack["genre"], markers, overlay_path)
-        video_generator.create_srt_file(markers, srt_path)
-        
-        # Mock download a short test sound or just compile from a placeholder
-        # In a real vault run, we download the original file_id or reuse local cached files.
-        # However, to be 100% robust, since we don't have the original samples locally,
-        # we can download the document using the bot API to get the audio preview!
-        # For simplicity, we assume we have a fallback loop or generate a simple preview.
-        # In this workflow, we will check if the old preview audio is available on YouTube or re-compile.
-        # Since compile requires files, we can download the file from Telegram using the file_id!
-        # Yes! The local Bot API allows downloading files via:
-        # http://localhost:8081/bot<token>/getFile?file_id=<file_id>
-        # Let's write a simple download helper for file_id to download the ZIP, extract it, and compile!
+        # 2. Download the original ZIP file from Telegram using the file_id
         local_zip = os.path.join(temp_dir, "old_kit.zip")
         print(f"Downloading old pack ZIP from Telegram using file_id: {old_pack['file_id']}")
         dl_url = f"https://api.telegram.org/bot{config.TELEGRAM_BOT_TOKEN}/getFile"
@@ -337,11 +319,20 @@ def run_throwback_release(upload: bool = False):
         # Process and compile just like normal!
         ext_dir = os.path.join(temp_dir, "extracted")
         audio_processor.unzip_pack(local_zip, ext_dir)
-        cats, all_files = audio_processor.process_and_rename_kit(ext_dir)
+        cats, all_files = audio_processor.process_and_rename_kit(ext_dir, rebranded_name=rebranded_name, genre=old_pack["genre"])
         showcase = audio_processor.select_preview_showcase(cats)
         
         voice_tag = os.path.join(config.ASSETS_DIR, "voice_tag.wav")
-        video_generator.compile_preview_audio(showcase, audio_path, voice_tag)
+        if not os.path.exists(voice_tag):
+            print("Note: voice_tag.wav not found in assets/. Compiling preview without watermarks.")
+            voice_tag = ""
+            
+        audio_path, markers = video_generator.compile_preview_audio(showcase, audio_path, voice_tag)
+        
+        # Create visual overlay graphic and subtitles.srt with the compiled markers
+        video_generator.create_srt_file(markers, srt_path)
+        video_generator.create_tracklist_overlay(rebranded_name, old_pack["genre"], markers, overlay_path)
+        
         video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, old_pack["genre"], markers, srt_path)
         video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, old_pack["genre"], rebranded_name)
         
@@ -470,7 +461,8 @@ def process_item(
     force_name: Optional[str] = None,
     force_genre: Optional[str] = None,
     item_in_queue: Optional[dict] = None,
-    size: int = 0
+    size: int = 0,
+    ai_naming: Optional[bool] = None
 ) -> bool:
     """
     Downloads/prepares the ZIP, extracts, rebrands, compiles audio/video, packages,
@@ -511,10 +503,6 @@ def process_item(
         else:
             raise ValueError("No source ZIP source (mock, zip_path, or url) was provided to process_item.")
             
-        # 2. Extract & Rebrand
-        audio_processor.unzip_pack(download_zip, extracted_dir)
-        cats, all_files = audio_processor.process_and_rename_kit(extracted_dir)
-        
         # Rebrand name & genre resolution
         if force_name and force_genre:
             rebranded_name = force_name
@@ -545,6 +533,16 @@ def process_item(
                 if upload:
                     notifier.send_telegram_message(f"⚠️ **DeepSeek Rebrand API Failed**: Used local fallback '{rebranded_name}' for pack.")
                     
+        # 2. Extract & Rebrand
+        audio_processor.unzip_pack(download_zip, extracted_dir)
+        cats, all_files = audio_processor.process_and_rename_kit(extracted_dir, rebranded_name=rebranded_name, genre=genre, ai_naming=ai_naming)
+        
+        # Verify file count threshold
+        total_samples = len(all_files)
+        min_samples = getattr(config, "MIN_PACK_SAMPLES", 5)
+        if total_samples < min_samples:
+            raise ValueError(f"Pack contains too few samples ({total_samples}). Minimum required is {min_samples}. Skipping.")
+                    
         # Generate cover and mockup art
         cover_generator.generate_cover_art(rebranded_name, genre, cover_path)
         mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre)
@@ -556,23 +554,9 @@ def process_item(
             print("Note: voice_tag.wav not found in assets/. Compiling preview without watermarks.")
             voice_tag = ""
             
-        video_generator.compile_preview_audio(showcase, audio_path, voice_tag)
+        audio_path, markers = video_generator.compile_preview_audio(showcase, audio_path, voice_tag)
         
-        # Create SRT Subtitles file and markers list
-        markers = []
-        current_time = 0.0
-        for fpath, cat in showcase:
-            duration = 12.0 if cat in ["Loops", "808s"] else 2.5
-            fname = os.path.basename(fpath).replace("[AQ] ", "")
-            for suffix in [".wav", ".mp3", ".aif", ".aiff"]:
-                fname = fname.replace(suffix, "")
-            markers.append({
-                "name": video_generator.re_strip_meta(fname),
-                "category": cat,
-                "start": current_time,
-                "end": current_time + duration
-            })
-            current_time += duration
+        # Create SRT Subtitles file
         video_generator.create_srt_file(markers, srt_path)
         
         # 4. Generate Video Visuals Tracklist Overlay
@@ -583,12 +567,14 @@ def process_item(
         video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, genre, rebranded_name)
         
         # 5. Package rebranded drumkit ZIP
-        zip_base_name = os.path.join(temp_dir, clean_filename_for_zip(rebranded_name))
+        clean_rebranded = rebranded_name.replace("Arqive", "").replace("[AQ]", "").strip()
+        target_root_name = f"{clean_rebranded.upper()} {genre.upper()} PACK (Produced by Arqive)"
+        zip_base_name = os.path.join(temp_dir, target_root_name)
         zip_files = audio_processor.zip_pack(extracted_dir, zip_base_name)
         
         if not upload:
             print("\n[Local Analysis Mode] Copying generated files to output folder...")
-            output_dir = os.path.join(config.BASE_DIR, "output", clean_filename_for_zip(rebranded_name))
+            output_dir = os.path.join(config.BASE_DIR, "output", target_root_name)
             os.makedirs(output_dir, exist_ok=True)
             
             # File copy mappings: (src, dest_name)
@@ -763,7 +749,8 @@ def run_pipeline(
     force_name: Optional[str] = None,
     force_genre: Optional[str] = None,
     subreddit: str = "Drumkits",
-    rss_url: Optional[str] = None
+    rss_url: Optional[str] = None,
+    ai_naming: Optional[bool] = None
 ):
     """Main pipeline routine."""
     # If explicit inputs are given, process directly
@@ -779,7 +766,8 @@ def run_pipeline(
             zip_path=zip_path,
             mock=mock,
             force_name=force_name,
-            force_genre=force_genre
+            force_genre=force_genre,
+            ai_naming=ai_naming
         )
         return
 
@@ -858,7 +846,8 @@ def run_pipeline(
                 item_in_queue=item,
                 size=size,
                 force_name=force_name,
-                force_genre=force_genre
+                force_genre=force_genre,
+                ai_naming=ai_naming
             )
             break
         except Exception as e:
@@ -886,8 +875,13 @@ if __name__ == "__main__":
     parser.add_argument("--genre", type=str, help="Force genre (e.g. Trap)")
     parser.add_argument("--subreddit", type=str, default="Drumkits", help="Subreddit name to scrape (default: Drumkits).")
     parser.add_argument("--rss-url", type=str, help="Specify a custom RSS feed URL to scrape directly.")
+    parser.add_argument("--ai-naming", type=str, choices=["true", "false"], help="Override AI sample naming ('true' or 'false').")
     args = parser.parse_args()
     
+    ai_naming_val = None
+    if args.ai_naming is not None:
+        ai_naming_val = args.ai_naming.lower() == "true"
+        
     run_pipeline(
         upload=args.upload,
         zip_path=args.zip,
@@ -896,6 +890,7 @@ if __name__ == "__main__":
         force_name=args.name,
         force_genre=args.genre,
         subreddit=args.subreddit,
-        rss_url=args.rss_url
+        rss_url=args.rss_url,
+        ai_naming=ai_naming_val
     )
 

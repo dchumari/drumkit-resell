@@ -181,3 +181,18 @@ Checkout/Download Links:
 ---
 Note: Re-branded and compiled automatically by Arqive Reseller. All files are royalty-free. Pinned comment contains direct checkout links for mobile users.
 """
+
+# Rebranding Naming Configurations
+# Modes: 'prefix', 'suffix', 'index_first', 'ai_unique_prefix', 'ai_unique_suffix'
+REBRAND_NAMING_MODE = os.getenv("REBRAND_NAMING_MODE", "ai_unique_suffix")
+AI_UNIQUE_NAMING = os.getenv("AI_UNIQUE_NAMING", "True").lower() == "true"
+OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "deepseek/deepseek-v4-flash")
+
+# Preview Showreel Durations (in seconds)
+PREVIEW_LOOP_DURATION = float(os.getenv("PREVIEW_LOOP_DURATION", "12.0"))
+PREVIEW_ONESHOT_MIN_DURATION = float(os.getenv("PREVIEW_ONESHOT_MIN_DURATION", "1.0"))
+PREVIEW_ONESHOT_MAX_DURATION = float(os.getenv("PREVIEW_ONESHOT_MAX_DURATION", "2.5"))
+
+# Minimum number of allowed samples in a pack to process
+MIN_PACK_SAMPLES = int(os.getenv("MIN_PACK_SAMPLES", "5"))
+

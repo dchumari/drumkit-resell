@@ -3,7 +3,7 @@ import re
 import zipfile
 import subprocess
 import shutil
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 # Common producer/brand keywords to strip
 BRAND_KEYWORDS = [
@@ -13,6 +13,51 @@ BRAND_KEYWORDS = [
 ]
 
 AUDIO_EXTENSIONS = (".wav", ".mp3", ".aif", ".aiff", ".flac")
+ALLOWED_EXTENSIONS = (".wav", ".mp3", ".aif", ".aiff", ".flac", ".fxp", ".fxb", ".fst", ".nki", ".sfz", ".nkm", ".h2b", ".mid", ".midi", ".flp")
+
+def extract_nested_zips(directory: str):
+    """Recursively scans for and extracts any nested .zip, .rar, or .7z files in the directory."""
+    import zipfile
+    found_any = True
+    while found_any:
+        found_any = False
+        for dirpath, dirnames, filenames in os.walk(directory):
+            for filename in filenames:
+                ext = os.path.splitext(filename)[1].lower()
+                if ext in (".zip", ".rar", ".7z"):
+                    archive_path = os.path.join(dirpath, filename)
+                    base_name = os.path.splitext(filename)[0]
+                    extract_dir = os.path.join(dirpath, base_name)
+                    os.makedirs(extract_dir, exist_ok=True)
+                    
+                    print(f"Extracting nested archive: {archive_path} -> {extract_dir}")
+                    extracted = False
+                    if ext == ".zip":
+                        try:
+                            with zipfile.ZipFile(archive_path, 'r') as zip_ref:
+                                zip_ref.extractall(extract_dir)
+                            extracted = True
+                        except Exception as err:
+                            print(f"Failed to extract nested zip {archive_path} with zipfile: {err}. Trying 7z...")
+                    
+                    if not extracted:
+                        cmd = ["7z", "x", archive_path, f"-o{extract_dir}", "-y"]
+                        try:
+                            subprocess.run(cmd, check=True, capture_output=True, text=True)
+                            extracted = True
+                        except Exception as e7z:
+                            print(f"7z fallback extraction failed for {archive_path}: {e7z}")
+                    
+                    # Delete the nested archive file
+                    try:
+                        os.remove(archive_path)
+                    except Exception as e:
+                        print(f"Failed to remove nested archive {archive_path}: {e}")
+                        
+                    found_any = True
+                    break # break inner loop to restart walking since files changed
+            if found_any:
+                break
 
 def unzip_pack(zip_path: str, extract_to: str):
     """Unzips the drumkit archive or copies directory contents to the target folder."""
@@ -39,25 +84,45 @@ def unzip_pack(zip_path: str, extract_to: str):
                 print(f"7z extraction failed: {e7z}")
                 raise zip_err
 
+    # Recursively extract any nested zip files
+    extract_nested_zips(extract_to)
+
 def clean_text(text: str) -> str:
-    """Removes branding words, BPM/Key annotations, and cleans up spacing/dashes."""
+    """Removes branding words, BPM/Key annotations, usernames/domains, and cleans up spacing/dashes."""
     cleaned = text
     
-    # Remove BPM patterns like (140BPM), [140 BPM], 140BPM, 140 bpm case-insensitively
+    # 1. Remove URLs and domain names (e.g. http://... or slapdat.xyz)
+    cleaned = re.sub(r"https?://[^\s()<>\"]+", "", cleaned)
+    cleaned = re.sub(r"(?i)\b[a-zA-Z0-9-]+\.(?:com|xyz|net|org|co|uk|de|fm|io|edu|gov)\b", "", cleaned)
+    
+    # 2. Remove hex hashes (MD5 or SHA-256) and optional surrounding underscores
+    cleaned = re.sub(r"(?i)_?[a-fA-F0-9]{32,64}_?", "", cleaned)
+    
+    # 3. Remove usernames starting with @ (e.g. @slapdat.xyz or @clpz)
+    cleaned = re.sub(r"@[a-zA-Z0-9_.-]+", "", cleaned)
+    
+    # 4. Convert special characters to spaces (e.g., !, _, +, =, -, |, ~, etc.)
+    # Running this before BPM/Key ensures word boundaries match correctly on spaces
+    cleaned = re.sub(r"[!_+=\-\|~`@#$%^&*:;\"'<>,?/]", " ", cleaned)
+    
+    # 5. Remove BPM patterns like (140BPM), [140 BPM], 140BPM, 140 bpm case-insensitively
     cleaned = re.sub(r"(?i)[\(\[\]\)]?\s*\b\d{2,3}\s*bpm\b\s*[\(\[\]\)]?", "", cleaned)
     
-    # Remove Key patterns like (Cmin), [A#], Cmin, F#maj, G#min, Am, F#
-    cleaned = re.sub(r"(?i)[\(\[\]\)]?\s*\b[A-G][#b]?(?:min|maj|minor|major|m)?(?![a-zA-Z0-9#])\s*[\(\[\]\)]?", "", cleaned)
+    # 6. Remove Key patterns like (Cmin), [A#], Cmin, F#maj, G#min, Am, F# (supporting optional spaces before quality)
+    cleaned = re.sub(r"(?i)[\(\[\]\)]?\s*\b[A-G][#b]?(?:\s*(?:min|maj|minor|major|m))?(?![a-zA-Z0-9#])\s*[\(\[\]\)]?", "", cleaned)
     
+    # 6.5 Convert any remaining brackets/parentheses to spaces
+    cleaned = re.sub(r"[\(\)\[\]{}]", " ", cleaned)
+    
+    # 7. Remove predefined brand keywords
     for kw in BRAND_KEYWORDS:
-        # Match case-insensitively with boundaries
         cleaned = re.sub(rf"(?i)\b{re.escape(kw)}\b", "", cleaned)
-    
-    # Clean up double spaces, leading/trailing spaces, and empty brackets
+        
+    # 8. Clean up double spaces, leading/trailing spaces, and empty brackets
     cleaned = re.sub(r"\s+", " ", cleaned)
-    cleaned = re.sub(r"\(\s*\)|\[\s*\]", "", cleaned)
-    cleaned = cleaned.replace(" - - ", " - ").replace(" -- ", " - ")
-    cleaned = cleaned.strip(" -_[]() ")
+    cleaned = re.sub(r"\(\s*\)|\[\s*\]|\{\s*\}", "", cleaned)
+    cleaned = cleaned.strip(" -_[](){} ")
+    
     return cleaned if cleaned else "Sample"
 
 def parse_bpm_key(filename: str) -> Tuple[str, str]:
@@ -72,123 +137,613 @@ def parse_bpm_key(filename: str) -> Tuple[str, str]:
     
     return bpm, key
 
-def categorize_sample(filename: str, parent_folder: str) -> str:
-    """Categorizes the sample based on filename and folder names."""
-    path_text = f"{parent_folder}/{filename}".lower()
-    
-    if "808" in path_text or "sub" in path_text:
-        return "808s"
-    elif "kick" in path_text:
-        return "Kicks"
-    elif "snare" in path_text or "clap" in path_text or "rim" in path_text:
-        return "Snares"
-    elif "hat" in path_text or "openhat" in path_text or "shaker" in path_text or "crash" in path_text or "cymbal" in path_text:
-        return "Hats"
-    elif "loop" in path_text or "melody" in path_text or "synth" in path_text or "chord" in path_text or "stem" in path_text or "drum loop" in path_text:
-        return "Loops"
-    elif "perc" in path_text or "conga" in path_text or "bongo" in path_text or "cowbell" in path_text or "tom" in path_text:
-        return "Percs"
-    elif "fx" in path_text or "sound effect" in path_text or "riser" in path_text or "sweep" in path_text or "ambient" in path_text:
-        return "FX"
-    
-    return "Others"
+CATEGORY_KEYWORDS = {
+    "808": "808S",
+    "sub": "808S",
+    "kick": "KICKS",
+    "snare": "SNARES",
+    "clap": "CLAPS",
+    "hat": "HATS",
+    "hihat": "HATS",
+    "openhat": "HATS",
+    "oh": "HATS",
+    "hh": "HATS",
+    "crash": "HATS",
+    "cymbal": "HATS",
+    "shaker": "HATS",
+    "loop": "LOOPS",
+    "melody": "LOOPS",
+    "melodies": "LOOPS",
+    "synth": "LOOPS",
+    "chord": "LOOPS",
+    "stem": "LOOPS",
+    "guitar": "LOOPS",
+    "piano": "LOOPS",
+    "keys": "LOOPS",
+    "flute": "LOOPS",
+    "bell": "LOOPS",
+    "string": "LOOPS",
+    "brass": "LOOPS",
+    "perc": "PERCS",
+    "conga": "PERCS",
+    "bongo": "PERCS",
+    "cowbell": "PERCS",
+    "tom": "PERCS",
+    "rim": "PERCS",
+    "fx": "FX",
+    "effect": "FX",
+    "riser": "FX",
+    "sweep": "FX",
+    "ambient": "FX",
+    "chant": "VOX",
+    "vox": "VOX",
+    "vocal": "VOX",
+    "midi": "MIDI"
+}
 
-def process_and_rename_kit(root_dir: str) -> Tuple[Dict[str, List[str]], List[str]]:
+def pluralize_word(word: str) -> str:
+    """Pluralizes a single word in uppercase."""
+    word_upper = word.upper().strip()
+    if not word_upper:
+        return ""
+    if word_upper.endswith("S"):
+        return word_upper
+    if word_upper.endswith("Y"):
+        if word_upper.endswith(("AY", "EY", "OY", "UY")):
+            return word_upper + "S"
+        return word_upper[:-1] + "IES"
+    if word_upper.endswith(("SH", "CH", "X", "Z", "SS")):
+        return word_upper + "ES"
+    return word_upper + "S"
+
+def pluralize_category(cat: str) -> str:
+    """Pluralizes a potentially multi-word category in uppercase."""
+    cat_upper = cat.upper().strip()
+    words = cat_upper.split()
+    if not words:
+        return "OTHERS"
+    # Pluralize only the last word if it's not already plural
+    last_word = words[-1]
+    words[-1] = pluralize_word(last_word)
+    return " ".join(words)
+
+def parse_category_and_descriptor(rel_path: str) -> Tuple[str, str]:
     """
-    Recursively renames files and folders, prefixes files with [AQ],
-    categorizes audio samples, and returns the categories dictionary.
+    Parses the relative path to extract the main category (in CAPS) and a descriptor.
+    If no standard keywords are found, it uses the cleaned, capitalized, and pluralized
+    leaf folder name as a custom category.
     """
-    # 1. Rename files first (to keep directory structure intact during walk)
-    all_renamed_files = []
-    categories: Dict[str, List[str]] = {
-        "808s": [], "Kicks": [], "Snares": [], "Hats": [], "Loops": [], "Percs": [], "FX": [], "Others": []
+    # Replace backslashes with forward slashes and split
+    parts = rel_path.replace("\\", "/").strip("/").split("/")
+    
+    # Strip any allowed extensions from parts first to avoid them leaking into category/descriptor
+    for i in range(len(parts)):
+        part_lower = parts[i].lower()
+        for ext in ALLOWED_EXTENSIONS:
+            if part_lower.endswith(ext):
+                parts[i] = parts[i][:-len(ext)]
+                break
+                
+    # Clean each part to wash branding/special chars
+    cleaned_parts = [clean_text(p) for p in parts if p.strip()]
+    if not cleaned_parts:
+        return "OTHERS", ""
+        
+    # Search from right to left for a category match
+    cat_part_idx = -1
+    matched_cat = ""
+    matched_kw = ""
+    
+    for idx in range(len(cleaned_parts) - 1, -1, -1):
+        part_lower = cleaned_parts[idx].lower()
+        for kw, target_cat in CATEGORY_KEYWORDS.items():
+            if kw in part_lower:
+                matched_cat = target_cat
+                cat_part_idx = idx
+                matched_kw = kw
+                break
+        if matched_cat:
+            break
+            
+    if matched_cat:
+        # Standard category found
+        if matched_cat == "LOOPS":
+            cat_folder_name = cleaned_parts[cat_part_idx]
+            cat_folder_lower = cat_folder_name.lower()
+            
+            # Case A: Generic Loops folder with a child folder (e.g. Loops/Melody)
+            if (cat_folder_lower == "loops" or cat_folder_lower == "loop") and len(cleaned_parts) > cat_part_idx + 1:
+                spec_folder = cleaned_parts[cat_part_idx + 1]
+                spec_lower = spec_folder.lower()
+                if "loop" not in spec_lower:
+                    matched_cat = singularize_category(spec_folder).upper() + " LOOPS"
+                else:
+                    matched_cat = pluralize_category(spec_folder)
+                
+                descriptor_parts = []
+                for idx in range(cat_part_idx + 2, len(cleaned_parts)):
+                    descriptor_parts.append(cleaned_parts[idx].lower())
+                descriptor = " ".join(descriptor_parts).strip()
+                return matched_cat, descriptor
+                
+            # Case B: Specific Loops folder (e.g. Melody Loops/Dry)
+            else:
+                LOOP_INSTRUMENTS = {"guitar", "piano", "synth", "chord", "melody", "melodies", "stem", "flute", "bell", "string", "brass", "keys"}
+                
+                cleaned_folder_desc = cat_folder_lower
+                # Strip loop keywords
+                cleaned_folder_desc = re.sub(r"(?i)\bloops?\b", "", cleaned_folder_desc)
+                # Strip matched keyword
+                if matched_kw:
+                    cleaned_folder_desc = re.sub(rf"(?i)\b{re.escape(matched_kw)}s?\b", "", cleaned_folder_desc)
+                cleaned_folder_desc = re.sub(r"\s+", " ", cleaned_folder_desc).strip()
+                
+                if matched_kw in LOOP_INSTRUMENTS:
+                    inst_name = singularize_category(matched_kw).upper()
+                    if cleaned_folder_desc:
+                        matched_cat = f"{cleaned_folder_desc.upper()} {inst_name} LOOPS"
+                    else:
+                        matched_cat = f"{inst_name} LOOPS"
+                else:
+                    if cleaned_folder_desc:
+                        matched_cat = cleaned_folder_desc.upper() + " LOOPS"
+                    else:
+                        # If empty, fallback to orig_clean (or LOOPS if empty)
+                        orig_clean = cat_folder_lower.replace("loops", "").replace("loop", "").strip()
+                        if orig_clean:
+                            matched_cat = orig_clean.upper() + " LOOPS"
+                        else:
+                            matched_cat = "LOOPS"
+                    
+                descriptor_parts = []
+                for idx in range(cat_part_idx + 1, len(cleaned_parts)):
+                    descriptor_parts.append(cleaned_parts[idx].lower())
+                descriptor = " ".join(descriptor_parts).strip()
+                return matched_cat, descriptor
+                
+        # Build descriptor for other standard categories
+        descriptor_parts = []
+        for idx in range(cat_part_idx + 1, len(cleaned_parts)):
+            descriptor_parts.append(cleaned_parts[idx].lower())
+            
+        cat_folder_name = cleaned_parts[cat_part_idx]
+        part_lower = cat_folder_name.lower()
+        cleaned_folder_desc = part_lower
+        for kw in CATEGORY_KEYWORDS.keys():
+            if kw in cleaned_folder_desc:
+                cleaned_folder_desc = re.sub(rf"(?i)\b{re.escape(kw)}s?\b", "", cleaned_folder_desc)
+                
+        cleaned_folder_desc = re.sub(r"\s+", " ", cleaned_folder_desc).strip()
+        if cleaned_folder_desc:
+            descriptor_parts.insert(0, cleaned_folder_desc)
+            
+        descriptor = " ".join(descriptor_parts)
+        descriptor = re.sub(r"\s+", " ", descriptor).strip()
+        return matched_cat, descriptor
+    else:
+        # No standard category found: Use cleaned, capitalized, and pluralized leaf folder name!
+        leaf_folder = cleaned_parts[-1]
+        custom_cat = pluralize_category(leaf_folder)
+        
+        # If there are parent directories above the leaf, use the immediate parent as descriptor
+        descriptor = ""
+        if len(cleaned_parts) > 1:
+            descriptor = cleaned_parts[-2].lower()
+            
+        return custom_cat, descriptor
+
+def query_ai_sample_names(category: str, count: int, genre: str) -> List[str]:
+    """Queries OpenRouter to generate unique, premium, genre-styled names for a sample category."""
+    import json
+    import urllib.request
+    import urllib.parse
+    import config
+    
+    if not getattr(config, "OPENROUTER_API_KEY", ""):
+        print("OpenRouter API key is missing. Using local fallback pool.")
+        return []
+        
+    url = f"{config.OPENROUTER_URL}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {config.OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://github.com/arqive-developer/drumkit-reseller",
     }
     
-    for dirpath, dirnames, filenames in os.walk(root_dir, topdown=False):
-        for name in filenames:
-            file_ext = os.path.splitext(name)[1].lower()
-            if file_ext in AUDIO_EXTENSIONS:
-                bpm, key = parse_bpm_key(name)
-                # Strip file extension for cleaning
-                base_name = os.path.splitext(name)[0]
-                cleaned_name = clean_text(base_name)
-                
-                # Format: [AQ] CleanedName (140BPM) (Cmin).wav
-                new_name = f"[AQ] {cleaned_name}"
-                meta = []
-                if bpm:
-                    meta.append(f"{bpm}BPM")
-                if key:
-                    meta.append(key)
-                if meta:
-                    new_name += " " + " ".join(f"({m})" for m in meta)
-                new_name += file_ext
-                
-                old_path = os.path.join(dirpath, name)
-                new_path = os.path.join(dirpath, new_name)
-                
-                try:
-                    os.rename(old_path, new_path)
-                    folder_name = os.path.basename(dirpath)
-                    cat = categorize_sample(new_name, folder_name)
-                    categories[cat].append(new_path)
-                    all_renamed_files.append(new_path)
-                except Exception as e:
-                    print(f"Error renaming file {old_path}: {e}")
-                    categories["Others"].append(old_path)
-            else:
-                # For non-audio files (like text, images, PDF), clean branding or delete
-                if name.lower().endswith((".txt", ".png", ".jpg", ".pdf")):
-                    cleaned_name = clean_text(os.path.splitext(name)[0]) + os.path.splitext(name)[1]
-                    old_path = os.path.join(dirpath, name)
-                    new_path = os.path.join(dirpath, cleaned_name)
-                    try:
-                        os.rename(old_path, new_path)
-                    except Exception:
-                        pass
+    # Custom style prompt based on genre
+    genre_lower = genre.lower()
+    if "trap" in genre_lower or "phonk" in genre_lower:
+        style_desc = "dark, aggressive, heavy, distorted, gritty, unhinged, underground, street, industrial"
+    elif "lofi" in genre_lower or "rnb" in genre_lower or "chill" in genre_lower or "soul" in genre_lower:
+        style_desc = "smooth, warm, dusty, vinyl, vintage, cozy, velvet, atmospheric, retro, dream, sunset, night"
+    else:
+        style_desc = "premium, clean, modern, sharp, digital, futuristic, space, solid, club, electronic"
+        
+    prompt = (
+        f"Generate a list of exactly {count} unique, creative, short (one-word), premium-sounding name descriptors "
+        f"suitable for naming {category} samples in a drum kit.\n"
+        f"Genre style: {genre.upper()} ({style_desc}).\n"
+        f"Instructions:\n"
+        f"1. Generate names like 'Cave', 'Room', 'Swamp', 'Slime', 'Explode', 'Trauma', 'Haze', 'Static', 'Sizzle'.\n"
+        f"2. Names must be single-word adjectives or nouns. Do not include numbers.\n"
+        f"3. Return the response in strict JSON format containing a single list of strings like: [\"Name1\", \"Name2\", ...]"
+    )
+    
+    payload = {
+        "model": getattr(config, "OPENROUTER_MODEL", "deepseek/deepseek-v4-flash"),
+        "messages": [{"role": "user", "content": prompt}]
+    }
+    
+    try:
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=15) as res:
+            res_data = json.loads(res.read().decode("utf-8"))
+            content = res_data["choices"][0]["message"]["content"].strip()
+            # Clean possible markdown json wrapper: ```json ... ```
+            content_cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", content, flags=re.MULTILINE).strip()
+            parsed = json.loads(content_cleaned)
+            if isinstance(parsed, list):
+                return [str(w).strip().title() for w in parsed if w]
+    except Exception as e:
+        print(f"DeepSeek AI sample naming query failed: {e}. Using local fallback.")
+    return []
 
-    # 2. Rename directories (bottom-up to avoid path breakages)
-    for dirpath, dirnames, filenames in os.walk(root_dir, topdown=False):
-        for name in dirnames:
-            old_dir_path = os.path.join(dirpath, name)
-            cleaned_dir_name = clean_text(name)
-            new_dir_path = os.path.join(dirpath, cleaned_dir_name)
-            if old_dir_path != new_dir_path:
-                try:
-                    os.rename(old_dir_path, new_dir_path)
-                except Exception as e:
-                    print(f"Error renaming directory {old_dir_path}: {e}")
+FALLBACK_NAMES = {
+    "808S": {
+        "dark": ["Swamp", "Trauma", "Viscera", "Gutshriek", "Explode", "Meatgrinder", "Slime", "Bonegrind", "God", "Voodoo", "Hades", "Pluto", "Titan", "Beast", "Thump", "Rumble", "Tremor", "Quake", "Grave", "Toxic", "Sludge", "Reaper", "Abyss", "Phantom", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Doom"],
+        "smooth": ["Warmth", "Velvet", "Haze", "Dream", "Clouds", "Swell", "Submerge", "Sunset", "Vibe", "Cozy", "Chill", "Dusk", "Dawn", "Aura", "Static", "Vinyl", "Sable", "Silk", "Lush", "Soft", "Glow", "Breeze", "Float", "Serene", "Mist", "Fade", "Shimmer", "Amber", "Pulse", "Eon"],
+        "clean": ["Solid", "Concrete", "Steel", "Anvil", "Piston", "Strike", "Knock", "Impact", "Apex", "Vortex", "Static", "Nova", "Pulse", "Punch", "Click", "Drive", "Stomp", "Hammer", "Force", "Limit", "Axis", "Core", "Cyber", "Grid", "Matrix", "Tech", "Volt", "Wave", "Sonic", "Sync"]
+    },
+    "KICKS": {
+        "dark": ["Punch", "Heavy", "Hard", "Solid", "Concrete", "Stomp", "Thump", "Boxer", "Knockout", "Drive", "Pulse", "Beast", "Goliath", "Mammoth", "Titan", "Rumble", "Quake", "Abyss", "Slam", "Smasher", "Crash", "Battering", "Iron", "Lead", "Hammer", "Piston", "Anvil", "Bash", "Batter", "Force"],
+        "smooth": ["Warm", "Soft", "Thud", "Puffy", "Dusty", "Tape", "Vinyl", "Cozy", "Muted", "Aura", "Lush", "Gentle", "Float", "Breeze", "Velvet", "Sable", "Glow", "Dusk", "Dawn", "Haze", "Plump", "Pillow", "Cloud", "Swell", "Pulse", "Round", "Tuned", "Deep", "Chill", "Vibe"],
+        "clean": ["Punchy", "Click", "Point", "Sharp", "Tight", "Short", "Snap", "Stab", "Laser", "Cyber", "Tech", "Axis", "Grid", "Core", "Limit", "Sonic", "Volt", "Cyber", "Digital", "Precision", "Exact", "Perfect", "Apex", "Vortex", "Sync", "Pulse", "Knock", "Drive", "Focus", "Crisp"]
+    },
+    "SNARES": {
+        "dark": ["Crack", "Slap", "Crisp", "Sharp", "Clack", "Metal", "Whip", "Smack", "Slam", "Shot", "Riot", "Static", "Bullet", "Sniper", "Trigger", "Blade", "Cut", "Slash", "Spit", "Shred", "Bite", "Sting", "Blast", "Explode", "Tear", "Break", "Crush", "Smash", "Rattle", "Clatter"],
+        "smooth": ["Dusty", "Tape", "Vinyl", "Soft", "Brushed", "Warm", "Muted", "Lo-Fi", "Lofi", "Aura", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush", "Chill", "Vibe", "Subtle", "Gentle", "Mellow", "Quiet"],
+        "clean": ["Tight", "Short", "Snap", "Stab", "Click", "Laser", "Cyber", "Tech", "Digital", "Studio", "Plate", "Gate", "Dry", "Acoustic", "Modern", "Perfect", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp", "Chirp", "Tink", "Tick", "Clink", "Pop", "Zap", "Volt"]
+    },
+    "CLAPS": {
+        "dark": ["Cave", "Swamp", "Viscera", "Trauma", "Riot", "Static", "Slam", "Smack", "Heavy", "Gritty", "Underground", "Doom", "Toxic", "Sludge", "Reaper", "Abyss", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Explode", "Tear", "Crush", "Blade", "Cut", "Slash", "Spit", "Shred", "Bite"],
+        "smooth": ["Room", "Hall", "Ambient", "Soft", "Warm", "Dusty", "Tape", "Vinyl", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush", "Chill", "Vibe", "Subtle", "Gentle", "Mellow", "Muted", "Quiet", "Softly"],
+        "clean": ["Synix", "Room", "Trap", "Tight", "Short", "Snap", "Stab", "Click", "Laser", "Cyber", "Tech", "Digital", "Studio", "Plate", "Gate", "Dry", "Acoustic", "Modern", "Perfect", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp", "Chirp", "Pop", "Zap", "Volt"]
+    },
+    "HATS": {
+        "dark": ["Metal", "Gritty", "Static", "Harsh", "Iron", "Steel", "Rusty", "Riot", "Doom", "Toxic", "Sludge", "Reaper", "Abyss", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Explode", "Tear", "Crush", "Blade", "Cut", "Slash", "Spit", "Shred", "Bite", "Sting", "Blast", "Smash"],
+        "smooth": ["Closed", "Open", "Pedal", "Tick", "Tink", "Sizzle", "Crisp", "Bright", "Shine", "Silver", "Gold", "Platinum", "Classic", "Modern", "Airy", "Tight", "Loose", "Short", "Soft", "Whisper", "Dusty", "Tape", "Vinyl", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Breeze", "Float"],
+        "clean": ["Tight", "Short", "Tick", "Tink", "Click", "Laser", "Cyber", "Tech", "Digital", "Studio", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp", "Chirp", "Pop", "Zap", "Volt", "Clock", "Chink", "Shine", "Silver", "Gold", "Platinum", "Modern", "Dry", "Gate"]
+    },
+    "LOOPS": {
+        "dark": ["Melody", "Synth", "Pluck", "Keys", "Guitar", "Vibe", "Atmosphere", "Chords", "Dream", "Night", "Day", "Sun", "Moon", "Stars", "Cloud", "Rain", "Wind", "Fire", "Water", "Earth", "Abyss", "Phantom", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Doom", "Toxic", "Sludge"],
+        "smooth": ["Warmth", "Velvet", "Haze", "Dream", "Clouds", "Swell", "Submerge", "Sunset", "Vibe", "Cozy", "Chill", "Dusk", "Dawn", "Aura", "Static", "Vinyl", "Sable", "Silk", "Lush", "Soft", "Glow", "Breeze", "Float", "Serene", "Mist", "Fade", "Shimmer", "Amber", "Pulse", "Eon"],
+        "clean": ["Solid", "Concrete", "Steel", "Anvil", "Piston", "Strike", "Knock", "Impact", "Apex", "Vortex", "Static", "Nova", "Pulse", "Punch", "Click", "Drive", "Stomp", "Hammer", "Force", "Limit", "Axis", "Core", "Cyber", "Grid", "Matrix", "Tech", "Volt", "Wave", "Sonic", "Sync"]
+    },
+    "PERCS": {
+        "dark": ["Rim", "Bongo", "Conga", "Block", "Cowbell", "Shaker", "Tambourine", "Triangle", "Click", "Snap", "Clack", "Tink", "Woodblock", "Maraca", "Cabasa", "Guiro", "Agogo", "Clave", "Castanet", "Tabla", "Abyss", "Phantom", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Doom", "Toxic", "Sludge"],
+        "smooth": ["Soft", "Warm", "Dusty", "Tape", "Vinyl", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush", "Chill", "Vibe", "Subtle", "Gentle", "Mellow", "Muted", "Quiet", "Softly", "Mellow", "Calm", "Peace"],
+        "clean": ["Click", "Snap", "Clack", "Tink", "Tick", "Laser", "Cyber", "Tech", "Digital", "Studio", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp", "Chirp", "Pop", "Zap", "Volt", "Rim", "Bongo", "Conga", "Block", "Cowbell", "Shaker", "Tambourine", "Triangle", "Clave"]
+    },
+    "FX": {
+        "dark": ["Riser", "Fall", "Sweep", "Whoosh", "Laser", "Crash", "Reverse", "Vinyl", "Noise", "Glitch", "Stutter", "Swell", "Impact", "Texture", "Drone", "Hum", "Buzz", "Chirp", "Siren", "Alarm", "Abyss", "Phantom", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Doom", "Toxic", "Sludge"],
+        "smooth": ["Ambient", "Soft", "Warm", "Dusty", "Tape", "Vinyl", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush", "Chill", "Vibe", "Subtle", "Gentle", "Mellow", "Muted", "Quiet", "Softly", "Mellow", "Calm"],
+        "clean": ["Laser", "Cyber", "Tech", "Digital", "Studio", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp", "Chirp", "Pop", "Zap", "Volt", "Glitch", "Stutter", "Swell", "Impact", "Texture", "Drone", "Hum", "Buzz", "Riser", "Fall", "Sweep", "Whoosh", "Reverse", "Noise"]
+    },
+    "VOX": {
+        "dark": ["Chant", "Vox", "Vocal", "Scream", "Shout", "Cry", "Whisper", "Grunt", "Gasp", "Sigh", "Laugh", "Howl", "Growl", "Roar", "Abyss", "Phantom", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Doom", "Toxic", "Sludge", "Reaper", "Abyss", "Slasher", "Venom", "Hollow", "Creep"],
+        "smooth": ["Chant", "Vox", "Vocal", "Soft", "Warm", "Dusty", "Tape", "Vinyl", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush", "Chill", "Vibe", "Subtle", "Gentle", "Mellow", "Muted", "Quiet", "Softly"],
+        "clean": ["Chant", "Vox", "Vocal", "Laser", "Cyber", "Tech", "Digital", "Studio", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp", "Chirp", "Pop", "Zap", "Volt", "Gate", "Dry", "Modern", "Perfect", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp"]
+    },
+    "OTHERS": {
+        "dark": ["Sample", "Sound", "OneShot", "Tone", "Note", "Wave", "Signal", "Pulse", "Beep", "Blip", "Noise", "Click", "Pop", "Snap", "Crack", "Hiss", "Hum", "Buzz", "Drone", "Chirp", "Abyss", "Phantom", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Doom", "Toxic", "Sludge"],
+        "smooth": ["Sample", "Sound", "OneShot", "Tone", "Note", "Wave", "Signal", "Pulse", "Beep", "Blip", "Soft", "Warm", "Dusty", "Tape", "Vinyl", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush", "Chill"],
+        "clean": ["Sample", "Sound", "OneShot", "Tone", "Note", "Wave", "Signal", "Pulse", "Beep", "Blip", "Laser", "Cyber", "Tech", "Digital", "Studio", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp", "Chirp", "Pop", "Zap", "Volt", "Gate", "Dry", "Modern"]
+    },
+    "BASSES": {
+        "dark": ["Sub", "Low", "Growl", "Reese", "Deep", "Fat", "Thick", "Pluck", "Wobble", "Heavy", "Doom", "Toxic", "Sludge", "Reaper", "Abyss", "Slasher", "Venom", "Hollow", "Creep", "Cinder"],
+        "smooth": ["Warmth", "Velvet", "Haze", "Dream", "Clouds", "Swell", "Submerge", "Sunset", "Vibe", "Cozy", "Chill", "Dusk", "Dawn", "Aura", "Static", "Vinyl", "Sable", "Silk", "Lush", "Soft"],
+        "clean": ["Solid", "Concrete", "Steel", "Anvil", "Piston", "Strike", "Knock", "Impact", "Apex", "Vortex", "Static", "Nova", "Pulse", "Punch", "Click", "Drive", "Stomp", "Hammer", "Force", "Limit"]
+    },
+    "BELLS": {
+        "dark": ["Ring", "Chime", "Tinkle", "Glass", "Crystal", "Silver", "Ice", "Metallic", "Tone", "Doom", "Toxic", "Sludge", "Reaper", "Abyss", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Grave"],
+        "smooth": ["Warm", "Soft", "Muted", "Lo-Fi", "Lofi", "Aura", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush"],
+        "clean": ["Crisp", "Chirp", "Tink", "Tick", "Clink", "Pop", "Zap", "Volt", "Clock", "Chink", "Shine", "Silver", "Gold", "Platinum", "Modern", "Dry", "Gate", "Apex", "Vortex", "Sync"]
+    },
+    "KEYS": {
+        "dark": ["Piano", "Rhodes", "Organ", "Synth", "Electric", "Classic", "Vibe", "Smooth", "Doom", "Toxic", "Sludge", "Reaper", "Abyss", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Grave"],
+        "smooth": ["Warm", "Soft", "Muted", "Lo-Fi", "Lofi", "Aura", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush"],
+        "clean": ["Solid", "Concrete", "Steel", "Anvil", "Piston", "Strike", "Knock", "Impact", "Apex", "Vortex", "Static", "Nova", "Pulse", "Punch", "Click", "Drive", "Stomp", "Hammer", "Force", "Limit"]
+    },
+    "LEADS": {
+        "dark": ["Lead", "Pluck", "Laser", "Glide", "Cyber", "Pulse", "Volt", "Sharp", "Bright", "Doom", "Toxic", "Sludge", "Reaper", "Abyss", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Grave"],
+        "smooth": ["Warm", "Soft", "Muted", "Lo-Fi", "Lofi", "Aura", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush"],
+        "clean": ["Laser", "Cyber", "Tech", "Digital", "Studio", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp", "Chirp", "Pop", "Zap", "Volt", "Glitch", "Stutter", "Swell", "Impact"]
+    },
+    "PRESETS": {
+        "dark": ["Patch", "Preset", "Bank", "Sound", "Synth", "Bass", "Lead", "Pluck", "Doom", "Toxic", "Sludge", "Reaper", "Abyss", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Grave"],
+        "smooth": ["Warm", "Soft", "Muted", "Lo-Fi", "Lofi", "Aura", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush"],
+        "clean": ["Laser", "Cyber", "Tech", "Digital", "Studio", "Precision", "Exact", "Apex", "Vortex", "Sync", "Pulse", "Crisp", "Chirp", "Pop", "Zap", "Volt", "Glitch", "Stutter", "Swell", "Impact"]
+    },
+    "MIDI": {
+        "dark": ["Note", "Chord", "Progression", "Pattern", "Scale", "Melody", "Arrangement", "Composition", "Score", "Doom", "Toxic", "Sludge", "Reaper", "Abyss", "Slasher", "Venom", "Hollow", "Creep", "Cinder", "Grave"],
+        "smooth": ["Warm", "Soft", "Muted", "Lo-Fi", "Lofi", "Aura", "Cozy", "Velvet", "Silk", "Sable", "Haze", "Whisper", "Feather", "Float", "Breeze", "Dusk", "Dawn", "Shimmer", "Glow", "Lush"],
+        "clean": ["Solid", "Concrete", "Steel", "Anvil", "Piston", "Strike", "Knock", "Impact", "Apex", "Vortex", "Static", "Nova", "Pulse", "Punch", "Click", "Drive", "Stomp", "Hammer", "Force", "Limit"]
+    }
+}
 
-    # Re-map categories to updated renamed paths (since parent directories changed)
-    # We walk again to gather finalized absolute paths
-    final_categories: Dict[str, List[str]] = {k: [] for k in categories.keys()}
-    final_all_files = []
+def get_rebrand_names(category: str, count: int, genre: str, ai_naming: Optional[bool] = None) -> List[str]:
+    """Retrieves rebranded sample names, querying AI first if enabled, falling back to local pool."""
+    import config
+    import random
+    
+    category_caps = category.upper()
+    
+    # Dynamic fallback mapping if the custom category is not in FALLBACK_NAMES
+    if category_caps not in FALLBACK_NAMES:
+        mapped = False
+        for kw in ["BASS", "SUB"]:
+            if kw in category_caps:
+                category_caps = "BASSES"
+                mapped = True
+                break
+        if not mapped:
+            for kw in ["BELL"]:
+                if kw in category_caps:
+                    category_caps = "BELLS"
+                    mapped = True
+                    break
+        if not mapped:
+            for kw in ["KEY", "PIANO", "ORGAN", "RHODES"]:
+                if kw in category_caps:
+                    category_caps = "KEYS"
+                    mapped = True
+                    break
+        if not mapped:
+            for kw in ["LEAD", "SYNTH", "PLUCK", "PAD"]:
+                if kw in category_caps:
+                    category_caps = "LEADS"
+                    mapped = True
+                    break
+        if not mapped:
+            for kw in ["PRESET", "PATCH", "BANK", "FXP", "FXB", "FST"]:
+                if kw in category_caps:
+                    category_caps = "PRESETS"
+                    mapped = True
+                    break
+        if not mapped:
+            for kw in ["MIDI", "MID"]:
+                if kw in category_caps:
+                    category_caps = "MIDI"
+                    mapped = True
+                    break
+        if not mapped:
+            category_caps = "OTHERS"
+        
+    names = []
+    
+    # 1. Query AI if enabled (pass the actual category for contextual names!)
+    ai_enabled = ai_naming if ai_naming is not None else getattr(config, "AI_UNIQUE_NAMING", True)
+    if ai_enabled:
+        print(f"Querying AI for {count} names for {category} ({genre})...")
+        names = query_ai_sample_names(category, count, genre)
+        
+    # 2. If AI failed/disabled or returned empty, use local fallback pool
+    if not names:
+        genre_lower = genre.lower()
+        if "trap" in genre_lower or "phonk" in genre_lower:
+            style = "dark"
+        elif "lofi" in genre_lower or "rnb" in genre_lower or "chill" in genre_lower or "soul" in genre_lower:
+            style = "smooth"
+        else:
+            style = "clean"
+            
+        pool = FALLBACK_NAMES[category_caps][style]
+        pool_shuffled = list(pool)
+        random.shuffle(pool_shuffled)
+        
+        while len(names) < count:
+            for item in pool_shuffled:
+                if len(names) >= count:
+                    break
+                candidate = item
+                idx = 1
+                while candidate in names:
+                    idx += 1
+                    candidate = f"{item} {idx}"
+                names.append(candidate)
+                
+    return names[:count]
+
+def singularize_category(cat: str) -> str:
+    """Singularizes a category name in lowercase."""
+    cat_lower = cat.lower().strip()
+    if cat_lower.endswith("ies"):
+        return cat_lower[:-3] + "y"
+    if cat_lower.endswith("sses"):
+        return cat_lower[:-2]
+    if cat_lower.endswith(("ches", "shes", "xes", "zes")):
+        return cat_lower[:-2]
+    if cat_lower.endswith("s") and not cat_lower.endswith("ss"):
+        return cat_lower[:-1]
+    return cat_lower
+
+def categorize_sample(filename: str, parent_folder: str) -> str:
+    """Categorizes the sample based on filename and folder names (kept for fallback compatibility)."""
+    cat, _ = parse_category_and_descriptor(os.path.join(parent_folder, filename))
+    return cat.title()
+
+def process_and_rename_kit(root_dir: str, rebranded_name: str = "Resold", genre: str = "Trap", ai_naming: Optional[bool] = None) -> Tuple[Dict[str, List[str]], List[str]]:
+    """
+    Recursively scans files in root_dir:
+    1. Keeps only allowed files (audio, presets, MIDI, FLP) and deletes all non-allowed files.
+    2. Groups them by parsed category (e.g., 808S, KICKS, custom categories) and extracts descriptors.
+    3. Renames the files using the configured template (or AI names) and copies them to 
+       flat category folders inside a new root directory named 'REBRANDED_NAME (Produced by Arqive)' in CAPS.
+    4. Cleans up empty folders and leftovers.
+    """
+    import config
+    import os
+    import shutil
+    
+    # 1. Walk directory to find all allowed and non-allowed files
+    allowed_files_by_cat: Dict[str, List[Tuple[str, str, str]]] = {} # category -> list of (abs_path, filename, descriptor)
+    non_allowed_files: List[str] = []
     
     for dirpath, dirnames, filenames in os.walk(root_dir):
+        # Calculate relative path from root_dir
+        rel_dir = os.path.relpath(dirpath, root_dir)
+        if rel_dir == ".":
+            rel_dir = ""
+            
         for name in filenames:
+            fpath = os.path.join(dirpath, name)
             file_ext = os.path.splitext(name)[1].lower()
-            if file_ext in AUDIO_EXTENSIONS:
-                fpath = os.path.join(dirpath, name)
-                folder_name = os.path.basename(dirpath)
-                cat = categorize_sample(name, folder_name)
-                final_categories[cat].append(fpath)
-                final_all_files.append(fpath)
+            if file_ext in ALLOWED_EXTENSIONS:
+                cat, desc = parse_category_and_descriptor(rel_dir)
+                if cat == "OTHERS":
+                    fn_cat, fn_desc = parse_category_and_descriptor(name)
+                    if fn_cat != "OTHERS":
+                        cat = fn_cat
+                        if not desc:
+                            desc = fn_desc
+                if cat not in allowed_files_by_cat:
+                    allowed_files_by_cat[cat] = []
+                allowed_files_by_cat[cat].append((fpath, name, desc))
+            else:
+                non_allowed_files.append(fpath)
                 
+    # Delete non-allowed files immediately
+    for naf in non_allowed_files:
+        try:
+            os.remove(naf)
+        except Exception as e:
+            print(f"Error removing non-allowed file {naf}: {e}")
+            
+    # Create the temporary rebranded directory structure in a separate parent directory
+    # to avoid collisions when the input ZIP is already structured as target_root_name.
+    clean_rebranded = rebranded_name.replace("Arqive", "").replace("[AQ]", "").strip()
+    target_root_name = f"{clean_rebranded.upper()} {genre.upper()} PACK (Produced by Arqive)"
+    
+    temp_rebranded_parent = root_dir + "_rebranded_temp"
+    if os.path.exists(temp_rebranded_parent):
+        shutil.rmtree(temp_rebranded_parent)
+    os.makedirs(temp_rebranded_parent, exist_ok=True)
+    
+    temp_rebranded_dir = os.path.join(temp_rebranded_parent, target_root_name)
+    os.makedirs(temp_rebranded_dir, exist_ok=True)
+    
+    final_categories: Dict[str, List[str]] = {}
+    final_all_files: List[str] = []
+    
+    # Process each category
+    for cat_caps, files in allowed_files_by_cat.items():
+        cat_dir = os.path.join(temp_rebranded_dir, cat_caps)
+        os.makedirs(cat_dir, exist_ok=True)
+        final_categories[cat_caps] = []
+        
+        file_count = len(files)
+        # Fetch rebranded names if AI naming mode is selected
+        ai_names = []
+        mode = getattr(config, "REBRAND_NAMING_MODE", "ai_unique_suffix")
+        if mode in ["ai_unique_prefix", "ai_unique_suffix"]:
+            ai_names = get_rebrand_names(cat_caps, file_count, genre, ai_naming)
+            
+        for idx, (old_path, filename, descriptor) in enumerate(files, 1):
+            file_ext = os.path.splitext(filename)[1].lower()
+            base_name = os.path.splitext(filename)[0]
+            bpm, key = parse_bpm_key(base_name)
+            
+            category_clean = singularize_category(cat_caps)
+            category_title = category_clean.title()
+            desc_clean = descriptor.lower()
+            desc_title = descriptor.title()
+            
+            # Format BPM/Key metadata
+            meta = []
+            if bpm:
+                meta.append(f"{bpm}BPM")
+            if key:
+                meta.append(key)
+            meta_str = " " + " ".join(f"({m})" for m in meta) if meta else ""
+            
+            # Build rebranded name using template
+            if mode == "prefix":
+                name_part = f"[AQ] {category_clean}"
+                if desc_clean:
+                    name_part += f" {desc_clean}"
+                name_part += f" {idx:03d}"
+            elif mode == "suffix":
+                name_part = f"{category_clean}"
+                if desc_clean:
+                    name_part += f" {desc_clean}"
+                name_part += f" {idx:03d} - @aq"
+            elif mode == "index_first":
+                name_part = f"{idx:03d} {category_title}"
+                if desc_title:
+                    name_part += f" {desc_title}"
+                name_part += " - @aq"
+            elif mode == "ai_unique_prefix":
+                ai_name = ai_names[idx - 1]
+                name_part = f"[AQ] {idx:03d} {category_title} {ai_name}"
+            elif mode == "ai_unique_suffix":
+                ai_name = ai_names[idx - 1]
+                name_part = f"{idx:03d} {category_title} {ai_name} - @aq"
+            else:
+                name_part = f"[AQ] {category_clean} {idx:03d}"
+                
+            new_name = name_part + meta_str + file_ext
+            new_name = new_name.replace("  ", " ").strip()  # clean any double spacing
+            new_path = os.path.join(cat_dir, new_name)
+            
+            try:
+                shutil.copy2(old_path, new_path)
+                # Compute the final path in root_dir since we'll rename temp_rebranded_parent to root_dir
+                final_path = os.path.join(root_dir, target_root_name, cat_caps, new_name)
+                final_categories[cat_caps].append(final_path)
+                final_all_files.append(final_path)
+            except Exception as e:
+                print(f"Error copying renamed file {old_path} to {new_path}: {e}")
+                
+    # Delete the entire original root_dir
+    try:
+        shutil.rmtree(root_dir)
+    except Exception as e:
+        print(f"Error removing original root_dir: {e}")
+        
+    # Move temp_rebranded_parent to root_dir
+    try:
+        shutil.move(temp_rebranded_parent, root_dir)
+    except Exception as e:
+        print(f"Error moving rebranded folder: {e}")
+            
     return final_categories, final_all_files
 
 def select_preview_showcase(categories: Dict[str, List[str]], max_per_cat: int = 5) -> List[Tuple[str, str]]:
     """
     Selects up to max_per_cat samples from each category to form a preview.
+    Filters out non-audio files (presets, MIDIs, FLPs) and only includes playable audio extensions.
     Returns list of tuples: (file_path, category_name)
     """
     showcase = []
-    # Order of showcase playback: Loops first, then 808s, Kicks, Snares, Hats, Percs, FX
-    order = ["Loops", "808s", "Kicks", "Snares", "Hats", "Percs", "FX", "Others"]
+    # Order of showcase playback: LOOPS first, then 808S, KICKS, SNARES, CLAPS, HATS, PERCS, FX, VOX, OTHERS
+    order = ["LOOPS", "808S", "KICKS", "SNARES", "CLAPS", "HATS", "PERCS", "FX", "VOX", "OTHERS"]
+    
+    # Process standard categories in defined order
     for cat in order:
-        files = categories.get(cat, [])
-        selected = files[:max_per_cat]  # Pick the first few
-        for f in selected:
-            showcase.append((f, cat))
+        if cat in categories:
+            audio_files = [f for f in categories[cat] if os.path.splitext(f)[1].lower() in AUDIO_EXTENSIONS]
+            selected = audio_files[:max_per_cat]
+            for f in selected:
+                showcase.append((f, cat))
+                
+    # Process any remaining custom/dynamic categories (alphabetically)
+    for cat in sorted(categories.keys()):
+        if cat not in order:
+            audio_files = [f for f in categories[cat] if os.path.splitext(f)[1].lower() in AUDIO_EXTENSIONS]
+            selected = audio_files[:max_per_cat]
+            for f in selected:
+                showcase.append((f, cat))
+                
     return showcase
 
 def zip_pack(source_dir: str, output_zip_base: str) -> List[str]:
