@@ -35,6 +35,104 @@ def get_background_image(url: str, cache_dir: str = "assets/cache") -> Image.Ima
         return None
 
 
+def project_3d_point(x, y, z, angle_x, angle_y, angle_z, cx=600, cy=600, scale=350):
+    """Rotates and projects a 3D point (x, y, z) in [-1, 1] onto 2D space."""
+    # X-rotation
+    rad_x = math.radians(angle_x)
+    cos_x, sin_x = math.cos(rad_x), math.sin(rad_x)
+    y1 = y * cos_x - z * sin_x
+    z1 = y * sin_x + z * cos_x
+    
+    # Y-rotation
+    rad_y = math.radians(angle_y)
+    cos_y, sin_y = math.cos(rad_y), math.sin(rad_y)
+    x2 = x * cos_y + z1 * sin_y
+    z2 = -x * sin_y + z1 * cos_y
+    
+    # Z-rotation
+    rad_z = math.radians(angle_z)
+    cos_z, sin_z = math.cos(rad_z), math.sin(rad_z)
+    x3 = x2 * cos_z - y1 * sin_z
+    y3 = x2 * sin_z + y1 * cos_z
+    
+    # Simple perspective projection
+    distance = 3.0
+    proj_x = int(cx + scale * x3 / (distance + z2))
+    proj_y = int(cy + scale * y3 / (distance + z2))
+    return proj_x, proj_y
+
+def draw_3d_wireframe_cube(draw, color):
+    """Draws a floating 3D wireframe cube rotated randomly."""
+    ax = random.uniform(0, 360)
+    ay = random.uniform(0, 360)
+    az = random.uniform(0, 360)
+    cx = random.randint(300, 900)
+    cy = random.randint(300, 900)
+    scale = random.randint(150, 250)
+    
+    vertices = [
+        (-1, -1, -1), (1, -1, -1), (1, 1, -1), (-1, 1, -1),
+        (-1, -1, 1), (1, -1, 1), (1, 1, 1), (-1, 1, 1)
+    ]
+    edges = [
+        (0, 1), (1, 2), (2, 3), (3, 0),
+        (4, 5), (5, 6), (6, 7), (7, 4),
+        (0, 4), (1, 5), (2, 6), (3, 7)
+    ]
+    
+    proj_pts = []
+    for x, y, z in vertices:
+        proj_pts.append(project_3d_point(x, y, z, ax, ay, az, cx, cy, scale))
+        
+    for start, end in edges:
+        draw.line([proj_pts[start], proj_pts[end]], fill=(*color, 65), width=2)
+
+def draw_generative_elements(img: Image.Image, pack_type: str, color: tuple) -> None:
+    """Draws randomized overlays and 3D wireframe shapes on the canvas."""
+    draw = ImageDraw.Draw(img)
+    # 1. Floating 3D cubes/wireframes
+    for _ in range(random.randint(2, 4)):
+        draw_3d_wireframe_cube(draw, color)
+        
+    # 2. Procedural background grid/groove overlay
+    if pack_type == "Drumkit":
+        spacing = random.randint(45, 75)
+        dot_r = random.randint(2, 5)
+        for x in range(0, 1200, spacing):
+            draw.line([(x, 0), (x, 1200)], fill=(*color, 25), width=1)
+        for y in range(0, 1200, spacing):
+            draw.line([(0, y), (1200, y)], fill=(*color, 25), width=1)
+        for x in range(spacing, 1200, spacing * 2):
+            for y in range(spacing, 1200, spacing * 2):
+                draw.ellipse([x - dot_r, y - dot_r, x + dot_r, y + dot_r], fill=(*color, 50))
+                
+    elif pack_type == "Loopkit":
+        cx, cy = 600, 600
+        for layer in range(random.randint(3, 5)):
+            pts = []
+            amp = random.randint(30, 65)
+            freq = random.uniform(0.003, 0.008)
+            phase = random.uniform(0, 6.28)
+            for x in range(0, 1200, 12):
+                y = cy + int(amp * math.sin(x * freq + phase))
+                pts.append((x, y))
+            for i in range(len(pts) - 1):
+                draw.line([pts[i], pts[i+1]], fill=(*color, 35), width=2)
+                
+        # Draw Cassette body in center
+        draw.rounded_rectangle([cx - 240, cy - 150, cx + 240, cy + 150], radius=15, outline=(*color, 80), width=4)
+        draw.rectangle([cx - 110, cy - 55, cx + 110, cy + 55], outline=(*color, 80), width=3)
+        draw.ellipse([cx - 70 - 22, cy - 22, cx - 70 + 22, cy + 22], outline=(*color, 80), width=3)
+        draw.ellipse([cx + 70 - 22, cy - 22, cx + 70 + 22, cy + 22], outline=(*color, 80), width=3)
+        
+    elif pack_type == "One-shot":
+        cx, cy = 600, 600
+        step = random.randint(20, 30)
+        for r in range(120, 520, step):
+            draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(*color, 30), width=1)
+        draw.ellipse([cx - 80, cy - 80, cx + 80, cy + 80], outline=(*color, 70), width=2)
+
+
 def get_gradient_mask(w: int, h: int) -> Image.Image:
     """Generates a vertical gradient mask."""
     mask = Image.new("L", (1, h))
