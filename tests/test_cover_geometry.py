@@ -1,8 +1,8 @@
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "src"))
-
+import sys
 from PIL import Image
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 from cover_generator import draw_generative_elements
 
 def test_draw_generative_elements():
