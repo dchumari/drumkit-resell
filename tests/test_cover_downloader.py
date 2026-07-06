@@ -1,9 +1,9 @@
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "src"))
-
 import shutil
+import sys
 from PIL import Image
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 from cover_generator import get_background_image
 
 def test_downloader():
