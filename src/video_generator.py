@@ -6,6 +6,7 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont
 from typing import List, Tuple, Dict
 from config import GENRE_COLORS, ASSETS_DIR
+from cover_generator import generate_gradient
 
 def get_wav_duration(filepath: str) -> float:
     """Attempts to read the duration of an audio file using wave first, then ffprobe fallback."""
@@ -18,7 +19,6 @@ def get_wav_duration(filepath: str) -> float:
     except Exception:
         try:
             import json
-            import subprocess
             cmd = ["ffprobe", "-v", "quiet", "-print_format", "json", "-show_format", filepath]
             res = subprocess.run(cmd, capture_output=True, text=True, check=True)
             data = json.loads(res.stdout)
@@ -131,7 +131,6 @@ def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_pa
 
 def re_strip_meta(text: str) -> str:
     """Removes trailing bracket metadata."""
-    import re
     text = re.sub(r"\(.*?\)", "", text)
     text = re.sub(r"\[.*?\]", "", text)
     return text.strip()
@@ -145,137 +144,236 @@ def format_time_srt(seconds: float) -> str:
     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
 def create_srt_file(markers: List[dict], srt_path: str):
-    """Generates an SRT subtitle file to show currently playing tracks."""
+    """Generates an SRT subtitle file (left empty since subtitle burn-in is removed)."""
     with open(srt_path, "w", encoding="utf-8") as f:
-        for idx, m in enumerate(markers, 1):
-            start = format_time_srt(m["start"])
-            end = format_time_srt(m["end"])
-            f.write(f"{idx}\n")
-            f.write(f"{start} --> {end}\n")
-            # Text layout: e.g., "Playing: 808 - Heavy" in cyan
-            f.write(f"NOW PLAYING: {m['category'].upper()} - {m['name'].upper()}\n\n")
+        f.write("")
 
-def create_tracklist_overlay(pack_name: str, genre: str, markers: List[dict], output_img_path: str):
-    """Generates a transparent 1920x1080 PNG image with a tracklist on the left."""
+def generate_capsule_image(color: Tuple[int, int, int], output_path: str, width: int = 480, height: int = 28):
+    """Creates a neon colored capsule pill image to highlight active track in overlay."""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    r = height // 2
+    draw.rounded_rectangle([0, 0, width, height], radius=r, fill=(*color, 45), outline=(*color, 240), width=1)
+    img.save(output_path, "PNG")
+
+def create_tracklist_overlay(pack_name: str, genre: str, markers: List[dict], output_img_path: str, color_palette=None) -> List[dict]:
+    """
+    Generates a transparent 1920x1080 PNG image with a tracklist on the left.
+    Removes brackets [] around categories.
+    Returns tracking coordinates of each listed sample item for FFmpeg capsule overlay.
+    """
     img = Image.new("RGBA", (1920, 1080), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
     
     gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
-    text_color = gconfig["text_color"]
-    border_color = gconfig["border_color"]
+    if color_palette:
+        text_color = color_palette[2]
+        border_color = color_palette[2]
+    else:
+        text_color = gconfig["text_color"]
+        border_color = gconfig["border_color"]
     
     try:
         font_logo = ImageFont.truetype("arialbd.ttf", 36)
         font_sub = ImageFont.truetype("arial.ttf", 20)
         font_header = ImageFont.truetype("arialbd.ttf", 26)
         font_item = ImageFont.truetype("arial.ttf", 22)
+        font_badge = ImageFont.truetype("arialbd.ttf", 15)
     except IOError:
         font_logo = ImageFont.load_default()
         font_sub = ImageFont.load_default()
         font_header = ImageFont.load_default()
         font_item = ImageFont.load_default()
+        font_badge = ImageFont.load_default()
+
+    # Draw rounded frosted glass background card
+    draw.rounded_rectangle([50, 50, 550, 1030], radius=16, fill=(15, 15, 25, 60), outline=(255, 255, 255, 25), width=2)
 
     # Draw Brand Logo
     draw.text((80, 80), "ARQIVE ARCHIVE", fill=(255, 255, 255, 250), font=font_logo)
     draw.text((80, 125), f"PREMIUM {genre.upper()} SELECTION", fill=text_color, font=font_sub)
-    draw.line([(80, 160), (500, 160)], fill=border_color, width=2)
+    draw.line([(80, 160), (500, 160)], fill=(255, 255, 255, 30), width=1)
     
     # Draw Left Tracklist
     draw.text((80, 185), "KIT SHOWCASE:", fill=text_color, font=font_header)
     
-    # We display up to 15 items in the list to avoid vertical overflow
     y = 230
     listed_count = 0
-    # Group markers by category for clean listing
     categories_seen = []
     
-    for m in markers:
-        if listed_count >= 14:
-            draw.text((100, y), "...and more premium samples", fill=(180, 180, 180, 150), font=font_item)
+    positions = []
+    
+    for idx, m in enumerate(markers):
+        is_new_cat = (m["category"] not in categories_seen)
+        needed_h = 32
+        if is_new_cat:
+            needed_h += 36 + 12
+            
+        if y + needed_h > 970:
+            positions.append({
+                "name": "...more",
+                "y": y - 2,
+                "is_more": True
+            })
+            draw.text((100, y), "...more", fill=(180, 180, 180, 150), font=font_item)
             break
             
-        if m["category"] not in categories_seen:
+        if is_new_cat:
             categories_seen.append(m["category"])
-            draw.text((90, y), f"[{m['category'].upper()}]", fill=border_color, font=font_sub)
-            y += 30
+            cat_text = m['category'].upper()
+            try:
+                bbox = draw.textbbox((0, 0), cat_text, font=font_badge)
+                tw = bbox[2] - bbox[0]
+                th = bbox[3] - bbox[1]
+            except Exception:
+                tw, th = len(cat_text) * 8, 15
             
+            # Uniform padding: 12px horizontal, 6px vertical
+            pad_x = 12
+            pad_y = 6
+            badge_w = tw + 2 * pad_x
+            badge_h = th + 2 * pad_y
+            
+            badge_x = 90
+            badge_y = y
+            
+            # Draw badge background
+            draw.rounded_rectangle([badge_x, badge_y, badge_x + badge_w, badge_y + badge_h], radius=4, fill=text_color)
+            
+            # Draw badge text mathematically centered
+            text_x = badge_x + pad_x - bbox[0]
+            text_y = badge_y + pad_y - bbox[1]
+            draw.text((text_x, text_y), cat_text, fill=(10, 10, 15), font=font_badge)
+            y += badge_h + 12
+            
+        positions.append({
+            "name": m["name"],
+            "y": y - 2,
+            "is_more": False
+        })
         # Draw track item
         draw.text((110, y), f"• {m['name'][:28]}", fill=(240, 240, 245, 220), font=font_item)
         y += 32
         listed_count += 1
-
-    # Draw a clean outline border on the left panel
-    draw.rectangle([50, 50, 550, 1030], outline=(*border_color, 80), width=2)
     
     img.save(output_img_path, "PNG")
     print(f"Tracklist overlay image created: {output_img_path}")
+    return positions
 
 def hex_to_ffmpeg_color(rgb: tuple) -> str:
     """Converts (R,G,B) tuple to FFmpeg color string like 0xRRGGBB."""
     return f"0x{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
 
-def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, output_video_path: str, genre: str, markers: List[dict], srt_path: str) -> bool:
+def generate_ffmpeg_tint_filter(tint_color: str, size: str = "1920x1080") -> str:
+    """Builds greyscale conversion followed by color tint overlay blend."""
+    return f"format=gray,split[g1][g2];color=c={tint_color}:s={size}[tc];[g1][tc]blend=all_mode='multiply'[tinted];[tinted][g2]blend=all_mode='overlay':all_opacity=0.6"
+
+def build_capsule_scroll_expression(markers: List[dict], positions: List[dict]) -> str:
+    """
+    Builds a nested conditional FFmpeg math expression for dynamic scroll highlight.
+    Returns an expression mapping current time 't' to the target Y-coordinate.
+    """
+    expr = ""
+    more_y = 1000
+    for pos in positions:
+        if pos.get("is_more"):
+            more_y = pos["y"]
+            break
+            
+    for idx, m in enumerate(markers):
+        y_val = more_y
+        for pos in positions:
+            if not pos.get("is_more") and pos["name"] == m["name"]:
+                y_val = pos["y"]
+                break
+                
+        if idx == len(markers) - 1:
+            expr += f"{y_val}"
+        else:
+            next_m = markers[idx + 1]
+            next_y = more_y
+            for pos in positions:
+                if not pos.get("is_more") and pos["name"] == next_m["name"]:
+                    next_y = pos["y"]
+                    break
+            
+            trans_start = m["end"] - 0.5
+            trans_end = m["end"]
+            
+            cond_expr = (
+                f"if(lt(t,{trans_start}),{y_val},"
+                f"if(lt(t,{trans_end}),{y_val}+({next_y}-{y_val})*(t-{trans_start})/0.5,{next_y}))"
+            )
+            expr += f"if(lt(t,{m['end']}),{cond_expr},"
+            
+    expr += ")" * (len(markers) - 1)
+    return expr
+
+def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, output_video_path: str, genre: str, markers: List[dict], srt_path: str, color_palette=None) -> bool:
     """
     Compiles the 16:9 landscape YouTube showcase video.
+    Features dynamically colored tinted background loop and scrolling active track highlight.
     """
     gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
-    rgb_tint = gconfig["bg_gradient"][0]
-    tint_color = hex_to_ffmpeg_color(rgb_tint)
-    wave_color = hex_to_ffmpeg_color(gconfig["text_color"])
+    if color_palette:
+        color1, color2, text_color_rgb = color_palette
+    else:
+        color1, color2 = gconfig["bg_gradient"]
+        text_color_rgb = gconfig["text_color"]
+        
+    tint_color = hex_to_ffmpeg_color(color1)
+    wave_color = hex_to_ffmpeg_color(text_color_rgb)
+    
+    # 1. Generate Highlight capsule PNG
+    capsule_path = os.path.join(os.path.dirname(output_video_path), "temp_capsule.png")
+    generate_capsule_image(text_color_rgb, capsule_path, width=480, height=28)
+    
+    # 2. Get layout overlay positions
+    positions = create_tracklist_overlay("Dummy", genre, markers, overlay_path, color_palette)
     
     # Find random background video
-    bg_video = "bg_loop_1.mp4"  # Default fallback
+    bg_video = "bg_loop_1.mp4"
     if os.path.exists(ASSETS_DIR):
         loops = [f for f in os.listdir(ASSETS_DIR) if f.startswith("bg_loop") and f.endswith(".mp4")]
         if loops:
             bg_video = random.choice(loops)
     bg_video_path = os.path.join(ASSETS_DIR, bg_video)
     
+    temp_bg_gradient = None
     if not os.path.exists(bg_video_path):
-        print(f"Background video loop {bg_video_path} not found. Visuals might fail.")
-        # Create a black fallback video input using lavfi if no bg video exists
-        bg_input = "-f lavfi -i color=c=black:s=1920x1080"
+        temp_bg_gradient = os.path.join(os.path.dirname(output_video_path), "temp_bg_gradient.png")
+        gradient_img = generate_gradient(2000, 2000, color1, color2)
+        gradient_img.save(temp_bg_gradient, "PNG")
+        bg_input = f"-loop 1 -i {temp_bg_gradient}"
+        bg_filter = "crop=w=1920:h=1080:x='(in_w-1920)/2 + (in_w-1920)/2*sin(t*0.1)':y='(in_h-1080)/2 + (in_h-1080)/2*cos(t*0.1)',setsar=1"
     else:
         bg_input = f"-stream_loop -1 -i {bg_video_path}"
+        bg_filter = f"scale=1920:1080,{generate_ffmpeg_tint_filter(tint_color, '1920x1080')}"
 
-    # Calculate total duration
     if not markers:
         print("Error: No markers provided for video compilation.")
         return False
     total_duration = markers[-1]["end"]
     
-    # FFmpeg Filter Complex:
-    # 1. Loop and scale background video to 1920x1080.
-    # 2. Apply a transparent color tint blend (multiply) based on the genre.
-    # 3. Create a reactive showwaves waveform visualizer from the audio.
-    # 4. Overlay the tracklist PNG overlay.
-    # 5. Overlay the 3D box mockup (scale to 600x600, place on right).
-    # 6. Overlay the waveform under the 3D mockup.
-    # 7. Burn in the SRT subtitle track showing the playing sample.
+    scroll_expr = build_capsule_scroll_expression(markers, positions)
     
     filter_complex = (
-        f"[0:v]scale=1920:1080,setsar=1[bg]; "
-        f"color=c={tint_color}@0.4:s=1920x1080[tint]; "
-        f"[bg][tint]blend=all_mode='multiply':all_opacity=0.6[bg_tinted]; "
+        f"[0:v]{bg_filter}[bg_tinted]; "
         f"[1:a]showwaves=s=650x180:mode=line:colors={wave_color}:r=30[wave]; "
-        f"[2:v]scale=600:600[mock]; "
-        f"[bg_tinted][3:v]overlay=x=0:y=0[bg_overlay]; "
-        f"[bg_overlay][mock]overlay=x=1200:y=180[bg_mock]; "
-        f"[bg_mock][wave]overlay=x=1175:y=800[outv]"
+        f"[2:v]scale=680:680[mock]; "
+        f"[bg_tinted][4:v]overlay=x=60:y='{scroll_expr}':eval=frame[bg_highlighted]; "
+        f"[bg_highlighted][3:v]overlay=x=0:y=0[bg_overlay]; "
+        f"[bg_overlay][mock]overlay=x=1160:y=140[bg_mock]; "
+        f"[bg_mock][wave]overlay=x=1175:y=800[finalv]"
     )
     
-    # Subtitles must be burned using the subtitles filter. Note: FFmpeg requires absolute paths 
-    # with double-backslashes or forward slashes for the subtitles filter on Windows.
-    clean_srt_path = srt_path.replace("\\", "/").replace(":", "\\:")
-    sub_filter = f"[outv]subtitles='{clean_srt_path}':force_style='Alignment=2,MarginV=60,FontSize=28,PrimaryColour=&H00FFFF&'[finalv]"
-    filter_complex += f"; {sub_filter}"
-
     cmd = [
         "ffmpeg", "-y",
         *bg_input.split(),
         "-i", audio_path,
         "-i", mockup_path,
         "-i", overlay_path,
+        "-i", capsule_path,
         "-filter_complex", filter_complex,
         "-map", "[finalv]",
         "-map", "1:a",
@@ -292,15 +390,170 @@ def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, out
     except Exception as e:
         print(f"Failed to compile 16:9 video: {e}")
         return False
+    finally:
+        if os.path.exists(capsule_path):
+            try:
+                os.remove(capsule_path)
+            except Exception:
+                pass
+        if temp_bg_gradient and os.path.exists(temp_bg_gradient):
+            try:
+                os.remove(temp_bg_gradient)
+            except Exception:
+                pass
 
-def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_path: str, genre: str, pack_name: str) -> bool:
+def ease_in_out(t: float) -> float:
+    """Helper for smooth transitions."""
+    if t < 0.5:
+        return 2.0 * t * t
+    return -1.0 + (4.0 - 2.0 * t) * t
+
+def draw_marquee_text(draw, img, text, font, fill, y_pos, width, max_w, t_rel):
+    bbox = draw.textbbox((0, 0), text, font=font)
+    tw = bbox[2] - bbox[0]
+    th = bbox[3] - bbox[1]
+    
+    if tw > max_w:
+        scroll_dist = tw - max_w
+        speed = 80.0  # pixels per second
+        scroll_time = scroll_dist / speed
+        loop_dur = 1.5 + scroll_time + 1.5  # 1.5s start pause, 1.5s end pause
+        t_mod = t_rel % loop_dur
+        if t_mod < 1.5:
+            x_off = 0
+        elif t_mod < 1.5 + scroll_time:
+            x_off = int((t_mod - 1.5) / scroll_time * scroll_dist)
+        else:
+            x_off = scroll_dist
+            
+        canvas_h = th + 40
+        txt_canvas = Image.new("RGBA", (tw + 40, canvas_h), (0, 0, 0, 0))
+        tc = ImageDraw.Draw(txt_canvas)
+        tc.text((20 - bbox[0], 20 - bbox[1]), text, fill=fill, font=font)
+        
+        visible = txt_canvas.crop((20 + x_off, 0, 20 + x_off + max_w, canvas_h))
+        
+        main_x = (width - max_w) // 2
+        main_y = y_pos - 20 + bbox[1]
+        img.paste(visible, (main_x, main_y), visible)
+    else:
+        draw.text((width // 2, y_pos), text, fill=fill, font=font, anchor="ms")
+
+def render_scrolling_lyric_frame(
+    width: int,
+    height: int,
+    t: float,
+    markers: List[dict],
+    genre: str,
+    output_path: str,
+    color_palette=None
+):
+    """Renders a single frame for the Spotify-style vertical lyric scrolling Shorts video."""
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    
+    gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
+    if color_palette:
+        accent_color = color_palette[2]
+    else:
+        accent_color = gconfig["text_color"]
+    
+    try:
+        font_large = ImageFont.truetype("arialbd.ttf", 56)
+        font_small = ImageFont.truetype("arialbd.ttf", 32)
+    except IOError:
+        font_large = ImageFont.load_default()
+        font_small = ImageFont.load_default()
+        
+    active_idx = 0
+    for idx, m in enumerate(markers):
+        if m["start"] <= t <= m["end"]:
+            active_idx = idx
+            break
+    else:
+        active_idx = len(markers) - 1
+        
+    current_marker = markers[active_idx]
+    
+    scroll_offset = 0.0
+    trans_start = current_marker["end"] - 0.5
+    if t >= trans_start and active_idx < len(markers) - 1:
+        progress = (t - trans_start) / 0.5
+        scroll_offset = ease_in_out(min(1.0, max(0.0, progress)))
+        
+    cy = 1350
+    gap = 80
+    
+    # Draw previous item
+    if active_idx > 0 or scroll_offset > 0.0:
+        prev_name = markers[active_idx - 1]["name"]
+        if scroll_offset > 0.0:
+            p_text = current_marker["name"]
+            p_text_disp = p_text[:24] + "..." if len(p_text) > 24 else p_text
+            y_pos = int(cy - gap * scroll_offset)
+            font_size = int(56 - 24 * scroll_offset)
+            opacity = int(255 - 135 * scroll_offset)
+            color = tuple(int(255 - (255 - accent_color[i]) * (1.0 - scroll_offset)) for i in range(3))
+        else:
+            p_text = prev_name
+            p_text_disp = p_text[:24] + "..." if len(p_text) > 24 else p_text
+            y_pos = cy - gap
+            font_size = 32
+            opacity = 120
+            color = (180, 180, 200)
+            
+        try:
+            f_prev = ImageFont.truetype("arialbd.ttf", font_size)
+        except IOError:
+            f_prev = font_small
+            
+        draw.text((width // 2, y_pos), p_text_disp, fill=(*color, opacity), font=f_prev, anchor="ms")
+        
+    # Draw active item
+    if scroll_offset > 0.0:
+        next_text = markers[active_idx + 1]["name"]
+        next_text_disp = next_text[:24] + "..." if len(next_text) > 24 else next_text
+        y_pos_next = int(cy + gap - gap * scroll_offset)
+        font_size_next = int(32 + 24 * scroll_offset)
+        opacity_next = int(120 + 135 * scroll_offset)
+        color_next = tuple(int(255 - (255 - accent_color[i]) * scroll_offset) for i in range(3))
+        
+        try:
+            f_next = ImageFont.truetype("arialbd.ttf", font_size_next)
+        except IOError:
+            f_next = font_large
+        draw.text((width // 2, y_pos_next), next_text_disp, fill=(*color_next, opacity_next), font=f_next, anchor="ms")
+    else:
+        try:
+            f_act = ImageFont.truetype("arialbd.ttf", 56)
+        except IOError:
+            f_act = font_large
+            
+        # Draw focused active text with marquee animation
+        t_rel = t - current_marker["start"]
+        draw_marquee_text(draw, img, current_marker["name"], f_act, (*accent_color, 255), cy, width, 880, t_rel)
+        
+        if active_idx < len(markers) - 1:
+            next_name = markers[active_idx + 1]["name"]
+            next_name_disp = next_name[:24] + "..." if len(next_name) > 24 else next_name
+            draw.text((width // 2, cy + gap), next_name_disp, fill=(180, 180, 200, 120), font=font_small, anchor="ms")
+            
+    img.save(output_path, "PNG")
+
+def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_path: str, genre: str, pack_name: str, markers: List[dict], color_palette=None) -> bool:
     """
-    Compiles the 9:16 vertical YouTube Shorts video (15-45s max).
-    Plays the first 1 or 2 loops.
+    Compiles the 9:16 vertical YouTube Shorts video.
+    Uses frame sequence lyric scrolling animation.
     """
     gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
-    tint_color = hex_to_ffmpeg_color(gconfig["bg_gradient"][0])
-    wave_color = hex_to_ffmpeg_color(gconfig["text_color"])
+    if color_palette:
+        color1, color2, text_color_rgb = color_palette
+    else:
+        color1, color2 = gconfig["bg_gradient"]
+        text_color_rgb = gconfig["text_color"]
+        
+    tint_color = hex_to_ffmpeg_color(color1)
+    wave_color = hex_to_ffmpeg_color(text_color_rgb)
     
     bg_video = "bg_loop_1.mp4"
     if os.path.exists(ASSETS_DIR):
@@ -309,55 +562,68 @@ def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_pa
             bg_video = random.choice(loops)
     bg_video_path = os.path.join(ASSETS_DIR, bg_video)
     
+    temp_bg_gradient = None
     if not os.path.exists(bg_video_path):
-        bg_input = "-f lavfi -i color=c=black:s=1080x1920"
+        temp_bg_gradient = os.path.join(os.path.dirname(output_video_path), "temp_bg_gradient_shorts.png")
+        gradient_img = generate_gradient(2000, 2000, color1, color2)
+        gradient_img.save(temp_bg_gradient, "PNG")
+        bg_input = f"-loop 1 -i {temp_bg_gradient}"
+        bg_filter = "crop=w=1080:h=1920:x='(in_w-1080)/2 + (in_w-1080)/2*sin(t*0.1)':y='(in_h-1920)/2 + (in_h-1920)/2*cos(t*0.1)',setsar=1"
     else:
         bg_input = f"-stream_loop -1 -i {bg_video_path}"
+        bg_filter = f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,{generate_ffmpeg_tint_filter(tint_color, '1080x1920')}"
         
-    # Limit Shorts to 30 seconds
-    duration = 30.0
+    duration = min(30.0, markers[-1]["end"])
     
-    # Generate transparent Shorts Text Overlay
-    overlay_path = "temp_shorts_overlay.png"
+    temp_frames_dir = os.path.join(os.path.dirname(output_video_path), "temp_shorts_frames")
+    if os.path.exists(temp_frames_dir):
+        shutil.rmtree(temp_frames_dir)
+    os.makedirs(temp_frames_dir, exist_ok=True)
+    
+    static_overlay_path = os.path.join(os.path.dirname(output_video_path), "temp_shorts_static.png")
     img = Image.new("RGBA", (1080, 1920), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
     try:
-        font_logo = ImageFont.truetype("arialbd.ttf", 32)
-        font_title = ImageFont.truetype("arialbd.ttf", 54)
+        font_logo = ImageFont.truetype("arialbd.ttf", 38)
+        font_title = ImageFont.truetype("arialbd.ttf", 64)
         font_sub = ImageFont.truetype("arial.ttf", 26)
     except IOError:
         font_logo = ImageFont.load_default()
         font_title = ImageFont.load_default()
         font_sub = ImageFont.load_default()
         
-    draw.text((540, 250), "ARQIVE", fill=(255, 255, 255, 230), font=font_logo, anchor="ms")
-    draw.text((540, 320), clean_title_for_shorts(pack_name), fill=gconfig["text_color"], font=font_title, anchor="ms")
-    draw.text((540, 1600), "🔗 FREE DOWNLOAD IN DESCRIPTION / PINNED MSG", fill=(245, 245, 250, 200), font=font_sub, anchor="ms")
-    img.save(overlay_path, "PNG")
-
-    # Filter Complex:
-    # 1. Scale background loop to 1080x1920 (fill).
-    # 2. Tint background.
-    # 3. Scale mockup to 750x750, place centered.
-    # 4. Generate showwaves horizontal waveform visualizer, place below mockup.
-    # 5. Overlay text image.
+    draw.text((540, 240), "ARQIVE", fill=(255, 255, 255, 230), font=font_logo, anchor="ms")
+    draw.text((540, 320), clean_title_for_shorts(pack_name), fill=text_color_rgb, font=font_title, anchor="ms")
+    draw.text((540, 1750), "🔗 FREE DOWNLOAD IN DESCRIPTION / PINNED MSG", fill=(245, 245, 250, 200), font=font_sub, anchor="ms")
+    img.save(static_overlay_path, "PNG")
+    
+    print("Generating scrolling lyric frame sequences...")
+    fps = 30
+    total_frames = int(duration * fps)
+    for frame_idx in range(total_frames):
+        t = frame_idx / fps
+        frame_name = f"frame_{frame_idx:05d}.png"
+        frame_path = os.path.join(temp_frames_dir, frame_name)
+        render_scrolling_lyric_frame(1080, 1920, t, markers, genre, frame_path, color_palette)
+        
     filter_complex = (
-        f"[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1[bg]; "
-        f"color=c={tint_color}@0.4:s=1080x1920[tint]; "
-        f"[bg][tint]blend=all_mode='multiply':all_opacity=0.6[bg_tinted]; "
-        f"[1:a]showwaves=s=880x200:mode=line:colors={wave_color}:r=30[wave]; "
+        f"[0:v]{bg_filter}[bg_tinted]; "
+        f"[1:a]showwaves=s=880x160:mode=line:colors={wave_color}:r=30[wave]; "
         f"[2:v]scale=750:750[mock]; "
         f"[bg_tinted][3:v]overlay=x=0:y=0[bg_overlay]; "
-        f"[bg_overlay][mock]overlay=x=165:y=500[bg_mock]; "
-        f"[bg_mock][wave]overlay=x=100:y=1300[finalv]"
-    )
-
+        f"[bg_overlay][mock]overlay=x=165:y=380[bg_mock]; "
+        f"[bg_mock][wave]overlay=x=100:y=1520[bg_wave]; "
+        f"[bg_wave][4:v]overlay=x=0:y=0[finalv]"
+     )
+    
     cmd = [
         "ffmpeg", "-y",
         *bg_input.split(),
         "-i", audio_path,
         "-i", mockup_path,
-        "-i", overlay_path,
+        "-i", static_overlay_path,
+        "-framerate", str(fps),
+        "-i", os.path.join(temp_frames_dir, "frame_%05d.png"),
         "-filter_complex", filter_complex,
         "-map", "[finalv]",
         "-map", "1:a",
@@ -375,8 +641,21 @@ def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_pa
         print(f"Failed to compile Shorts video: {e}")
         return False
     finally:
-        if os.path.exists(overlay_path):
-            os.remove(overlay_path)
+        if os.path.exists(static_overlay_path):
+            try:
+                os.remove(static_overlay_path)
+            except Exception:
+                pass
+        if os.path.exists(temp_frames_dir):
+            try:
+                shutil.rmtree(temp_frames_dir)
+            except Exception:
+                pass
+        if temp_bg_gradient and os.path.exists(temp_bg_gradient):
+            try:
+                os.remove(temp_bg_gradient)
+            except Exception:
+                pass
 
 def clean_title_for_shorts(name: str) -> str:
     """Gets uppercase clean name for Shorts center graphic."""
