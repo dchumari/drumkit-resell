@@ -62,26 +62,27 @@ def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: 
     overlay = Image.new("RGBA", (width, height), (0, 0, 0, 100))
     spine = Image.alpha_composite(spine.convert("RGBA"), overlay).convert("RGB")
     
-    draw = ImageDraw.Draw(spine)
-    
-    # 2. Paste Producer Icon at the top
-    from config import ASSETS_DIR
-    pi_path = os.path.join(ASSETS_DIR, "producer_icon_or_logo(1).png")
+    # 2. Draw Producer Icon (producer_icon_or_logo(1).png) at the top of vertical spine
+    pi_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "producer_icon_or_logo(1).png")
     if os.path.exists(pi_path):
         try:
             pi_img = Image.open(pi_path).convert("RGBA")
-            pi_img = pi_img.resize((60, 60), Image.Resampling.LANCZOS)
-            # Center on spine width=120, 80px from top
-            spine.paste(pi_img, (60 - 30, 80), pi_img)
+            pi_img = pi_img.resize((48, 48), Image.Resampling.LANCZOS)
+            # Center horizontally (width=120, so x = 60 - 24 = 36), 60px from top
+            spine.paste(pi_img, (36, 60), pi_img)
         except Exception as e:
             print(f"Error drawing producer icon on spine: {e}")
             
-    # 3. Draw rotated main title text in the middle
+    # 3. Draw vertical rotated text
+    draw = ImageDraw.Draw(spine)
     try:
         font_spine = ImageFont.truetype("arialbd.ttf", 26)
+        font_spine_badge = ImageFont.truetype("arialbd.ttf", 20)
     except IOError:
         font_spine = ImageFont.load_default()
+        font_spine_badge = ImageFont.load_default()
         
+    # Create horizontal text image for pack title
     bbox = draw.textbbox((0, 0), text, font=font_spine)
     tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
     
@@ -89,40 +90,38 @@ def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: 
     td = ImageDraw.Draw(txt_img)
     td.text((20, 10), text, fill=(240, 240, 245, 220), font=font_spine)
     
+    # Rotate 270 degrees (so it reads bottom-to-top)
     rotated_txt = txt_img.rotate(270, expand=True)
+    
+    # Center rotated text on spine (offset vertical center down a bit because of logo at top)
     rw, rh = rotated_txt.size
     sx = (width - rw) // 2
-    sy = (height - rh) // 2
+    sy = 150 + (height - 300 - rh) // 2
     spine.paste(rotated_txt, (sx, sy), rotated_txt)
     
-    # 4. Draw vertical capsule naming badge near the bottom
+    # 4. Draw rotated pack type label at the bottom of the spine
     badge_text = pack_type.upper()
     if badge_text == "LOOPKIT":
         badge_text = "LOOP KIT"
     elif badge_text == "ONE-SHOT":
         badge_text = "ONE-SHOTS"
-    elif badge_text in ["DEFAULT", "PRESETS"]:
-        badge_text = "PRESETS BANK" if badge_text == "PRESETS" else "SAMPLE PACK"
+    elif badge_text == "DEFAULT":
+        badge_text = "SAMPLE PACK"
         
-    try:
-        font_badge = ImageFont.truetype("arialbd.ttf", 20)
-    except IOError:
-        font_badge = ImageFont.load_default()
-        
-    bbox_b = draw.textbbox((0, 0), badge_text, font=font_badge)
+    badge_text = f"• {badge_text} •"
+    bbox_b = draw.textbbox((0, 0), badge_text, font=font_spine_badge)
     bw, bh = bbox_b[2] - bbox_b[0], bbox_b[3] - bbox_b[1]
     
-    pad_x, pad_y = 12, 6
-    b_txt_img = Image.new("RGBA", (bw + pad_x * 2, bh + pad_y * 2), (0, 0, 0, 0))
-    bd = ImageDraw.Draw(b_txt_img)
-    bd.rounded_rectangle([0, 0, bw + pad_x * 2, bh + pad_y * 2], radius=6, outline=(240, 240, 245, 180), width=2)
-    bd.text((pad_x - bbox_b[0], pad_y - bbox_b[1]), badge_text, fill=(240, 240, 245, 180), font=font_badge)
+    badge_txt_img = Image.new("RGBA", (bw + 20, bh + 10), (0, 0, 0, 0))
+    tbd = ImageDraw.Draw(badge_txt_img)
+    # Draw with neon-ish light coloring matching text colors
+    tbd.text((10, 5), badge_text, fill=(240, 240, 245, 180), font=font_spine_badge)
+    rotated_badge = badge_txt_img.rotate(270, expand=True)
     
-    rotated_b = b_txt_img.rotate(270, expand=True)
-    brw, brh = rotated_b.size
-    bsx = (width - brw) // 2
-    bsy = height - 120 - brh
-    spine.paste(rotated_b, (bsx, bsy), rotated_b)
+    rbw, rbh = rotated_badge.size
+    bsx = (width - rbw) // 2
+    bsy = height - 140
+    spine.paste(rotated_badge, (bsx, bsy), rotated_badge)
     
     return spine
 
@@ -133,6 +132,7 @@ def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre:
     canvas_size = (736, 736)
     canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
     
+    # Coordinates matching 736x736 parallel vector template
     B = (148, 98)
     C = (230, 60)
     D = (588, 127)
@@ -140,6 +140,7 @@ def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre:
     F = (230, 676)
     G = (588, 623)
     
+    # Define 3D perspectives coordinates
     # Spine (Left Face)
     spine_src = [(0, 0), (0, 1200), (120, 1200), (120, 0)]
     spine_dest = [B, E, F, C]
@@ -151,13 +152,13 @@ def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre:
     # 1. Draw soft drop shadow behind the box
     shadow_canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
     sd = ImageDraw.Draw(shadow_canvas)
+    # Draw soft polygon shadow base under the box
     sd.polygon([(140, 650), (230, 685), (600, 630), (600, 620), (140, 635)], fill=(0, 0, 0, 120))
     shadow_canvas = shadow_canvas.filter(ImageFilter.GaussianBlur(radius=15))
     canvas.paste(shadow_canvas, (0, 0), shadow_canvas)
     
     # 2. Warp Spine Left Face
-    clean_title = pack_name.replace("Arqive", "").strip().upper()
-    spine_img = generate_spine(cover_path, height=1200, width=120, text=clean_title, pack_type=pack_type).convert("RGBA")
+    spine_img = generate_spine(cover_path, height=1200, width=120, text=pack_name.upper(), pack_type=pack_type).convert("RGBA")
     spine_coeffs = get_perspective_coeffs(spine_dest, spine_src)
     warped_spine = spine_img.transform(canvas_size, Image.Transform.PERSPECTIVE, spine_coeffs, Image.Resampling.BILINEAR)
     canvas.paste(warped_spine, (0, 0), warped_spine)
@@ -165,7 +166,7 @@ def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre:
     # 3. Warp Front Cover
     cover_img = Image.open(cover_path).convert("RGBA")
     front_coeffs = get_perspective_coeffs(front_dest, front_src)
-    warped_front = cover_img.transform(canvas_size, Image.Transform.PERSPECTIVE, front_coeffs, Image.Resampling.BILINEAR)
+    warped_front = cover_img.transform(canvas_size, Image.Transform.PERSPECTIVE, front_coeffs, Image.Resampling.BILINEAN if hasattr(Image.Resampling, 'BILINEAN') else Image.Resampling.BILINEAR)
     canvas.paste(warped_front, (0, 0), warped_front)
     
     # Save as transparent PNG

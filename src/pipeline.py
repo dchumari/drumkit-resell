@@ -23,14 +23,6 @@ import notifier
 import downloader
 import audio_processor
 import cover_generator
-import mockup_generator
-import video_generator
-import youtube_uploader
-import telegram_publisher
-
-PROCESSED_LINKS_FILE = os.path.join(config.DATA_DIR, "processed_links.txt")
-QUEUE_FILE = os.path.join(config.DATA_DIR, "scraped_queue.json")
-PACKS_FILE = os.path.join(config.DATA_DIR, "packs.json")
 
 def detect_pack_type(name: str) -> str:
     """Identifies the category of the pack based on its name."""
@@ -44,7 +36,14 @@ def detect_pack_type(name: str) -> str:
     if any(k in name_lower for k in ["presets", "bank", "serum", "electra"]):
         return "Presets"
     return "Default"
+import mockup_generator
+import video_generator
+import youtube_uploader
+import telegram_publisher
 
+PROCESSED_LINKS_FILE = os.path.join(config.DATA_DIR, "processed_links.txt")
+QUEUE_FILE = os.path.join(config.DATA_DIR, "scraped_queue.json")
+PACKS_FILE = os.path.join(config.DATA_DIR, "packs.json")
 
 def load_processed_links() -> set:
     """Loads the set of processed Reddit post IDs."""
@@ -331,7 +330,7 @@ def run_throwback_release(upload: bool = False):
         # 1. Regenerate visual assets with fresh random colors
         rebranded_name = f"[VAULT] {old_pack['name']}"
         color_palette = resolve_randomized_palette(old_pack["genre"])
-        pack_type = detect_pack_type(old_pack["name"])
+        pack_type = detect_pack_type(rebranded_name)
         cover_generator.generate_cover_art(rebranded_name, old_pack["genre"], cover_path, color_palette, pack_type=pack_type)
         mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, old_pack["genre"], color_palette, pack_type=pack_type)
         

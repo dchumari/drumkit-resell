@@ -1,7 +1,7 @@
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "src"))
+import sys
 
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
 from pipeline import detect_pack_type
 
 def test_detect_pack_type():
