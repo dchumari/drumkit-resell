@@ -1,6 +1,6 @@
 import os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from config import GENRE_COLORS
+from config import GENRE_COLORS, ASSETS_DIR
 
 def solve_linear_system(matrix, vector):
     """Gaussian elimination solver for NxN matrix in pure Python."""
@@ -62,27 +62,16 @@ def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: 
     overlay = Image.new("RGBA", (width, height), (0, 0, 0, 100))
     spine = Image.alpha_composite(spine.convert("RGBA"), overlay).convert("RGB")
     
-    # 2. Draw Producer Icon (producer_icon_or_logo(1).png) at the top of vertical spine
-    pi_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "producer_icon_or_logo(1).png")
-    if os.path.exists(pi_path):
-        try:
-            pi_img = Image.open(pi_path).convert("RGBA")
-            pi_img = pi_img.resize((48, 48), Image.Resampling.LANCZOS)
-            # Center horizontally (width=120, so x = 60 - 24 = 36), 60px from top
-            spine.paste(pi_img, (36, 60), pi_img)
-        except Exception as e:
-            print(f"Error drawing producer icon on spine: {e}")
-            
-    # 3. Draw vertical rotated text
+    # 2. Draw vertical rotated main text
     draw = ImageDraw.Draw(spine)
     try:
         font_spine = ImageFont.truetype("arialbd.ttf", 26)
-        font_spine_badge = ImageFont.truetype("arialbd.ttf", 20)
+        font_spine_badge = ImageFont.truetype("arialbd.ttf", 16)
     except IOError:
         font_spine = ImageFont.load_default()
         font_spine_badge = ImageFont.load_default()
         
-    # Create horizontal text image for pack title
+    # Create horizontal text image
     bbox = draw.textbbox((0, 0), text, font=font_spine)
     tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
     
@@ -93,36 +82,57 @@ def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: 
     # Rotate 270 degrees (so it reads bottom-to-top)
     rotated_txt = txt_img.rotate(270, expand=True)
     
-    # Center rotated text on spine (offset vertical center down a bit because of logo at top)
+    # Center rotated text on spine
     rw, rh = rotated_txt.size
     sx = (width - rw) // 2
-    sy = 150 + (height - 300 - rh) // 2
+    sy = (height - rh) // 2
+    
     spine.paste(rotated_txt, (sx, sy), rotated_txt)
     
-    # 4. Draw rotated pack type label at the bottom of the spine
+    # 3. Draw vertical rotated pack-type capsule badge below main text
     badge_text = pack_type.upper()
     if badge_text == "LOOPKIT":
         badge_text = "LOOP KIT"
     elif badge_text == "ONE-SHOT":
         badge_text = "ONE-SHOTS"
-    elif badge_text == "DEFAULT":
-        badge_text = "SAMPLE PACK"
         
-    badge_text = f"• {badge_text} •"
-    bbox_b = draw.textbbox((0, 0), badge_text, font=font_spine_badge)
-    bw, bh = bbox_b[2] - bbox_b[0], bbox_b[3] - bbox_b[1]
-    
-    badge_txt_img = Image.new("RGBA", (bw + 20, bh + 10), (0, 0, 0, 0))
-    tbd = ImageDraw.Draw(badge_txt_img)
-    # Draw with neon-ish light coloring matching text colors
-    tbd.text((10, 5), badge_text, fill=(240, 240, 245, 180), font=font_spine_badge)
-    rotated_badge = badge_txt_img.rotate(270, expand=True)
-    
-    rbw, rbh = rotated_badge.size
-    bsx = (width - rbw) // 2
-    bsy = height - 140
-    spine.paste(rotated_badge, (bsx, bsy), rotated_badge)
-    
+    if badge_text != "DEFAULT":
+        badge_bbox = draw.textbbox((0, 0), badge_text, font=font_spine_badge)
+        btw, bth = badge_bbox[2] - badge_bbox[0], badge_bbox[3] - badge_bbox[1]
+        
+        pad_x, pad_y = 12, 6
+        badge_canvas_w = btw + pad_x * 2 + 10
+        badge_canvas_h = bth + pad_y * 2 + 10
+        
+        badge_img = Image.new("RGBA", (badge_canvas_w, badge_canvas_h), (0, 0, 0, 0))
+        bd = ImageDraw.Draw(badge_img)
+        
+        # Draw capsule outline
+        bd.rounded_rectangle([5, 5, badge_canvas_w - 5, badge_canvas_h - 5], radius=6, outline=(245, 245, 250, 180), width=2)
+        bd.text((5 + pad_x, 5 + pad_y), badge_text, fill=(245, 245, 250, 200), font=font_spine_badge)
+        
+        # Rotate 270 degrees
+        rotated_badge = badge_img.rotate(270, expand=True)
+        rbw, rbh = rotated_badge.size
+        
+        # Paste below the main text
+        bsx = (width - rbw) // 2
+        bsy = sy + rh + 40
+        if bsy + rbh < height - 60:
+            spine.paste(rotated_badge, (bsx, bsy), rotated_badge)
+            
+    # 4. Paste Producer Icon at the top of the spine (60x60px)
+    pi_path = os.path.join(ASSETS_DIR, "producer_icon_or_logo(1).png")
+    if os.path.exists(pi_path):
+        try:
+            pi_img = Image.open(pi_path).convert("RGBA")
+            pi_img = pi_img.resize((60, 60), Image.Resampling.LANCZOS)
+            # Center horizontally, 60px from top
+            spine.paste(pi_img, ((width - 60) // 2, 60), pi_img)
+            print("Pasted producer icon on spine.")
+        except Exception as e:
+            print(f"Error pasting producer icon on spine: {e}")
+            
     return spine
 
 def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre: str, color_palette=None, pack_type: str = "Default"):
@@ -166,7 +176,7 @@ def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre:
     # 3. Warp Front Cover
     cover_img = Image.open(cover_path).convert("RGBA")
     front_coeffs = get_perspective_coeffs(front_dest, front_src)
-    warped_front = cover_img.transform(canvas_size, Image.Transform.PERSPECTIVE, front_coeffs, Image.Resampling.BILINEAN if hasattr(Image.Resampling, 'BILINEAN') else Image.Resampling.BILINEAR)
+    warped_front = cover_img.transform(canvas_size, Image.Transform.PERSPECTIVE, front_coeffs, Image.Resampling.BILINEAR)
     canvas.paste(warped_front, (0, 0), warped_front)
     
     # Save as transparent PNG

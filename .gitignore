@@ -58,3 +58,7 @@ output/
 .DS_Store
 Thumbs.db
 
+# Project-specific ignores
+assets/tests_subject/
+.superpowers/
+

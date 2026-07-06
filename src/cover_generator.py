@@ -2,17 +2,18 @@ import os
 import re
 import math
 import random
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from config import GENRE_COLORS, ASSETS_DIR
 import urllib.request
 import hashlib
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from config import GENRE_COLORS, ASSETS_DIR
 
 SIZE = 1200
 
-def get_background_image(url: str, cache_dir: str = "assets/cache") -> Image.Image:
-    """Downloads a background image from a URL and caches it locally."""
+def get_background_image(url: str, cache_dir: str = "assets/cache", cache_key: str = None) -> Image.Image:
+    """Downloads a background image from a URL and caches it locally under a cache key."""
     os.makedirs(cache_dir, exist_ok=True)
-    url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
+    key_source = cache_key if cache_key else url
+    url_hash = hashlib.md5(key_source.encode('utf-8')).hexdigest()
     cache_path = os.path.join(cache_dir, f"{url_hash}.png")
     
     if os.path.exists(cache_path):
@@ -26,13 +27,15 @@ def get_background_image(url: str, cache_dir: str = "assets/cache") -> Image.Ima
             url, 
             headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
         )
-        with urllib.request.urlopen(req, timeout=8) as response:
+        print(f"Downloading background from {url}...")
+        with urllib.request.urlopen(req, timeout=10) as response:
             with open(cache_path, 'wb') as out_file:
                 out_file.write(response.read())
         return Image.open(cache_path).convert("RGB")
     except Exception as e:
         print(f"Network download failed: {e}. Falling back to gradient.")
         return None
+
 
 def get_gradient_mask(w: int, h: int) -> Image.Image:
     """Generates a vertical gradient mask."""
@@ -48,128 +51,6 @@ def generate_gradient(w: int, h: int, color1: tuple, color2: tuple) -> Image.Ima
     mask = get_gradient_mask(w, h)
     base.paste(top, (0, 0), mask)
     return base
-
-def project_3d_point(x, y, z, angle_x, angle_y, angle_z, cx=600, cy=600, scale=350):
-    """Rotates and projects a 3D point (x, y, z) in [-1, 1] onto 2D space."""
-    # X-rotation
-    rad_x = math.radians(angle_x)
-    cos_x, sin_x = math.cos(rad_x), math.sin(rad_x)
-    y1 = y * cos_x - z * sin_x
-    z1 = y * sin_x + z * cos_x
-    
-    # Y-rotation
-    rad_y = math.radians(angle_y)
-    cos_y, sin_y = math.cos(rad_y), math.sin(rad_y)
-    x2 = x * cos_y + z1 * sin_y
-    z2 = -x * sin_y + z1 * cos_y
-    
-    # Z-rotation
-    rad_z = math.radians(angle_z)
-    cos_z, sin_z = math.cos(rad_z), math.sin(rad_z)
-    x3 = x2 * cos_z - y1 * sin_z
-    y3 = x2 * sin_z + y1 * cos_z
-    
-    # Simple perspective projection
-    distance = 3.0
-    proj_x = int(cx + scale * x3 / (distance + z2))
-    proj_y = int(cy + scale * y3 / (distance + z2))
-    return proj_x, proj_y
-
-def draw_3d_wireframe_cube(draw, color):
-    """Draws a floating 3D wireframe cube rotated randomly."""
-    ax = random.uniform(0, 360)
-    ay = random.uniform(0, 360)
-    az = random.uniform(0, 360)
-    cx = random.randint(300, 900)
-    cy = random.randint(300, 900)
-    scale = random.randint(150, 250)
-    
-    vertices = [
-        (-1, -1, -1), (1, -1, -1), (1, 1, -1), (-1, 1, -1),
-        (-1, -1, 1), (1, -1, 1), (1, 1, 1), (-1, 1, 1)
-    ]
-    edges = [
-        (0, 1), (1, 2), (2, 3), (3, 0),
-        (4, 5), (5, 6), (6, 7), (7, 4),
-        (0, 4), (1, 5), (2, 6), (3, 7)
-    ]
-    
-    proj_pts = []
-    for x, y, z in vertices:
-        proj_pts.append(project_3d_point(x, y, z, ax, ay, az, cx, cy, scale))
-        
-    for start, end in edges:
-        draw.line([proj_pts[start], proj_pts[end]], fill=(*color, 65), width=2)
-
-def draw_generative_elements(img: Image.Image, pack_type: str, color: tuple) -> None:
-    """Draws randomized overlays and 3D wireframe shapes on the canvas."""
-    draw = ImageDraw.Draw(img)
-    # 1. Floating 3D cubes/wireframes
-    # Use random state that is not seeded by time to make each run truly unique
-    for _ in range(random.randint(2, 4)):
-        draw_3d_wireframe_cube(draw, color)
-        
-    # 2. Procedural background grid/groove overlay
-    if pack_type == "Drumkit":
-        spacing = random.randint(45, 75)
-        dot_r = random.randint(2, 5)
-        for x in range(0, SIZE, spacing):
-            draw.line([(x, 0), (x, SIZE)], fill=(*color, 25), width=1)
-        for y in range(0, SIZE, spacing):
-            draw.line([(0, y), (SIZE, y)], fill=(*color, 25), width=1)
-        for x in range(spacing, SIZE, spacing * 2):
-            for y in range(spacing, SIZE, spacing * 2):
-                draw.ellipse([x - dot_r, y - dot_r, x + dot_r, y + dot_r], fill=(*color, 50))
-                
-    elif pack_type == "Loopkit":
-        cx, cy = SIZE // 2, SIZE // 2
-        for layer in range(random.randint(3, 5)):
-            pts = []
-            amp = random.randint(30, 65)
-            freq = random.uniform(0.003, 0.008)
-            phase = random.uniform(0, 6.28)
-            for x in range(0, SIZE, 12):
-                y = cy + int(amp * math.sin(x * freq + phase))
-                pts.append((x, y))
-            for i in range(len(pts) - 1):
-                draw.line([pts[i], pts[i+1]], fill=(*color, 35), width=2)
-                
-        # Draw Cassette body in center
-        draw.rounded_rectangle([cx - 240, cy - 150, cx + 240, cy + 150], radius=15, outline=(*color, 80), width=4)
-        draw.rectangle([cx - 110, cy - 55, cx + 110, cy + 55], outline=(*color, 80), width=3)
-        draw.ellipse([cx - 70 - 22, cy - 22, cx - 70 + 22, cy + 22], outline=(*color, 80), width=3)
-        draw.ellipse([cx + 70 - 22, cy - 22, cx + 70 + 22, cy + 22], outline=(*color, 80), width=3)
-        
-    elif pack_type == "One-shot":
-        cx, cy = SIZE // 2, SIZE // 2
-        step = random.randint(20, 30)
-        for r in range(120, 520, step):
-            draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(*color, 30), width=1)
-        draw.ellipse([cx - 80, cy - 80, cx + 80, cy + 80], outline=(*color, 70), width=2)
-
-def draw_pack_type_badge(draw, cx, cy, pack_type, color, font):
-    """Draws a capsule outline badge with text below the title."""
-    badge_text = pack_type.upper()
-    if badge_text == "LOOPKIT":
-        badge_text = "LOOP KIT"
-    elif badge_text == "ONE-SHOT":
-        badge_text = "ONE-SHOTS"
-    elif badge_text == "DEFAULT":
-        badge_text = "SAMPLE PACK"
-        
-    bbox = draw.textbbox((0, 0), badge_text, font=font)
-    tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
-    
-    pad_x, pad_y = 20, 10
-    bx0, by0 = cx - tw // 2 - pad_x, cy - th // 2 - pad_y
-    bx1, by1 = cx + tw // 2 + pad_x, cy + th // 2 + pad_y
-    
-    # Draw outline rounded rectangle
-    draw.rounded_rectangle([bx0, by0, bx1, by1], radius=8, outline=color, width=2)
-    # Draw text centered inside
-    tx, ty = cx - tw // 2 - bbox[0], cy - th // 2 - bbox[1]
-    draw.text((tx, ty), badge_text, fill=color, font=font)
-
 
 def draw_topographic_lines(img: Image.Image, color: tuple, count: int = 10):
     """Draws topographical curved lines on the background."""
@@ -209,6 +90,27 @@ def draw_stardust(img: Image.Image, color: tuple, count: int = 400):
                         blend = tuple(int(o[i] + (color[i] - o[i]) * a / 255) for i in range(3))
                         img.putpixel((px, py), blend)
 
+def draw_pack_type_badge(draw, cx, cy, pack_type, color, font):
+    """Draws a capsule outline badge with text below the title."""
+    badge_text = pack_type.upper()
+    if badge_text == "LOOPKIT":
+        badge_text = "LOOP KIT"
+    elif badge_text == "ONE-SHOT":
+        badge_text = "ONE-SHOTS"
+        
+    bbox = draw.textbbox((0, 0), badge_text, font=font)
+    tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    
+    pad_x, pad_y = 20, 10
+    bx0, by0 = cx - tw // 2 - pad_x, cy - th // 2 - pad_y
+    bx1, by1 = cx + tw // 2 + pad_x, cy + th // 2 + pad_y
+    
+    # Draw outline rounded rectangle
+    draw.rounded_rectangle([bx0, by0, bx1, by1], radius=8, outline=color, width=2)
+    # Draw text centered inside
+    tx, ty = cx - tw // 2 - bbox[0], cy - th // 2 - bbox[1]
+    draw.text((tx, ty), badge_text, fill=color, font=font)
+
 def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palette=None, pack_type: str = "Default") -> str:
     """
     Generates a full 1200x1200px rebranded cover art image 
@@ -224,37 +126,52 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
         color1, color2 = gconfig["bg_gradient"]
     text_color = gconfig["text_color"]
     border_color = gconfig["border_color"]
+    overlay_filename = gconfig["overlay"]
     
-    # 1. Background Sourcing
+    # 1. Base gradient
+    img = generate_gradient(SIZE, SIZE, color1, color2)
+    
+    # Load background texture if available
     bg_img = None
     local_bg_dir = os.path.join(ASSETS_DIR, "backgrounds")
     if os.path.exists(local_bg_dir):
-        local_files = [os.path.join(local_bg_dir, f) for f in os.listdir(local_bg_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        if local_files:
+        local_bgs = [f for f in os.listdir(local_bg_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+        if local_bgs:
             try:
-                bg_img = Image.open(random.choice(local_files)).convert("RGB")
+                bg_img = Image.open(os.path.join(local_bg_dir, random.choice(local_bgs))).convert("RGB")
+                print("Loaded background from local assets.")
             except Exception:
                 pass
                 
     if bg_img is None:
-        # Fetch from online free URL
-        bg_img = get_background_image("https://picsum.photos/1200/1200", os.path.join(ASSETS_DIR, "cache"))
+        # Download from picsum
+        picsum_url = "https://picsum.photos/1200/1200"
+        bg_img = get_background_image(picsum_url, cache_key=f"{picsum_url}_{pack_name}")
         
     if bg_img is not None:
         bg_img = bg_img.resize((SIZE, SIZE), Image.Resampling.LANCZOS)
-        solid_color = Image.new("RGB", (SIZE, SIZE), color1)
-        # Blend background image with the primary theme color (40% theme color tint)
-        img = Image.blend(bg_img, solid_color, 0.4)
-    else:
-        # Fallback to vertical gradient
-        img = generate_gradient(SIZE, SIZE, color1, color2)
+        bg_gray = bg_img.convert("L")
+        # Blend the grayscale texture onto the base gradient (mix 30% texture + 70% gradient)
+        img = Image.blend(img, Image.merge("RGB", (bg_gray, bg_gray, bg_gray)), 0.3)
     
     # 2. Topo lines & stardust
     draw_topographic_lines(img, text_color, count=8)
     draw_stardust(img, text_color, count=500)
     
-    # 3. Dynamic Generative geometry
-    draw_generative_elements(img, pack_type, text_color)
+    # 3. Apply PNG geometric overlay if specified
+    if overlay_filename:
+        overlay_path = os.path.join(ASSETS_DIR, overlay_filename)
+        if os.path.exists(overlay_path):
+            try:
+                overlay_img = Image.open(overlay_path).convert("RGBA")
+                # Resize overlay to fit cover
+                overlay_img = overlay_img.resize((SIZE, SIZE), Image.Resampling.LANCZOS)
+                # Blend using alpha channel
+                base_rgba = img.convert("RGBA")
+                blended = Image.alpha_composite(base_rgba, overlay_img)
+                img = blended.convert("RGB")
+            except Exception as e:
+                print(f"Error loading cover art overlay {overlay_filename}: {e}")
     
     draw = ImageDraw.Draw(img)
     
@@ -262,11 +179,9 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
     try:
         font_brand = ImageFont.truetype("arial.ttf", 18)
         font_title = ImageFont.truetype("arialbd.ttf", 140)
-        font_badge = ImageFont.truetype("arialbd.ttf", 36)
     except IOError:
         font_brand = ImageFont.load_default()
         font_title = ImageFont.load_default()
-        font_badge = ImageFont.load_default()
         
     cx, cy = SIZE // 2, SIZE // 2
     
@@ -299,7 +214,12 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
     draw = ImageDraw.Draw(img)
     draw.text((tx, ty), display_title, fill=(255, 255, 255), font=font_title)
     
-    # Draw pack-type capsule subtitle badge below title
+    # Draw Pack Type Capsule Badge
+    try:
+        font_badge = ImageFont.truetype("arialbd.ttf", 36)
+    except IOError:
+        font_badge = ImageFont.load_default()
+        
     badge_y = ty + th + 60
     draw_pack_type_badge(draw, cx, badge_y, pack_type, text_color, font_badge)
     
@@ -317,8 +237,10 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
     # 5. Outlined border
     draw.rectangle([8, 8, SIZE - 9, SIZE - 9], outline=border_color, width=3)
     
-    # 6. Logo & Parental Advisory Overlays
-    # A. Parental Advisory on bottom-left (scaled to width=160px)
+    # 6. Apply Branding Overlays
+    rgba_img = img.convert("RGBA")
+    
+    # Bottom-left: Parental Advisory
     pa_path = os.path.join(ASSETS_DIR, "parental_advisory.png")
     if os.path.exists(pa_path):
         try:
@@ -326,31 +248,35 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
             pa_w = 160
             pa_h = int(pa_img.height * (pa_w / pa_img.width))
             pa_img = pa_img.resize((pa_w, pa_h), Image.Resampling.LANCZOS)
-            # Paste at (60, 1200 - 60 - height)
-            img.paste(pa_img, (60, SIZE - 60 - pa_h), pa_img)
+            rgba_img.paste(pa_img, (60, SIZE - 60 - pa_h), pa_img)
+            print("Pasted Parental Advisory logo at bottom-left.")
         except Exception as e:
             print(f"Error loading parental advisory logo: {e}")
             
-    # B. Producer Icon on top-left (80x80px)
+    # Top-left: Producer Icon (80x80px)
     pi_path = os.path.join(ASSETS_DIR, "producer_icon_or_logo(1).png")
     if os.path.exists(pi_path):
         try:
             pi_img = Image.open(pi_path).convert("RGBA")
             pi_img = pi_img.resize((80, 80), Image.Resampling.LANCZOS)
-            img.paste(pi_img, (60, 60), pi_img)
+            rgba_img.paste(pi_img, (60, 60), pi_img)
+            print("Pasted Producer Icon at top-left.")
         except Exception as e:
             print(f"Error loading producer icon: {e}")
             
-    # C. Main Logo on top-right (120x120px)
+    # Top-right: Main Logo (120x120px)
     ml_path = os.path.join(ASSETS_DIR, "producer_icon_or_logo.png")
     if os.path.exists(ml_path):
         try:
             ml_img = Image.open(ml_path).convert("RGBA")
             ml_img = ml_img.resize((120, 120), Image.Resampling.LANCZOS)
-            img.paste(ml_img, (SIZE - 60 - 120, 60), ml_img)
+            rgba_img.paste(ml_img, (SIZE - 60 - 120, 60), ml_img)
+            print("Pasted Main Logo at top-right.")
         except Exception as e:
             print(f"Error loading main logo: {e}")
             
+    img = rgba_img.convert("RGB")
+    
     img.save(output_path)
     print(f"Cover art generated: {output_path}")
     return output_path

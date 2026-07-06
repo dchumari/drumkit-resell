@@ -23,19 +23,6 @@ import notifier
 import downloader
 import audio_processor
 import cover_generator
-
-def detect_pack_type(name: str) -> str:
-    """Identifies the category of the pack based on its name."""
-    name_lower = name.lower()
-    if any(k in name_lower for k in ["drumkit", "drum kit", "drums"]):
-        return "Drumkit"
-    if any(k in name_lower for k in ["loopkit", "loop kit", "melody", "melodies", "loops"]):
-        return "Loopkit"
-    if any(k in name_lower for k in ["oneshot", "one shot", "oneshots"]):
-        return "One-shot"
-    if any(k in name_lower for k in ["presets", "bank", "serum", "electra"]):
-        return "Presets"
-    return "Default"
 import mockup_generator
 import video_generator
 import youtube_uploader
@@ -330,9 +317,8 @@ def run_throwback_release(upload: bool = False):
         # 1. Regenerate visual assets with fresh random colors
         rebranded_name = f"[VAULT] {old_pack['name']}"
         color_palette = resolve_randomized_palette(old_pack["genre"])
-        pack_type = detect_pack_type(rebranded_name)
-        cover_generator.generate_cover_art(rebranded_name, old_pack["genre"], cover_path, color_palette, pack_type=pack_type)
-        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, old_pack["genre"], color_palette, pack_type=pack_type)
+        cover_generator.generate_cover_art(rebranded_name, old_pack["genre"], cover_path, color_palette)
+        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, old_pack["genre"], color_palette)
         
         # 2. Download the original ZIP file from Telegram using the file_id
         local_zip = os.path.join(temp_dir, "old_kit.zip")
@@ -485,6 +471,19 @@ def clean_filename_for_zip(name: str) -> str:
     cleaned = name.replace(" ", "_").replace("[", "").replace("]", "")
     return re.sub(r'[^a-zA-Z0-9_-]', '', cleaned)
 
+def detect_pack_type(name: str) -> str:
+    """Identifies the category of the pack based on its name."""
+    name_lower = name.lower()
+    if any(k in name_lower for k in ["drumkit", "drum kit", "drums"]):
+        return "Drumkit"
+    if any(k in name_lower for k in ["loopkit", "loop kit", "melody", "loops"]):
+        return "Loopkit"
+    if any(k in name_lower for k in ["oneshot", "one shot", "oneshots"]):
+        return "One-shot"
+    if any(k in name_lower for k in ["presets", "bank", "serum", "electra"]):
+        return "Presets"
+    return "Default"
+
 def process_item(
     url: Optional[str],
     title: str,
@@ -579,8 +578,8 @@ def process_item(
             raise ValueError(f"Pack contains too few samples ({total_samples}). Minimum required is {min_samples}. Skipping.")
                     
         # Generate cover and mockup art
-        color_palette = resolve_randomized_palette(genre)
         pack_type = detect_pack_type(rebranded_name)
+        color_palette = resolve_randomized_palette(genre)
         cover_generator.generate_cover_art(rebranded_name, genre, cover_path, color_palette, pack_type=pack_type)
         mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre, color_palette, pack_type=pack_type)
         

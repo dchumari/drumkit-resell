@@ -16,6 +16,7 @@ import cover_generator
 import mockup_generator
 import video_generator
 import audio_processor
+from pipeline import resolve_randomized_palette, detect_pack_type
 
 def generate_sine_wave(filepath: str, duration: float, freq: float):
     """Generates a simple mono sine wave WAV file using only the standard library wave module."""
@@ -135,8 +136,10 @@ def main():
 
         # Step 3: Generate cover and 3D mockup graphics
         print("\nStep 3: Rendering cover art & 3D mockup box...")
-        cover_generator.generate_cover_art(rebranded_full_name, args.genre, cover_path)
-        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_full_name, args.genre)
+        pack_type = detect_pack_type(rebranded_full_name)
+        color_palette = resolve_randomized_palette(args.genre)
+        cover_generator.generate_cover_art(rebranded_full_name, args.genre, cover_path, color_palette, pack_type=pack_type)
+        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_full_name, args.genre, color_palette, pack_type=pack_type)
         
         # Step 4: Create Audio Showcase
         print("\nStep 4: Compiling preview showcase audio mix...")
@@ -154,7 +157,7 @@ def main():
         video_generator.create_srt_file(markers, srt_path)
         
         # Now create overlay image using markers dict list
-        video_generator.create_tracklist_overlay(rebranded_full_name, args.genre, markers, overlay_path)
+        video_generator.create_tracklist_overlay(rebranded_full_name, args.genre, markers, overlay_path, color_palette)
         
         # Step 6: Compile video files (using FFmpeg)
         # Temporarily append Gyan.FFmpeg to system path if needed to ensure subprocess runs
@@ -164,10 +167,10 @@ def main():
             os.environ["PATH"] += ";" + gyan_path
             
         print("\nStep 6: Running FFmpeg to compile landscape 16:9 showreel...")
-        v16_9_ok = video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, args.genre, markers, srt_path)
+        v16_9_ok = video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, args.genre, markers, srt_path, color_palette)
         
         print("Step 7: Running FFmpeg to compile vertical 9:16 Shorts showreel...")
-        v9_16_ok = video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, args.genre, rebranded_full_name)
+        v9_16_ok = video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, args.genre, rebranded_full_name, markers, color_palette)
         
         # Step 8: Package Rebranded Zip
         print("\nStep 8: Packaging clean rebranded drumkit volume...")
