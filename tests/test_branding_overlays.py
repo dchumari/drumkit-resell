@@ -1,28 +1,29 @@
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "src"))
-
+import sys
 from PIL import Image
-import cover_generator
-from config import ASSETS_DIR
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
+from cover_generator import generate_cover_art
+from mockup_generator import generate_3d_mockup
 
 def test_branding_overlays():
-    # Verify the paths exist in the workspace assets folder
-    pa_path = os.path.join(ASSETS_DIR, "parental_advisory.png")
-    pi_path = os.path.join(ASSETS_DIR, "producer_icon_or_logo(1).png")
-    ml_path = os.path.join(ASSETS_DIR, "producer_icon_or_logo.png")
+    # Make sure mock images exist in assets
+    assert os.path.exists("assets/parental_advisory.png")
+    assert os.path.exists("assets/producer_icon_or_logo.png")
+    assert os.path.exists("assets/producer_icon_or_logo(1).png")
     
-    assert os.path.exists(pa_path), f"Missing {pa_path}"
-    assert os.path.exists(pi_path), f"Missing {pi_path}"
-    assert os.path.exists(ml_path), f"Missing {ml_path}"
+    # Run generative cover art to verify no overlay exceptions
+    cover_path = "test_output/test_overlay_cover.png"
+    generate_cover_art("Overlay Test Pack", "Trap", cover_path, pack_type="Drumkit")
+    assert os.path.exists(cover_path)
     
-    # Generate cover art and make sure it loads files without throwing exception
-    out_cover = "test_output/test_branding_cover.png"
-    os.makedirs("test_output", exist_ok=True)
+    # Run 3D mockup to verify no exceptions
+    mockup_path = "test_output/test_overlay_mockup.png"
+    generate_3d_mockup(cover_path, mockup_path, "Overlay Test Pack", "Trap", pack_type="Drumkit")
+    assert os.path.exists(mockup_path)
     
-    cover_generator.generate_cover_art("Branding Test Kit", "Trap", out_cover, pack_type="Drumkit")
-    assert os.path.exists(out_cover)
-    
-    # Clean up test output file
-    if os.path.exists(out_cover):
-        os.remove(out_cover)
+    # Clean up test output
+    if os.path.exists(cover_path):
+        os.remove(cover_path)
+    if os.path.exists(mockup_path):
+        os.remove(mockup_path)
