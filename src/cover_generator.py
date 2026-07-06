@@ -133,6 +133,30 @@ def draw_generative_elements(img: Image.Image, pack_type: str, color: tuple) -> 
         draw.ellipse([cx - 80, cy - 80, cx + 80, cy + 80], outline=(*color, 70), width=2)
 
 
+def draw_pack_type_badge(draw, cx, cy, pack_type, color, font):
+    """Draws a capsule outline badge with text below the title."""
+    badge_text = pack_type.upper()
+    if badge_text == "LOOPKIT":
+        badge_text = "LOOP KIT"
+    elif badge_text == "ONE-SHOT":
+        badge_text = "ONE-SHOTS"
+    elif badge_text in ["DEFAULT", "PRESETS"]:
+        badge_text = "PRESETS BANK" if badge_text == "PRESETS" else "SAMPLE PACK"
+        
+    bbox = draw.textbbox((0, 0), badge_text, font=font)
+    tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    
+    pad_x, pad_y = 20, 10
+    bx0, by0 = cx - tw // 2 - pad_x, cy - th // 2 - pad_y
+    bx1, by1 = cx + tw // 2 + pad_x, cy + th // 2 + pad_y
+    
+    # Capsule outline
+    draw.rounded_rectangle([bx0, by0, bx1, by1], radius=8, outline=color, width=2)
+    # Text
+    tx, ty = cx - tw // 2 - bbox[0], cy - th // 2 - bbox[1]
+    draw.text((tx, ty), badge_text, fill=color, font=font)
+
+
 def get_gradient_mask(w: int, h: int) -> Image.Image:
     """Generates a vertical gradient mask."""
     mask = Image.new("L", (1, h))
@@ -186,7 +210,7 @@ def draw_stardust(img: Image.Image, color: tuple, count: int = 400):
                         blend = tuple(int(o[i] + (color[i] - o[i]) * a / 255) for i in range(3))
                         img.putpixel((px, py), blend)
 
-def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palette=None) -> str:
+def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palette=None, pack_type: str = "Default") -> str:
     """
     Generates a full 1200x1200px rebranded cover art image 
     customized by genre and saves it to output_path.
@@ -201,29 +225,42 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
         color1, color2 = gconfig["bg_gradient"]
     text_color = gconfig["text_color"]
     border_color = gconfig["border_color"]
-    overlay_filename = gconfig["overlay"]
     
-    # 1. Base gradient
-    img = generate_gradient(SIZE, SIZE, color1, color2)
-    
-    # 2. Topo lines & stardust
+    # 1. Image Sourcing: check local backgrounds or Picsum download
+    bg_img = None
+    bg_folder = os.path.join(ASSETS_DIR, "backgrounds")
+    if os.path.exists(bg_folder):
+        import glob
+        bg_files = glob.glob(os.path.join(bg_folder, "*"))
+        bg_files = [f for f in bg_files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.webp'))]
+        if bg_files:
+            try:
+                # Seed based on pack name to keep it deterministic per pack
+                random.seed(hash(pack_name))
+                bg_img = Image.open(random.choice(bg_files)).convert("RGB").resize((SIZE, SIZE), Image.Resampling.LANCZOS)
+            except Exception as e:
+                print(f"Error loading local background: {e}")
+                
+    if not bg_img:
+        # Use picsum image with deterministic seed based on pack_name hash
+        img_id = abs(hash(pack_name)) % 1000
+        picsum_url = f"https://picsum.photos/id/{img_id}/1200/1200"
+        bg_img = get_background_image(picsum_url)
+        if not bg_img:
+            # Fallback random picsum
+            bg_img = get_background_image("https://picsum.photos/1200/1200")
+            
+    if bg_img:
+        # Blend 55% background image, 45% flat genre gradient tint
+        overlay_tint = generate_gradient(SIZE, SIZE, color1, color2)
+        img = Image.blend(bg_img, overlay_tint, 0.45)
+    else:
+        img = generate_gradient(SIZE, SIZE, color1, color2)
+        
+    # 2. Draw Topo lines, stardust and generative pack-type overlays
     draw_topographic_lines(img, text_color, count=8)
     draw_stardust(img, text_color, count=500)
-    
-    # 3. Apply PNG geometric overlay if specified
-    if overlay_filename:
-        overlay_path = os.path.join(ASSETS_DIR, overlay_filename)
-        if os.path.exists(overlay_path):
-            try:
-                overlay_img = Image.open(overlay_path).convert("RGBA")
-                # Resize overlay to fit cover
-                overlay_img = overlay_img.resize((SIZE, SIZE), Image.Resampling.LANCZOS)
-                # Blend using alpha channel
-                base_rgba = img.convert("RGBA")
-                blended = Image.alpha_composite(base_rgba, overlay_img)
-                img = blended.convert("RGB")
-            except Exception as e:
-                print(f"Error loading cover art overlay {overlay_filename}: {e}")
+    draw_generative_elements(img, pack_type, text_color)
     
     draw = ImageDraw.Draw(img)
     
@@ -266,6 +303,14 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
     draw = ImageDraw.Draw(img)
     draw.text((tx, ty), display_title, fill=(255, 255, 255), font=font_title)
     
+    # 3. Draw capsule naming badge
+    try:
+        font_badge = ImageFont.truetype("arialbd.ttf", 36)
+    except IOError:
+        font_badge = ImageFont.load_default()
+    badge_y = ty + th + 60
+    draw_pack_type_badge(draw, cx, badge_y, pack_type, text_color, font_badge)
+    
     # 4. Headers and footers
     header_text = "ARQIVE SAMPLE COLLECTION"
     bbox_h = draw.textbbox((0, 0), header_text, font=font_brand)
@@ -280,6 +325,39 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
     # 5. Outlined border
     draw.rectangle([8, 8, SIZE - 9, SIZE - 9], outline=border_color, width=3)
     
+    # 6. Logo and Parental Advisory Overlays
+    # bottom-left Parental Advisory (width=160px)
+    pa_path = os.path.join(ASSETS_DIR, "parental_advisory.png")
+    if os.path.exists(pa_path):
+        try:
+            pa_img = Image.open(pa_path).convert("RGBA")
+            pa_w = 160
+            pa_h = int(pa_img.height * (pa_w / pa_img.width))
+            pa_img = pa_img.resize((pa_w, pa_h), Image.Resampling.LANCZOS)
+            img.paste(pa_img, (60, SIZE - 60 - pa_h), pa_img)
+        except Exception as e:
+            print(f"Error loading parental advisory logo: {e}")
+            
+    # top-left Producer Icon (80x80px)
+    pi_path = os.path.join(ASSETS_DIR, "producer_icon_or_logo(1).png")
+    if os.path.exists(pi_path):
+        try:
+            pi_img = Image.open(pi_path).convert("RGBA")
+            pi_img = pi_img.resize((80, 80), Image.Resampling.LANCZOS)
+            img.paste(pi_img, (60, 60), pi_img)
+        except Exception as e:
+            print(f"Error loading producer icon: {e}")
+            
+    # top-right Main Logo (120x120px)
+    ml_path = os.path.join(ASSETS_DIR, "producer_icon_or_logo.png")
+    if os.path.exists(ml_path):
+        try:
+            ml_img = Image.open(ml_path).convert("RGBA")
+            ml_img = ml_img.resize((120, 120), Image.Resampling.LANCZOS)
+            img.paste(ml_img, (SIZE - 60 - 120, 60), ml_img)
+        except Exception as e:
+            print(f"Error loading main logo: {e}")
+            
     img.save(output_path)
     print(f"Cover art generated: {output_path}")
     return output_path

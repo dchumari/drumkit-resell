@@ -32,6 +32,20 @@ PROCESSED_LINKS_FILE = os.path.join(config.DATA_DIR, "processed_links.txt")
 QUEUE_FILE = os.path.join(config.DATA_DIR, "scraped_queue.json")
 PACKS_FILE = os.path.join(config.DATA_DIR, "packs.json")
 
+def detect_pack_type(name: str) -> str:
+    """Identifies the category of the pack based on its name."""
+    name_lower = name.lower()
+    if any(k in name_lower for k in ["drumkit", "drum kit", "drums"]):
+        return "Drumkit"
+    if any(k in name_lower for k in ["loopkit", "loop kit", "melody", "melodies", "loops"]):
+        return "Loopkit"
+    if any(k in name_lower for k in ["oneshot", "one shot", "oneshots"]):
+        return "One-shot"
+    if any(k in name_lower for k in ["presets", "bank", "serum", "electra"]):
+        return "Presets"
+    return "Default"
+
+
 def load_processed_links() -> set:
     """Loads the set of processed Reddit post IDs."""
     if not os.path.exists(PROCESSED_LINKS_FILE):
@@ -73,6 +87,26 @@ def save_packs(packs: List[dict]):
     """Saves the registry of completed packs."""
     with open(PACKS_FILE, "w", encoding="utf-8") as f:
         json.dump(packs, f, indent=4)
+
+def resolve_randomized_palette(genre: str):
+    """Resolves a cohesive color palette for the run with RGB jitter."""
+    import random
+    gconfig = config.GENRE_COLORS.get(genre, config.GENRE_COLORS["Default"])
+    base_c1, base_c2 = gconfig["bg_gradient"]
+    base_text_color = gconfig["text_color"]
+    
+    # We apply the same random offset to both colors to maintain the color relationship (gradient transition)
+    offset_r = random.randint(-20, 20)
+    offset_g = random.randint(-20, 20)
+    offset_b = random.randint(-20, 20)
+    
+    def jitter_color(color):
+        r = max(0, min(255, color[0] + offset_r))
+        g = max(0, min(255, color[1] + offset_g))
+        b = max(0, min(255, color[2] + offset_b))
+        return (r, g, b)
+        
+    return (jitter_color(base_c1), jitter_color(base_c2), jitter_color(base_text_color))
 
 def scrape_reddit_links(subreddit: str = "Drumkits", rss_url: Optional[str] = None) -> int:
     """
@@ -296,8 +330,10 @@ def run_throwback_release(upload: bool = False):
         
         # 1. Regenerate visual assets with fresh random colors
         rebranded_name = f"[VAULT] {old_pack['name']}"
-        cover_generator.generate_cover_art(rebranded_name, old_pack["genre"], cover_path)
-        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, old_pack["genre"])
+        color_palette = resolve_randomized_palette(old_pack["genre"])
+        pack_type = detect_pack_type(old_pack["name"])
+        cover_generator.generate_cover_art(rebranded_name, old_pack["genre"], cover_path, color_palette, pack_type=pack_type)
+        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, old_pack["genre"], color_palette, pack_type=pack_type)
         
         # 2. Download the original ZIP file from Telegram using the file_id
         local_zip = os.path.join(temp_dir, "old_kit.zip")
@@ -331,10 +367,10 @@ def run_throwback_release(upload: bool = False):
         
         # Create visual overlay graphic and subtitles.srt with the compiled markers
         video_generator.create_srt_file(markers, srt_path)
-        video_generator.create_tracklist_overlay(rebranded_name, old_pack["genre"], markers, overlay_path)
+        video_generator.create_tracklist_overlay(rebranded_name, old_pack["genre"], markers, overlay_path, color_palette)
         
-        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, old_pack["genre"], markers, srt_path)
-        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, old_pack["genre"], rebranded_name)
+        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, old_pack["genre"], markers, srt_path, color_palette)
+        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, old_pack["genre"], rebranded_name, markers, color_palette)
         
         if not upload:
             print("\n[Local Analysis Mode] Copying generated Vault throwback files to output folder...")
@@ -544,8 +580,10 @@ def process_item(
             raise ValueError(f"Pack contains too few samples ({total_samples}). Minimum required is {min_samples}. Skipping.")
                     
         # Generate cover and mockup art
-        cover_generator.generate_cover_art(rebranded_name, genre, cover_path)
-        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre)
+        color_palette = resolve_randomized_palette(genre)
+        pack_type = detect_pack_type(rebranded_name)
+        cover_generator.generate_cover_art(rebranded_name, genre, cover_path, color_palette, pack_type=pack_type)
+        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre, color_palette, pack_type=pack_type)
         
         # 3. Create Audio Showcase
         showcase = audio_processor.select_preview_showcase(cats)
@@ -560,11 +598,11 @@ def process_item(
         video_generator.create_srt_file(markers, srt_path)
         
         # 4. Generate Video Visuals Tracklist Overlay
-        video_generator.create_tracklist_overlay(rebranded_name, genre, markers, overlay_path)
+        video_generator.create_tracklist_overlay(rebranded_name, genre, markers, overlay_path, color_palette)
         
         # Compile video files
-        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, genre, markers, srt_path)
-        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, genre, rebranded_name)
+        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, genre, markers, srt_path, color_palette)
+        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, genre, rebranded_name, markers, color_palette)
         
         # 5. Package rebranded drumkit ZIP
         clean_rebranded = rebranded_name.replace("Arqive", "").replace("[AQ]", "").strip()
