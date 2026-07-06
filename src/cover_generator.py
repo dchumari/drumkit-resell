@@ -2,10 +2,38 @@ import os
 import re
 import math
 import random
+import urllib.request
+import hashlib
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from config import GENRE_COLORS, ASSETS_DIR
 
 SIZE = 1200
+
+def get_background_image(url: str, cache_dir: str = "assets/cache") -> Image.Image:
+    """Downloads a background image from a URL and caches it locally."""
+    os.makedirs(cache_dir, exist_ok=True)
+    url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
+    cache_path = os.path.join(cache_dir, f"{url_hash}.png")
+    
+    if os.path.exists(cache_path):
+        try:
+            return Image.open(cache_path).convert("RGB")
+        except Exception:
+            pass
+            
+    try:
+        req = urllib.request.Request(
+            url, 
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+        )
+        with urllib.request.urlopen(req, timeout=8) as response:
+            with open(cache_path, 'wb') as out_file:
+                out_file.write(response.read())
+        return Image.open(cache_path).convert("RGB")
+    except Exception as e:
+        print(f"Network download failed: {e}. Falling back to gradient.")
+        return None
+
 
 def get_gradient_mask(w: int, h: int) -> Image.Image:
     """Generates a vertical gradient mask."""
@@ -60,7 +88,7 @@ def draw_stardust(img: Image.Image, color: tuple, count: int = 400):
                         blend = tuple(int(o[i] + (color[i] - o[i]) * a / 255) for i in range(3))
                         img.putpixel((px, py), blend)
 
-def generate_cover_art(pack_name: str, genre: str, output_path: str) -> str:
+def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palette=None) -> str:
     """
     Generates a full 1200x1200px rebranded cover art image 
     customized by genre and saves it to output_path.
@@ -69,7 +97,10 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str) -> str:
     
     # Resolve genre config
     gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
-    color1, color2 = gconfig["bg_gradient"]
+    if color_palette:
+        color1, color2 = color_palette[0], color_palette[1]
+    else:
+        color1, color2 = gconfig["bg_gradient"]
     text_color = gconfig["text_color"]
     border_color = gconfig["border_color"]
     overlay_filename = gconfig["overlay"]
