@@ -8,11 +8,6 @@ from typing import List, Tuple, Dict, Optional
 from config import GENRE_COLORS, ASSETS_DIR
 from cover_generator import generate_gradient
 
-# Failsafe: Ensure winget links path is in PATH (required for winget FFmpeg DLLs)
-gyan_path = os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\WinGet\Links")
-if os.path.exists(gyan_path) and gyan_path not in os.environ["PATH"]:
-    os.environ["PATH"] += ";" + gyan_path
-
 def get_wav_duration(filepath: str) -> float:
     """Attempts to read the duration of an audio file using wave first, then ffprobe fallback."""
     import wave
@@ -34,17 +29,30 @@ def get_wav_duration(filepath: str) -> float:
 def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_path: str, voice_tag_path: str) -> Tuple[str, List[dict]]:
     """
     Trims, concatenates, and mixes voice tag watermarks into the showcase audio.
+    Standardizes each audio segment first to temporary WAV files to prevent command length limits and mixed sample rate issues.
     Returns (output_audio_path, markers)
     """
     import config
-    temp_concat = "temp_concat.wav"
-    inputs = []
-    filter_parts = []
-    concat_parts = []
+    temp_dir = os.path.join(os.path.dirname(output_audio_path), "temp_concat_parts")
+    if os.path.exists(temp_dir):
+        try:
+            shutil.rmtree(temp_dir)
+        except Exception:
+            pass
+    os.makedirs(temp_dir, exist_ok=True)
+    
+    temp_concat = os.path.join(os.path.dirname(output_audio_path), "temp_concat.wav")
+    if os.path.exists(temp_concat):
+        try:
+            os.remove(temp_concat)
+        except Exception:
+            pass
+        
     current_time = 0.0
     markers = []
+    temp_part_files = []
     
-    # 1. Build trim and concat filter
+    # 1. Pre-process each segment individually (trim, pad, and standardize to 44.1kHz stereo WAV)
     for idx, (fpath, cat) in enumerate(showcase_files):
         actual_dur = get_wav_duration(fpath)
         
@@ -59,10 +67,20 @@ def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_pa
             else:
                 duration = min(actual_dur, max_dur)
                 
-        inputs.extend(["-i", fpath])
-        filter_parts.append(f"[{idx}:a]apad,atrim=end={duration},asetpts=PTS-STARTPTS[a{idx}]")
-        concat_parts.append(f"[a{idx}]")
-        
+        part_wav = os.path.join(temp_dir, f"part_{idx:03d}.wav")
+        # Standardize sample rate (44100), channels (2), codec (pcm_s16le)
+        cmd_part = [
+            "ffmpeg", "-y", "-i", fpath,
+            "-af", f"apad,atrim=end={duration},asetpts=PTS-STARTPTS",
+            "-ar", "44100", "-ac", "2", "-c:a", "pcm_s16le", part_wav
+        ]
+        try:
+            subprocess.run(cmd_part, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            temp_part_files.append(part_wav)
+        except Exception as e:
+            print(f"Error standardizing showcase audio segment {fpath}: {e}")
+            continue
+            
         fname = os.path.basename(fpath)
         display_name = fname
         for prefix in ["[AQ]", "[AQ] "]:
@@ -84,21 +102,40 @@ def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_pa
         })
         current_time += duration
 
-    if not showcase_files:
+    if not temp_part_files:
+        if os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception:
+                pass
         return output_audio_path, []
 
-    filter_str = "; ".join(filter_parts) + "; " + "".join(concat_parts) + f"concat=n={len(showcase_files)}:v=0:a=1[aout]"
-    cmd_concat = ["ffmpeg", "-y"] + inputs + ["-filter_complex", filter_str, "-map", "[aout]", temp_concat]
+    # 2. Write the concat list txt file
+    concat_txt_path = os.path.join(temp_dir, "concat_list.txt")
+    with open(concat_txt_path, "w", encoding="utf-8") as f:
+        for p in temp_part_files:
+            # Format filename properly for FFmpeg concat demuxer (escaping single quotes)
+            safe_p = os.path.abspath(p).replace("'", "'\\''")
+            f.write(f"file '{safe_p}'\n")
+            
+    # 3. Concatenate using FFmpeg demuxer
+    cmd_concat = ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", concat_txt_path, "-c", "copy", temp_concat]
     
     try:
         subprocess.run(cmd_concat, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception as e:
-        print(f"Error concatenating showcase audio: {e}")
+        print(f"Error concatenating showcase audio via demuxer: {e}")
+        # Clean up and fallback
+        if os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception:
+                pass
         if len(showcase_files) > 0:
             shutil.copy(showcase_files[0][0], output_audio_path)
         return output_audio_path, markers
 
-    # 2. Mix in the voice tag watermarks
+    # 4. Mix in the voice tag watermarks
     tag_inputs = ["-i", temp_concat]
     if voice_tag_path and os.path.exists(voice_tag_path):
         tag_inputs.extend(["-i", voice_tag_path])
@@ -129,8 +166,17 @@ def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_pa
         print(f"Error mixing voice tags: {e}")
         shutil.copy(temp_concat, output_audio_path)
     finally:
+        # Clean up all temporary files
+        if os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+            except Exception:
+                pass
         if os.path.exists(temp_concat):
-            os.remove(temp_concat)
+            try:
+                os.remove(temp_concat)
+            except Exception:
+                pass
             
     return output_audio_path, markers
 
@@ -192,7 +238,7 @@ def create_tracklist_overlay(pack_name: str, genre: str, markers: List[dict], ou
         font_badge = ImageFont.load_default()
 
     # Draw rounded frosted glass background card
-    draw.rounded_rectangle([50, 50, 550, 1030], radius=16, fill=(15, 15, 25, 165), outline=(255, 255, 255, 45), width=2)
+    draw.rounded_rectangle([50, 50, 550, 1030], radius=16, fill=(10, 10, 15, 170), outline=(255, 255, 255, 25), width=2)
 
     # Draw Brand Logo
     draw.text((80, 80), "ARQIVE ARCHIVE", fill=(255, 255, 255, 250), font=font_logo)
@@ -271,7 +317,7 @@ def hex_to_ffmpeg_color(rgb: tuple) -> str:
 
 def generate_ffmpeg_tint_filter(tint_color: str, size: str = "1920x1080") -> str:
     """Builds greyscale conversion followed by color tint overlay blend."""
-    return f"format=gray,split[g1][g2];color=c={tint_color}:s={size}[tc];[g1][tc]blend=all_mode='multiply':all_opacity=0.45[tinted];[tinted][g2]blend=all_mode='overlay':all_opacity=0.55"
+    return f"format=gray,eq=brightness=-0.30,split[g1][g2];color=c={tint_color}:s={size}[tc];[g1][tc]blend=all_mode='multiply':all_opacity=0.5[tinted];[tinted][g2]blend=all_mode='overlay':all_opacity=0.4"
 
 def build_capsule_scroll_expression(markers: List[dict], positions: List[dict]) -> str:
     """
@@ -565,9 +611,6 @@ def render_scrolling_lyric_frame(
     """Renders a single frame for the Spotify-style vertical lyric scrolling Shorts video."""
     img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
-    
-    # Draw rounded backing card for the scrolling lyrics player to ensure readability
-    draw.rounded_rectangle([60, 1210, width - 60, 1490], radius=16, fill=(10, 10, 15, 160), outline=(255, 255, 255, 35), width=2)
     
     gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
     if color_palette:
