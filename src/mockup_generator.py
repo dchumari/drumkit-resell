@@ -133,6 +133,30 @@ def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: 
             
     return spine
 
+def draw_neon_outline(canvas: Image.Image, polygon_pts: list, color: tuple):
+    """Draws multiple blurred layers of a line outline to create a neon glow around the polygon points."""
+    pts = polygon_pts + [polygon_pts[0]]
+    
+    # 1. Thick blurred background glow (width 24, alpha 45, Gaussian blur 10)
+    glow1 = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+    gd1 = ImageDraw.Draw(glow1)
+    gd1.line(pts, fill=(*color, 45), width=24, joint="round")
+    glow1 = glow1.filter(ImageFilter.GaussianBlur(10))
+    canvas.alpha_composite(glow1)
+    
+    # 2. Medium blurred overlay glow (width 12, alpha 95, Gaussian blur 4)
+    glow2 = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+    gd2 = ImageDraw.Draw(glow2)
+    gd2.line(pts, fill=(*color, 95), width=12, joint="round")
+    glow2 = glow2.filter(ImageFilter.GaussianBlur(4))
+    canvas.alpha_composite(glow2)
+    
+    # 3. Crisp white neon core (width 3, alpha 220)
+    glow3 = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+    gd3 = ImageDraw.Draw(glow3)
+    gd3.line(pts, fill=(255, 255, 255, 220), width=3, joint="round")
+    canvas.alpha_composite(glow3)
+
 def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre: str, color_palette=None, pack_type: str = "Default"):
     """Warps cover and spine into a 3D box mockup and saves it."""
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
@@ -176,6 +200,15 @@ def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre:
     front_coeffs = get_perspective_coeffs(front_dest, front_src)
     warped_front = cover_img.transform(canvas_size, Image.Transform.PERSPECTIVE, front_coeffs, Image.Resampling.BILINEAR)
     canvas.paste(warped_front, (0, 0), warped_front)
+    
+    # 4. Draw Neon outline around the box silhouette
+    silhouette = [B, C, D, G, F, E]
+    gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
+    if color_palette:
+        neon_color = color_palette[2]
+    else:
+        neon_color = gconfig["text_color"]
+    draw_neon_outline(canvas, silhouette, neon_color)
     
     # Save as transparent PNG
     canvas.save(output_path, "PNG")

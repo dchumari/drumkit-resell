@@ -312,6 +312,9 @@ def create_tracklist_overlay(pack_name: str, genre: str, markers: List[dict], ou
         y += 32
         listed_count += 1
     
+    # Draw translucent wave background card on the right
+    draw.rounded_rectangle([1145, 770, 1855, 1010], radius=16, fill=(10, 10, 15, 120), outline=text_color, width=2)
+    
     img.save(output_img_path, "PNG")
     print(f"Tracklist overlay image created: {output_img_path}")
     return positions
@@ -524,7 +527,7 @@ def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, out
     
     filter_complex = (
         f"[0:v]{bg_filter}[bg_tinted]; "
-        f"[1:a]showwaves=s=650x180:mode=line:colors={wave_color}:r=30[wave]; "
+        f"[1:a]showwaves=s=650x180:mode=line:colors={wave_color}:r=30:scale=sqrt[wave]; "
         f"[2:v]scale=680:680[mock]; "
         f"[bg_tinted][4:v]overlay=x=60:y='{scroll_expr}':eval=frame[bg_highlighted]; "
         f"[bg_highlighted][3:v]overlay=x=0:y=0[bg_overlay]; "
@@ -767,6 +770,8 @@ def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_pa
         
     draw.text((540, 240), "ARQIVE", fill=(255, 255, 255, 230), font=font_logo, anchor="ms")
     draw.text((540, 320), clean_title_for_shorts(pack_name), fill=text_color_rgb, font=font_title, anchor="ms")
+    # Draw translucent wave background card
+    draw.rounded_rectangle([70, 1490, 1010, 1710], radius=16, fill=(10, 10, 15, 120), outline=text_color_rgb, width=2)
     draw.text((540, 1750), "🔗 FREE DOWNLOAD IN DESCRIPTION / PINNED MSG", fill=(245, 245, 250, 200), font=font_sub, anchor="ms")
     img.save(static_overlay_path, "PNG")
     
@@ -781,7 +786,7 @@ def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_pa
         
     filter_complex = (
         f"[0:v]{bg_filter}[bg_tinted]; "
-        f"[1:a]showwaves=s=880x160:mode=line:colors={wave_color}:r=30[wave]; "
+        f"[1:a]showwaves=s=880x160:mode=line:colors={wave_color}:r=30:scale=sqrt[wave]; "
         f"[2:v]scale=750:750[mock]; "
         f"[bg_tinted][3:v]overlay=x=0:y=0[bg_overlay]; "
         f"[bg_overlay][mock]overlay=x=165:y=380[bg_mock]; "

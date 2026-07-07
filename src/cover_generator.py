@@ -234,8 +234,8 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
     fw = bbox_f[2] - bbox_f[0]
     draw.text((cx - fw // 2, SIZE - 46), footer_text, fill=border_color, font=font_brand)
     
-    # 5. Outlined border
-    draw.rectangle([8, 8, SIZE - 9, SIZE - 9], outline=border_color, width=3)
+    # 5. Outlined border (removed to clean up mockup front face edges)
+    # draw.rectangle([8, 8, SIZE - 9, SIZE - 9], outline=border_color, width=3)
     
     # 6. Apply Branding Overlays
     rgba_img = img.convert("RGBA")
