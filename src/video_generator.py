@@ -369,17 +369,19 @@ def get_pexels_background_video(cache_dir: str = "assets/cache", registry_path: 
         selected_video = random.choice(candidates)
         video_id = selected_video["id"]
         
-        # 4. Find best HD video file
+        # 4. Find best MP4 video file by resolution (preferring HD/Full HD up to 2048px width)
         video_files = selected_video.get("video_files", [])
+        mp4_files = [vf for vf in video_files if vf.get("file_type") == "video/mp4" and vf.get("link")]
         best_file = None
-        for vf in video_files:
-            # We prefer HD (1920x1080) mp4 files
-            if vf.get("quality") == "hd" and vf.get("file_type") == "video/mp4":
-                best_file = vf
-                break
-        if not best_file and video_files:
-            # Fallback to first available file
-            best_file = video_files[0]
+        if mp4_files:
+            mp4_files.sort(key=lambda x: (x.get("width") or 0) * (x.get("height") or 0), reverse=True)
+            for vf in mp4_files:
+                w = vf.get("width") or 0
+                if w <= 2048:
+                    best_file = vf
+                    break
+            if not best_file:
+                best_file = mp4_files[0]
             
         if not best_file or not best_file.get("link"):
             print("No valid video link found in Pexels payload.")
