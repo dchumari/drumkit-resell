@@ -52,18 +52,24 @@ def get_perspective_coeffs(src_pts, dest_pts):
         vector.append(v)
     return solve_linear_system(matrix, vector)
 
-def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: str = "ARQIVE COLLECTION", pack_type: str = "Default") -> Image.Image:
-    """Generates a matching 2D spine strip from the cover art."""
-    cover = Image.open(cover_path)
-    
-    # 1. Base spine texture cropped from the cover's left side
-    spine = cover.crop((20, 0, 20 + width, height))
-    # Apply a dark overlay gradient to give it depth
-    overlay = Image.new("RGBA", (width, height), (0, 0, 0, 100))
-    spine = Image.alpha_composite(spine.convert("RGBA"), overlay).convert("RGB")
-    
-    # 2. Draw vertical rotated main text
+def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: str = "ARQIVE COLLECTION", pack_type: str = "Default", color_palette=None, genre: str = "Default") -> Image.Image:
+    """Generates an independent 2D spine strip with a solid matte charcoal background."""
+    # 1. Base spine texture: Solid charcoal/black background
+    spine = Image.new("RGB", (width, height), (18, 18, 20))
     draw = ImageDraw.Draw(spine)
+    
+    # Subtle right border edge divider
+    draw.line([(width - 1, 0), (width - 1, height)], fill=(35, 35, 40), width=1)
+    
+    # Resolve accent color for the capsule badge
+    accent_color = (255, 160, 30) # Default orange fallback
+    if color_palette:
+        accent_color = color_palette[2]
+    else:
+        gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
+        accent_color = gconfig["text_color"]
+        
+    # 2. Draw vertical rotated main text
     try:
         font_spine = ImageFont.truetype("arialbd.ttf", 26)
         font_spine_badge = ImageFont.truetype("arialbd.ttf", 16)
@@ -71,22 +77,17 @@ def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: 
         font_spine = ImageFont.load_default()
         font_spine_badge = ImageFont.load_default()
         
-    # Create horizontal text image
     bbox = draw.textbbox((0, 0), text, font=font_spine)
     tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
     
     txt_img = Image.new("RGBA", (tw + 40, th + 20), (0, 0, 0, 0))
     td = ImageDraw.Draw(txt_img)
-    td.text((20, 10), text, fill=(240, 240, 245, 220), font=font_spine)
+    td.text((20, 10), text, fill=(245, 245, 250, 220), font=font_spine)
     
-    # Rotate 270 degrees (so it reads bottom-to-top)
     rotated_txt = txt_img.rotate(270, expand=True)
-    
-    # Center rotated text on spine
     rw, rh = rotated_txt.size
     sx = (width - rw) // 2
     sy = (height - rh) // 2
-    
     spine.paste(rotated_txt, (sx, sy), rotated_txt)
     
     # 3. Draw vertical rotated pack-type capsule badge below main text
@@ -107,27 +108,24 @@ def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: 
         badge_img = Image.new("RGBA", (badge_canvas_w, badge_canvas_h), (0, 0, 0, 0))
         bd = ImageDraw.Draw(badge_img)
         
-        # Draw capsule outline
-        bd.rounded_rectangle([5, 5, badge_canvas_w - 5, badge_canvas_h - 5], radius=6, outline=(245, 245, 250, 180), width=2)
-        bd.text((5 + pad_x, 5 + pad_y), badge_text, fill=(245, 245, 250, 200), font=font_spine_badge)
+        # Draw capsule outline using accent color
+        bd.rounded_rectangle([5, 5, badge_canvas_w - 5, badge_canvas_h - 5], radius=6, outline=(*accent_color, 180), width=2)
+        bd.text((5 + pad_x, 5 + pad_y), badge_text, fill=(*accent_color, 200), font=font_spine_badge)
         
-        # Rotate 270 degrees
         rotated_badge = badge_img.rotate(270, expand=True)
         rbw, rbh = rotated_badge.size
         
-        # Paste below the main text
         bsx = (width - rbw) // 2
         bsy = sy + rh + 40
         if bsy + rbh < height - 60:
             spine.paste(rotated_badge, (bsx, bsy), rotated_badge)
             
-    # 4. Paste Producer Icon at the top of the spine (60x60px)
+    # 4. Paste Producer Icon at top of spine (60x60px)
     pi_path = os.path.join(ASSETS_DIR, "producer_icon_or_logo(1).png")
     if os.path.exists(pi_path):
         try:
             pi_img = Image.open(pi_path).convert("RGBA")
             pi_img = pi_img.resize((60, 60), Image.Resampling.LANCZOS)
-            # Center horizontally, 60px from top
             spine.paste(pi_img, ((width - 60) // 2, 60), pi_img)
             print("Pasted producer icon on spine.")
         except Exception as e:
@@ -168,7 +166,7 @@ def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre:
     canvas.paste(shadow_canvas, (0, 0), shadow_canvas)
     
     # 2. Warp Spine Left Face
-    spine_img = generate_spine(cover_path, height=1200, width=120, text=pack_name.upper(), pack_type=pack_type).convert("RGBA")
+    spine_img = generate_spine(cover_path, height=1200, width=120, text=pack_name.upper(), pack_type=pack_type, color_palette=color_palette, genre=genre).convert("RGBA")
     spine_coeffs = get_perspective_coeffs(spine_dest, spine_src)
     warped_spine = spine_img.transform(canvas_size, Image.Transform.PERSPECTIVE, spine_coeffs, Image.Resampling.BILINEAR)
     canvas.paste(warped_spine, (0, 0), warped_spine)

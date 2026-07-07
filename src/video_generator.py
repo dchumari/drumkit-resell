@@ -309,6 +309,106 @@ def build_capsule_scroll_expression(markers: List[dict], positions: List[dict]) 
     expr += ")" * (len(markers) - 1)
     return expr
 
+def get_pexels_background_video(cache_dir: str = "assets/cache", registry_path: str = "data/used_background_videos.json") -> Optional[str]:
+    """
+    Queries Pexels Videos search API for 'abstract background',
+    filters out previously used video IDs using the registry,
+    downloads the selected HD video, and saves the ID to the registry.
+    """
+    import config
+    api_key = getattr(config, "PEXELS_API_KEY", "")
+    if not api_key:
+        return None
+        
+    import json
+    import urllib.parse
+    import urllib.request
+    import random
+    import hashlib
+    
+    os.makedirs(cache_dir, exist_ok=True)
+    os.makedirs(os.path.dirname(registry_path), exist_ok=True)
+    
+    # 1. Load used videos registry
+    used_ids = set()
+    if os.path.exists(registry_path):
+        try:
+            with open(registry_path, "r", encoding="utf-8") as f:
+                used_ids = set(json.load(f))
+        except Exception:
+            pass
+            
+    # 2. Query Pexels Video API
+    query = "abstract background"
+    url = f"https://api.pexels.com/v1/videos/search?query={urllib.parse.quote(query)}&per_page=80"
+    
+    try:
+        req = urllib.request.Request(url, headers={
+            "Authorization": api_key,
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        })
+        print(f"Searching Pexels Video API for: '{query}'...")
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            videos = data.get("videos", [])
+            
+        if not videos:
+            print("No Pexels videos found.")
+            return None
+            
+        # 3. Filter out already used video IDs
+        candidates = [v for v in videos if v.get("id") not in used_ids]
+        
+        # If all videos in page were already used, reset registry to avoid blocking
+        if not candidates:
+            print("All returned Pexels videos were already used. Resetting used videos list to recycle.")
+            candidates = videos
+            used_ids = set()
+            
+        # Select a random unused video
+        selected_video = random.choice(candidates)
+        video_id = selected_video["id"]
+        
+        # 4. Find best HD video file
+        video_files = selected_video.get("video_files", [])
+        best_file = None
+        for vf in video_files:
+            # We prefer HD (1920x1080) mp4 files
+            if vf.get("quality") == "hd" and vf.get("file_type") == "video/mp4":
+                best_file = vf
+                break
+        if not best_file and video_files:
+            # Fallback to first available file
+            best_file = video_files[0]
+            
+        if not best_file or not best_file.get("link"):
+            print("No valid video link found in Pexels payload.")
+            return None
+            
+        # 5. Download the video file
+        download_url = best_file["link"]
+        cached_video_path = os.path.join(cache_dir, f"video_{video_id}.mp4")
+        
+        if not os.path.exists(cached_video_path):
+            img_req = urllib.request.Request(download_url, headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+            })
+            print(f"Downloading Pexels video background: {download_url}")
+            with urllib.request.urlopen(img_req, timeout=15) as img_resp:
+                with open(cached_video_path, "wb") as out_file:
+                    out_file.write(img_resp.read())
+                    
+        # 6. Save selection to registry
+        used_ids.add(video_id)
+        with open(registry_path, "w", encoding="utf-8") as f:
+            json.dump(list(used_ids), f, indent=4)
+            
+        print(f"Successfully selected and cached Pexels video background (ID: {video_id})")
+        return cached_video_path
+    except Exception as e:
+        print(f"Pexels Video API failed: {e}. Falling back to default background.")
+        return None
+
 def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, output_video_path: str, genre: str, markers: List[dict], srt_path: str, color_palette=None) -> bool:
     """
     Compiles the 16:9 landscape YouTube showcase video.
@@ -331,24 +431,31 @@ def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, out
     # 2. Get layout overlay positions
     positions = create_tracklist_overlay("Dummy", genre, markers, overlay_path, color_palette)
     
-    # Find random background video
-    bg_video = "bg_loop_1.mp4"
-    if os.path.exists(ASSETS_DIR):
-        loops = [f for f in os.listdir(ASSETS_DIR) if f.startswith("bg_loop") and f.endswith(".mp4")]
-        if loops:
-            bg_video = random.choice(loops)
-    bg_video_path = os.path.join(ASSETS_DIR, bg_video)
-    
+    # Find background video (Try Pexels first, then local assets, then gradient fallback)
+    pexels_video = get_pexels_background_video()
     temp_bg_gradient = None
-    if not os.path.exists(bg_video_path):
-        temp_bg_gradient = os.path.join(os.path.dirname(output_video_path), "temp_bg_gradient.png")
-        gradient_img = generate_gradient(2000, 2000, color1, color2)
-        gradient_img.save(temp_bg_gradient, "PNG")
-        bg_input = f"-loop 1 -i {temp_bg_gradient}"
-        bg_filter = "crop=w=1920:h=1080:x='(in_w-1920)/2 + (in_w-1920)/2*sin(t*0.1)':y='(in_h-1080)/2 + (in_h-1080)/2*cos(t*0.1)',setsar=1"
-    else:
+    
+    if pexels_video:
+        bg_video_path = pexels_video
         bg_input = f"-stream_loop -1 -i {bg_video_path}"
-        bg_filter = f"scale=1920:1080,{generate_ffmpeg_tint_filter(tint_color, '1920x1080')}"
+        bg_filter = f"scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,setsar=1,{generate_ffmpeg_tint_filter(tint_color, '1920x1080')}"
+    else:
+        bg_video = "bg_loop_1.mp4"
+        if os.path.exists(ASSETS_DIR):
+            loops = [f for f in os.listdir(ASSETS_DIR) if f.startswith("bg_loop") and f.endswith(".mp4")]
+            if loops:
+                bg_video = random.choice(loops)
+        bg_video_path = os.path.join(ASSETS_DIR, bg_video)
+        
+        if not os.path.exists(bg_video_path):
+            temp_bg_gradient = os.path.join(os.path.dirname(output_video_path), "temp_bg_gradient.png")
+            gradient_img = generate_gradient(2000, 2000, color1, color2)
+            gradient_img.save(temp_bg_gradient, "PNG")
+            bg_input = f"-loop 1 -i {temp_bg_gradient}"
+            bg_filter = "crop=w=1920:h=1080:x='(in_w-1920)/2 + (in_w-1920)/2*sin(t*0.1)':y='(in_h-1080)/2 + (in_h-1080)/2*cos(t*0.1)',setsar=1"
+        else:
+            bg_input = f"-stream_loop -1 -i {bg_video_path}"
+            bg_filter = f"scale=1920:1080,{generate_ffmpeg_tint_filter(tint_color, '1920x1080')}"
 
     if not markers:
         print("Error: No markers provided for video compilation.")
@@ -555,23 +662,31 @@ def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_pa
     tint_color = hex_to_ffmpeg_color(color1)
     wave_color = hex_to_ffmpeg_color(text_color_rgb)
     
-    bg_video = "bg_loop_1.mp4"
-    if os.path.exists(ASSETS_DIR):
-        loops = [f for f in os.listdir(ASSETS_DIR) if f.startswith("bg_loop") and f.endswith(".mp4")]
-        if loops:
-            bg_video = random.choice(loops)
-    bg_video_path = os.path.join(ASSETS_DIR, bg_video)
-    
+    # Find background video (Try Pexels first, then local assets, then gradient fallback)
+    pexels_video = get_pexels_background_video()
     temp_bg_gradient = None
-    if not os.path.exists(bg_video_path):
-        temp_bg_gradient = os.path.join(os.path.dirname(output_video_path), "temp_bg_gradient_shorts.png")
-        gradient_img = generate_gradient(2000, 2000, color1, color2)
-        gradient_img.save(temp_bg_gradient, "PNG")
-        bg_input = f"-loop 1 -i {temp_bg_gradient}"
-        bg_filter = "crop=w=1080:h=1920:x='(in_w-1080)/2 + (in_w-1080)/2*sin(t*0.1)':y='(in_h-1920)/2 + (in_h-1920)/2*cos(t*0.1)',setsar=1"
-    else:
+    
+    if pexels_video:
+        bg_video_path = pexels_video
         bg_input = f"-stream_loop -1 -i {bg_video_path}"
         bg_filter = f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,{generate_ffmpeg_tint_filter(tint_color, '1080x1920')}"
+    else:
+        bg_video = "bg_loop_1.mp4"
+        if os.path.exists(ASSETS_DIR):
+            loops = [f for f in os.listdir(ASSETS_DIR) if f.startswith("bg_loop") and f.endswith(".mp4")]
+            if loops:
+                bg_video = random.choice(loops)
+        bg_video_path = os.path.join(ASSETS_DIR, bg_video)
+        
+        if not os.path.exists(bg_video_path):
+            temp_bg_gradient = os.path.join(os.path.dirname(output_video_path), "temp_bg_gradient_shorts.png")
+            gradient_img = generate_gradient(2000, 2000, color1, color2)
+            gradient_img.save(temp_bg_gradient, "PNG")
+            bg_input = f"-loop 1 -i {temp_bg_gradient}"
+            bg_filter = "crop=w=1080:h=1920:x='(in_w-1080)/2 + (in_w-1080)/2*sin(t*0.1)':y='(in_h-1920)/2 + (in_h-1920)/2*cos(t*0.1)',setsar=1"
+        else:
+            bg_input = f"-stream_loop -1 -i {bg_video_path}"
+            bg_filter = f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,{generate_ffmpeg_tint_filter(tint_color, '1080x1920')}"
         
     duration = min(30.0, markers[-1]["end"])
     

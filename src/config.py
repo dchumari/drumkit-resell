@@ -50,6 +50,7 @@ ADMIN_CHAT_ID = os.getenv("ADMIN_CHAT_ID", "")  # Target chat ID for logging bot
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_URL = os.getenv("OPENROUTER_URL", "https://openrouter.ai/api/v1")
+PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "")
 
 YOUTUBE_REFRESH_TOKEN = os.getenv("YOUTUBE_REFRESH_TOKEN", "")
 YOUTUBE_CLIENT_ID = os.getenv("YOUTUBE_CLIENT_ID", "")
