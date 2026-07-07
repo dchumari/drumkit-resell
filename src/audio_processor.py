@@ -718,9 +718,10 @@ def process_and_rename_kit(root_dir: str, rebranded_name: str = "Resold", genre:
             
     return final_categories, final_all_files
 
-def select_preview_showcase(categories: Dict[str, List[str]], max_per_cat: int = 5) -> List[Tuple[str, str]]:
+def select_preview_showcase(categories: Dict[str, List[str]], max_per_cat: int = 2, max_total: int = 15) -> List[Tuple[str, str]]:
     """
-    Selects up to max_per_cat samples from each category to form a preview.
+    Selects up to max_per_cat samples from each category to form a preview,
+    capping the total number of selected samples at max_total.
     Filters out non-audio files (presets, MIDIs, FLPs) and only includes playable audio extensions.
     Returns list of tuples: (file_path, category_name)
     """
@@ -744,7 +745,7 @@ def select_preview_showcase(categories: Dict[str, List[str]], max_per_cat: int =
             for f in selected:
                 showcase.append((f, cat))
                 
-    return showcase
+    return showcase[:max_total]
 
 def zip_pack(source_dir: str, output_zip_base: str) -> List[str]:
     """

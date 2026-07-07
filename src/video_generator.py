@@ -8,6 +8,11 @@ from typing import List, Tuple, Dict, Optional
 from config import GENRE_COLORS, ASSETS_DIR
 from cover_generator import generate_gradient
 
+# Failsafe: Ensure winget links path is in PATH (required for winget FFmpeg DLLs)
+gyan_path = os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\WinGet\Links")
+if os.path.exists(gyan_path) and gyan_path not in os.environ["PATH"]:
+    os.environ["PATH"] += ";" + gyan_path
+
 def get_wav_duration(filepath: str) -> float:
     """Attempts to read the duration of an audio file using wave first, then ffprobe fallback."""
     import wave
@@ -187,7 +192,7 @@ def create_tracklist_overlay(pack_name: str, genre: str, markers: List[dict], ou
         font_badge = ImageFont.load_default()
 
     # Draw rounded frosted glass background card
-    draw.rounded_rectangle([50, 50, 550, 1030], radius=16, fill=(15, 15, 25, 60), outline=(255, 255, 255, 25), width=2)
+    draw.rounded_rectangle([50, 50, 550, 1030], radius=16, fill=(15, 15, 25, 165), outline=(255, 255, 255, 45), width=2)
 
     # Draw Brand Logo
     draw.text((80, 80), "ARQIVE ARCHIVE", fill=(255, 255, 255, 250), font=font_logo)
@@ -266,7 +271,7 @@ def hex_to_ffmpeg_color(rgb: tuple) -> str:
 
 def generate_ffmpeg_tint_filter(tint_color: str, size: str = "1920x1080") -> str:
     """Builds greyscale conversion followed by color tint overlay blend."""
-    return f"format=gray,split[g1][g2];color=c={tint_color}:s={size}[tc];[g1][tc]blend=all_mode='multiply':all_opacity=0.3[tinted];[tinted][g2]blend=all_mode='overlay':all_opacity=0.7"
+    return f"format=gray,split[g1][g2];color=c={tint_color}:s={size}[tc];[g1][tc]blend=all_mode='multiply':all_opacity=0.45[tinted];[tinted][g2]blend=all_mode='overlay':all_opacity=0.55"
 
 def build_capsule_scroll_expression(markers: List[dict], positions: List[dict]) -> str:
     """
@@ -560,6 +565,9 @@ def render_scrolling_lyric_frame(
     """Renders a single frame for the Spotify-style vertical lyric scrolling Shorts video."""
     img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
+    
+    # Draw rounded backing card for the scrolling lyrics player to ensure readability
+    draw.rounded_rectangle([60, 1210, width - 60, 1490], radius=16, fill=(10, 10, 15, 160), outline=(255, 255, 255, 35), width=2)
     
     gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
     if color_palette:
