@@ -67,6 +67,11 @@ def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_pa
             else:
                 duration = min(actual_dur, max_dur)
                 
+        # Limit total showcase preview time to 3 minutes (180.0 seconds)
+        if current_time + duration > 180.0:
+            print(f"Reached 3-minute showcase duration limit. Skipping remaining {len(showcase_files) - idx} files.")
+            break
+            
         part_wav = os.path.join(temp_dir, f"part_{idx:03d}.wav")
         # Standardize sample rate (44100), channels (2), codec (pcm_s16le)
         cmd_part = [

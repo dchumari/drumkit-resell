@@ -744,7 +744,7 @@ def select_preview_showcase(categories: Dict[str, List[str]], max_per_cat: int =
             for f in selected:
                 showcase.append((f, cat))
                 
-    return showcase[:20]
+    return showcase
 
 def zip_pack(source_dir: str, output_zip_base: str) -> List[str]:
     """
