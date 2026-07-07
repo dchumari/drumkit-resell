@@ -63,3 +63,17 @@ def test_pexels_video_registry():
     if os.path.exists(registry_path):
         os.remove(registry_path)
     config.PEXELS_API_KEY = old_key
+
+def test_detect_pack_type_logic():
+    from pipeline import detect_pack_type
+    # 1. Test by title keywords
+    assert detect_pack_type("Nova Pack", "Exclusive Loopkit 2026") == "Loopkit"
+    assert detect_pack_type("Apex Drums", "Best 808s") == "Drumkit"
+    assert detect_pack_type("Starlight One Shots", "Clean synths") == "One-shot"
+    
+    # 2. Test by extracted categories fallback
+    cats_loop = {"LOOPS": ["melody.wav"], "MELODIES": ["piano.wav"]}
+    assert detect_pack_type("Nova Pack", "No keywords", cats_loop) == "Loopkit"
+    
+    cats_drum = {"808S": ["sub.wav"], "KICKS": ["kick.wav"], "SNARES": ["snare.wav"]}
+    assert detect_pack_type("Nova Pack", "No keywords", cats_drum) == "Drumkit"

@@ -136,7 +136,7 @@ def main():
 
         # Step 3: Generate cover and 3D mockup graphics
         print("\nStep 3: Rendering cover art & 3D mockup box...")
-        pack_type = detect_pack_type(rebranded_full_name)
+        pack_type = detect_pack_type(rebranded_full_name, args.name, cats)
         color_palette = resolve_randomized_palette(args.genre)
         cover_generator.generate_cover_art(rebranded_full_name, args.genre, cover_path, color_palette, pack_type=pack_type)
         mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_full_name, args.genre, color_palette, pack_type=pack_type)
@@ -166,11 +166,14 @@ def main():
         if os.path.exists(gyan_path) and gyan_path not in os.environ["PATH"]:
             os.environ["PATH"] += ";" + gyan_path
             
+        # Resolve Pexels background video once per pack to ensure Landscape and Shorts use the same one
+        pexels_bg_path = video_generator.get_pexels_background_video()
+        
         print("\nStep 6: Running FFmpeg to compile landscape 16:9 showreel...")
-        v16_9_ok = video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, args.genre, markers, srt_path, color_palette)
+        v16_9_ok = video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, args.genre, markers, srt_path, color_palette, pexels_video_path=pexels_bg_path)
         
         print("Step 7: Running FFmpeg to compile vertical 9:16 Shorts showreel...")
-        v9_16_ok = video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, args.genre, rebranded_full_name, markers, color_palette)
+        v9_16_ok = video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, args.genre, rebranded_full_name, markers, color_palette, pexels_video_path=pexels_bg_path)
         
         # Step 8: Package Rebranded Zip
         print("\nStep 8: Packaging clean rebranded drumkit volume...")

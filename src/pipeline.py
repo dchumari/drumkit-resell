@@ -471,17 +471,27 @@ def clean_filename_for_zip(name: str) -> str:
     cleaned = name.replace(" ", "_").replace("[", "").replace("]", "")
     return re.sub(r'[^a-zA-Z0-9_-]', '', cleaned)
 
-def detect_pack_type(name: str) -> str:
-    """Identifies the category of the pack based on its name."""
-    name_lower = name.lower()
-    if any(k in name_lower for k in ["drumkit", "drum kit", "drums"]):
-        return "Drumkit"
-    if any(k in name_lower for k in ["loopkit", "loop kit", "melody", "loops"]):
-        return "Loopkit"
-    if any(k in name_lower for k in ["oneshot", "one shot", "oneshots"]):
+def detect_pack_type(name: str, original_title: str = "", cats: dict = None) -> str:
+    """Identifies the category of the pack based on name, original title, and folder contents."""
+    full_search = f"{name} {original_title}".lower()
+    if any(k in full_search for k in ["oneshot", "one shot", "oneshots"]):
         return "One-shot"
-    if any(k in name_lower for k in ["presets", "bank", "serum", "electra"]):
+    if any(k in full_search for k in ["loopkit", "loop kit", "loops", "melody kit", "melodies"]):
+        return "Loopkit"
+    if any(k in full_search for k in ["drumkit", "drum kit", "drums", "kit"]):
+        return "Drumkit"
+    if any(k in full_search for k in ["presets", "bank", "serum", "electra"]):
         return "Presets"
+        
+    # Check extracted categories
+    if cats:
+        has_loops = any(c in cats for c in ["LOOPS", "MELODIES"])
+        has_drums = any(c in cats for c in ["808S", "KICKS", "SNARES", "HATS", "CLAPS", "PERCS"])
+        if has_loops and not has_drums:
+            return "Loopkit"
+        if has_drums:
+            return "Drumkit"
+            
     return "Default"
 
 def process_item(
@@ -578,7 +588,7 @@ def process_item(
             raise ValueError(f"Pack contains too few samples ({total_samples}). Minimum required is {min_samples}. Skipping.")
                     
         # Generate cover and mockup art
-        pack_type = detect_pack_type(rebranded_name)
+        pack_type = detect_pack_type(rebranded_name, title, cats)
         color_palette = resolve_randomized_palette(genre)
         cover_generator.generate_cover_art(rebranded_name, genre, cover_path, color_palette, pack_type=pack_type)
         mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre, color_palette, pack_type=pack_type)
@@ -598,9 +608,12 @@ def process_item(
         # 4. Generate Video Visuals Tracklist Overlay
         video_generator.create_tracklist_overlay(rebranded_name, genre, markers, overlay_path, color_palette)
         
+        # Resolve Pexels background video once per pack to ensure Landscape and Shorts use the same one
+        pexels_bg_path = video_generator.get_pexels_background_video()
+        
         # Compile video files
-        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, genre, markers, srt_path, color_palette)
-        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, genre, rebranded_name, markers, color_palette)
+        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, genre, markers, srt_path, color_palette, pexels_video_path=pexels_bg_path)
+        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, genre, rebranded_name, markers, color_palette, pexels_video_path=pexels_bg_path)
         
         # 5. Package rebranded drumkit ZIP
         clean_rebranded = rebranded_name.replace("Arqive", "").replace("[AQ]", "").strip()

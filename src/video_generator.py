@@ -266,7 +266,7 @@ def hex_to_ffmpeg_color(rgb: tuple) -> str:
 
 def generate_ffmpeg_tint_filter(tint_color: str, size: str = "1920x1080") -> str:
     """Builds greyscale conversion followed by color tint overlay blend."""
-    return f"format=gray,split[g1][g2];color=c={tint_color}:s={size}[tc];[g1][tc]blend=all_mode='multiply'[tinted];[tinted][g2]blend=all_mode='overlay':all_opacity=0.6"
+    return f"format=gray,split[g1][g2];color=c={tint_color}:s={size}[tc];[g1][tc]blend=all_mode='multiply':all_opacity=0.3[tinted];[tinted][g2]blend=all_mode='overlay':all_opacity=0.7"
 
 def build_capsule_scroll_expression(markers: List[dict], positions: List[dict]) -> str:
     """
@@ -411,7 +411,7 @@ def get_pexels_background_video(cache_dir: str = "assets/cache", registry_path: 
         print(f"Pexels Video API failed: {e}. Falling back to default background.")
         return None
 
-def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, output_video_path: str, genre: str, markers: List[dict], srt_path: str, color_palette=None) -> bool:
+def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, output_video_path: str, genre: str, markers: List[dict], srt_path: str, color_palette=None, pexels_video_path: Optional[str] = None) -> bool:
     """
     Compiles the 16:9 landscape YouTube showcase video.
     Features dynamically colored tinted background loop and scrolling active track highlight.
@@ -433,8 +433,8 @@ def compile_video_16_9(audio_path: str, mockup_path: str, overlay_path: str, out
     # 2. Get layout overlay positions
     positions = create_tracklist_overlay("Dummy", genre, markers, overlay_path, color_palette)
     
-    # Find background video (Try Pexels first, then local assets, then gradient fallback)
-    pexels_video = get_pexels_background_video()
+    # Find background video (Try passed Pexels video first, then fetch Pexels, then local assets, then gradient fallback)
+    pexels_video = pexels_video_path if pexels_video_path and os.path.exists(pexels_video_path) else get_pexels_background_video()
     temp_bg_gradient = None
     
     if pexels_video:
@@ -649,7 +649,7 @@ def render_scrolling_lyric_frame(
             
     img.save(output_path, "PNG")
 
-def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_path: str, genre: str, pack_name: str, markers: List[dict], color_palette=None) -> bool:
+def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_path: str, genre: str, pack_name: str, markers: List[dict], color_palette=None, pexels_video_path: Optional[str] = None) -> bool:
     """
     Compiles the 9:16 vertical YouTube Shorts video.
     Uses frame sequence lyric scrolling animation.
@@ -664,8 +664,8 @@ def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_pa
     tint_color = hex_to_ffmpeg_color(color1)
     wave_color = hex_to_ffmpeg_color(text_color_rgb)
     
-    # Find background video (Try Pexels first, then local assets, then gradient fallback)
-    pexels_video = get_pexels_background_video()
+    # Find background video (Try passed Pexels video first, then fetch Pexels, then local assets, then gradient fallback)
+    pexels_video = pexels_video_path if pexels_video_path and os.path.exists(pexels_video_path) else get_pexels_background_video()
     temp_bg_gradient = None
     
     if pexels_video:
