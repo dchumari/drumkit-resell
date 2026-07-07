@@ -313,7 +313,7 @@ def create_tracklist_overlay(pack_name: str, genre: str, markers: List[dict], ou
         listed_count += 1
     
     # Draw translucent wave background card on the right
-    draw.rounded_rectangle([1145, 770, 1855, 1010], radius=16, fill=(10, 10, 15, 120), outline=text_color, width=2)
+    draw.rounded_rectangle([1145, 770, 1855, 1010], radius=16, fill=(10, 10, 15, 160))
     
     img.save(output_img_path, "PNG")
     print(f"Tracklist overlay image created: {output_img_path}")
@@ -771,7 +771,7 @@ def compile_video_9_16_shorts(audio_path: str, mockup_path: str, output_video_pa
     draw.text((540, 240), "ARQIVE", fill=(255, 255, 255, 230), font=font_logo, anchor="ms")
     draw.text((540, 320), clean_title_for_shorts(pack_name), fill=text_color_rgb, font=font_title, anchor="ms")
     # Draw translucent wave background card
-    draw.rounded_rectangle([70, 1490, 1010, 1710], radius=16, fill=(10, 10, 15, 120), outline=text_color_rgb, width=2)
+    draw.rounded_rectangle([70, 1490, 1010, 1710], radius=16, fill=(10, 10, 15, 160))
     draw.text((540, 1750), "🔗 FREE DOWNLOAD IN DESCRIPTION / PINNED MSG", fill=(245, 245, 250, 200), font=font_sub, anchor="ms")
     img.save(static_overlay_path, "PNG")
     
