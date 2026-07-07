@@ -4,7 +4,7 @@ import random
 import shutil
 import subprocess
 from PIL import Image, ImageDraw, ImageFont
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 from config import GENRE_COLORS, ASSETS_DIR
 from cover_generator import generate_gradient
 
