@@ -470,5 +470,64 @@
                 "end": 44.53859410430839
             }
         ]
+    },
+    {
+        "reddit_id": null,
+        "name": "Arqive Vortex 76",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADB2pScCSjk5w0wLI40NvLZFxiGENPAAImHAACZHaZUkGcLUAWgrMbPAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADB2pScCSjk5w0wLI40NvLZFxiGENPAAImHAACZHaZUkGcLUAWgrMbPAQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "eDq-LmjQtHk",
+        "tg_invoice_link": "https://t.me/c/3737519537/17",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-11T16:32:53.826956",
+        "markers": [
+            {
+                "name": "001 808 Venom - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 5.0
+            },
+            {
+                "name": "001 Kick Thump - @aq",
+                "category": "KICKS",
+                "start": 5.0,
+                "end": 6.5
+            },
+            {
+                "name": "001 Snare Slash - @aq",
+                "category": "SNARES",
+                "start": 6.5,
+                "end": 8.0
+            },
+            {
+                "name": "001 Hat Rusty - @aq",
+                "category": "HATS",
+                "start": 8.0,
+                "end": 9.0
+            },
+            {
+                "name": "001 Perc Phantom - @aq",
+                "category": "PERCS",
+                "start": 9.0,
+                "end": 10.2
+            },
+            {
+                "name": "001 Fx Glitch - @aq",
+                "category": "FX",
+                "start": 10.2,
+                "end": 12.7
+            },
+            {
+                "name": "001 Lofi Melody Loopam Loop Pop - @aq",
+                "category": "LOFI MELODY LOOPAM LOOPS",
+                "start": 12.7,
+                "end": 24.7
+            }
+        ]
     }
 ]
