@@ -145,6 +145,172 @@ GENRE_COLORS = {
     }
 }
 
+MULTIPLE_STYLES = {
+    "rounded_sidebar": {
+        "font_family": "Mulish",
+        "bg_gradient": ((30, 20, 50), (10, 8, 20)),
+        "text_color": (162, 130, 255),
+        "border_color": (80, 60, 140),
+        "secondary_color": (255, 255, 255),
+        "active_badge_bg": (162, 130, 255),
+        "active_badge_fg": (10, 8, 20),
+        "rounded_corners": 20,
+        "card_opacity": 15,
+        "wave_color": "0xa282ff"
+    },
+    "friendly_glass": {
+        "font_family": "Nunito",
+        "bg_gradient": ((40, 25, 10), (15, 10, 5)),
+        "text_color": (255, 152, 0),
+        "border_color": (160, 100, 30),
+        "secondary_color": (255, 255, 255),
+        "active_badge_bg": (255, 152, 0),
+        "active_badge_fg": (255, 255, 255),
+        "rounded_corners": 16,
+        "card_opacity": 20,
+        "wave_color": "0xff9800"
+    },
+    "liquid_glass": {
+        "font_family": "Nunito",
+        "bg_gradient": ((45, 10, 30), (15, 5, 10)),
+        "text_color": (255, 42, 133),
+        "border_color": (150, 30, 80),
+        "secondary_color": (255, 255, 255),
+        "active_badge_bg": (255, 42, 133),
+        "active_badge_fg": (255, 255, 255),
+        "rounded_corners": 35,
+        "card_opacity": 22,
+        "wave_color": "0xff2a85"
+    },
+    "pastel_minimalist": {
+        "font_family": "Mulish",
+        "bg_gradient": ((0, 150, 130), (0, 60, 50)),
+        "text_color": (0, 191, 165),
+        "border_color": (255, 255, 255),
+        "secondary_color": (255, 255, 255),
+        "active_badge_bg": (255, 255, 255),
+        "active_badge_fg": (0, 191, 165),
+        "rounded_corners": 28,
+        "card_opacity": 250,
+        "wave_color": "0x00bfa5"
+    },
+    "neon_sunset": {
+        "font_family": "Nunito",
+        "bg_gradient": ((15, 10, 25), (45, 15, 80)),
+        "text_color": (255, 0, 127),
+        "border_color": (255, 255, 0),
+        "secondary_color": (255, 123, 0),
+        "active_badge_bg": (255, 255, 0),
+        "active_badge_fg": (0, 0, 0),
+        "rounded_corners": 20,
+        "card_opacity": 255,
+        "wave_color": "0xffff00"
+    },
+    "floating_badge": {
+        "font_family": "Nunito",
+        "bg_gradient": ((10, 20, 30), (5, 10, 15)),
+        "text_color": (0, 242, 254),
+        "border_color": (30, 150, 160),
+        "secondary_color": (255, 255, 255),
+        "active_badge_bg": (0, 242, 254),
+        "active_badge_fg": (10, 20, 30),
+        "rounded_corners": 20,
+        "card_opacity": 20,
+        "wave_color": "0x00f2fe"
+    },
+    "frosted_bubble": {
+        "font_family": "Mulish",
+        "bg_gradient": ((15, 25, 20), (5, 10, 8)),
+        "text_color": (255, 179, 0),
+        "border_color": (255, 179, 0),
+        "secondary_color": (255, 94, 151),
+        "active_badge_bg": (255, 94, 151),
+        "active_badge_fg": (255, 255, 255),
+        "rounded_corners": 30,
+        "card_opacity": 18,
+        "wave_color": "0xffb300"
+    },
+    "liquid_sunset": {
+        "font_family": "Nunito",
+        "bg_gradient": ((20, 10, 30), (5, 2, 10)),
+        "text_color": (255, 138, 0),
+        "border_color": (255, 0, 127),
+        "secondary_color": (255, 255, 255),
+        "active_badge_bg": (255, 0, 127),
+        "active_badge_fg": (255, 255, 255),
+        "rounded_corners": 24,
+        "card_opacity": 15,
+        "wave_color": "0xff8a00"
+    },
+    "asymmetric_float": {
+        "font_family": "Mulish",
+        "bg_gradient": ((25, 20, 45), (10, 8, 20)),
+        "text_color": (162, 130, 255),
+        "border_color": (162, 130, 255),
+        "secondary_color": (255, 255, 255),
+        "active_badge_bg": (162, 130, 255),
+        "active_badge_fg": (10, 8, 20),
+        "rounded_corners": 28,
+        "card_opacity": 20,
+        "wave_color": "0xa282ff"
+    }
+}
+
+COLOR_MAP = {
+    "red": (255, 30, 30),
+    "orange": (255, 127, 0),
+    "yellow": (255, 220, 0),
+    "green": (50, 220, 80),
+    "mint": (0, 240, 160),
+    "cyan": (0, 220, 255),
+    "blue": (0, 127, 255),
+    "purple": (162, 130, 255),
+    "pink": (255, 0, 127),
+    "magenta": (255, 0, 127),
+    "white": (245, 245, 250),
+}
+
+def resolve_custom_color_palette(color_str: str):
+    """
+    Parses a color override string (hex, named, or 'random') and generates
+    a cohesive 3-color palette (bg_gradient_start, bg_gradient_end, accent_text).
+    """
+    import random
+    color_str = color_str.strip().lower()
+    
+    # 1. Handle random color generation
+    if color_str == "random":
+        # Pick a random predefined color name
+        color_str = random.choice(list(COLOR_MAP.keys()))
+        
+    accent = None
+    
+    # 2. Parse hex color
+    if color_str.startswith("#"):
+        hex_val = color_str.lstrip("#")
+        try:
+            accent = tuple(int(hex_val[i:i+2], 16) for i in (0, 2, 4))
+        except Exception:
+            accent = (255, 160, 30)  # Default fallback orange
+            
+    # 3. Parse named color
+    if not accent:
+        accent = COLOR_MAP.get(color_str)
+        
+    # 4. Fallback if not found
+    if not accent:
+        accent = (255, 160, 30)
+        
+    # 5. Derive gradient backgrounds (cohesive dark tint)
+    # Background start: 20% of accent brightness
+    color1 = (max(8, accent[0] // 5), max(8, accent[1] // 5), max(8, accent[2] // 5))
+    # Background end: 8% of accent brightness (near black)
+    color2 = (max(4, accent[0] // 12), max(4, accent[1] // 12), max(4, accent[2] // 12))
+    
+    return (color1, color2, accent)
+
+
+
 # Affiliate VST/Sample pack marketing links mapped to genre
 AFFILIATE_LINKS = {
     "Trap": "🔥 Recommended Trap VST: https://affiliate.example.com/synth-vst\n🔊 Best Saturation Plugin: https://affiliate.example.com/sat-plugin",
