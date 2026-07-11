@@ -506,14 +506,19 @@ def process_item(
     force_genre: Optional[str] = None,
     item_in_queue: Optional[dict] = None,
     size: int = 0,
-    ai_naming: Optional[bool] = None
+    ai_naming: Optional[bool] = None,
+    style: Optional[str] = None,
+    color: Optional[str] = None
 ) -> bool:
     """
     Downloads/prepares the ZIP, extracts, rebrands, compiles audio/video, packages,
     and either copies to local output directory (if upload=False) or uploads to
     Telegram/YouTube and updates databases (if upload=True).
     """
-    temp_dir = os.path.join(config.BASE_DIR, "temp_pipeline")
+    # Use a per-process temp directory so multiple parallel runs never clash
+    # on download.zip, extracted/, temp_concat_parts/, or temp_shorts_frames/.
+    run_id = os.getpid()
+    temp_dir = os.path.join(config.BASE_DIR, "temp_pipeline", f"run_{run_id}")
     if os.path.exists(temp_dir):
         try:
             shutil.rmtree(temp_dir)
@@ -587,11 +592,24 @@ def process_item(
         if total_samples < min_samples:
             raise ValueError(f"Pack contains too few samples ({total_samples}). Minimum required is {min_samples}. Skipping.")
                     
-        # Generate cover and mockup art
+        # Resolve cover and mockup art colors
         pack_type = detect_pack_type(rebranded_name, title, cats)
-        color_palette = resolve_randomized_palette(genre)
-        cover_generator.generate_cover_art(rebranded_name, genre, cover_path, color_palette, pack_type=pack_type)
-        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre, color_palette, pack_type=pack_type)
+        
+        # Resolve E2E cohesive color palette, prioritizing custom color overrides
+        if color:
+            color_palette = config.resolve_custom_color_palette(color)
+        else:
+            if style and style in config.MULTIPLE_STYLES:
+                sconfig = config.MULTIPLE_STYLES[style]
+                c1, c2 = sconfig["bg_gradient"]
+                text_color = sconfig["text_color"]
+                color_palette = (c1, c2, text_color)
+            else:
+                color_palette = resolve_randomized_palette(genre)
+                
+        cover_generator.generate_cover_art(rebranded_name, genre, cover_path, color_palette, pack_type=pack_type, style=style)
+        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre, color_palette, pack_type=pack_type, style=style)
+
         
         # 3. Create Audio Showcase
         showcase = audio_processor.select_preview_showcase(cats)
@@ -606,14 +624,14 @@ def process_item(
         video_generator.create_srt_file(markers, srt_path)
         
         # 4. Generate Video Visuals Tracklist Overlay
-        video_generator.create_tracklist_overlay(rebranded_name, genre, markers, overlay_path, color_palette)
+        video_generator.create_tracklist_overlay(rebranded_name, genre, markers, overlay_path, color_palette, style=style)
         
         # Resolve Pexels background video once per pack to ensure Landscape and Shorts use the same one
         pexels_bg_path = video_generator.get_pexels_background_video()
         
         # Compile video files
-        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, genre, markers, srt_path, color_palette, pexels_video_path=pexels_bg_path)
-        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, genre, rebranded_name, markers, color_palette, pexels_video_path=pexels_bg_path)
+        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, genre, markers, srt_path, color_palette, pexels_video_path=pexels_bg_path, style=style)
+        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, genre, rebranded_name, markers, color_palette, pexels_video_path=pexels_bg_path, style=style)
         
         # 5. Package rebranded drumkit ZIP
         clean_rebranded = rebranded_name.replace("Arqive", "").replace("[AQ]", "").strip()
@@ -799,7 +817,9 @@ def run_pipeline(
     force_genre: Optional[str] = None,
     subreddit: str = "Drumkits",
     rss_url: Optional[str] = None,
-    ai_naming: Optional[bool] = None
+    ai_naming: Optional[bool] = None,
+    style: Optional[str] = None,
+    color: Optional[str] = None
 ):
     """Main pipeline routine."""
     # If explicit inputs are given, process directly
@@ -816,7 +836,9 @@ def run_pipeline(
             mock=mock,
             force_name=force_name,
             force_genre=force_genre,
-            ai_naming=ai_naming
+            ai_naming=ai_naming,
+            style=style,
+            color=color
         )
         return
 
@@ -896,7 +918,9 @@ def run_pipeline(
                 size=size,
                 force_name=force_name,
                 force_genre=force_genre,
-                ai_naming=ai_naming
+                ai_naming=ai_naming,
+                style=style,
+                color=color
             )
             break
         except Exception as e:
@@ -925,6 +949,8 @@ if __name__ == "__main__":
     parser.add_argument("--subreddit", type=str, default="Drumkits", help="Subreddit name to scrape (default: Drumkits).")
     parser.add_argument("--rss-url", type=str, help="Specify a custom RSS feed URL to scrape directly.")
     parser.add_argument("--ai-naming", type=str, choices=["true", "false"], help="Override AI sample naming ('true' or 'false').")
+    parser.add_argument("--style", type=str, choices=["rounded_sidebar", "friendly_glass", "liquid_glass", "pastel_minimalist", "neon_sunset", "floating_badge", "frosted_bubble", "liquid_sunset", "asymmetric_float"], help="Visual style theme.")
+    parser.add_argument("--color", type=str, help="Custom color name (e.g. mint, red, cyan), hex (e.g. #FF0055), or 'random' to override theme color scheme.")
     args = parser.parse_args()
     
     ai_naming_val = None
@@ -940,6 +966,8 @@ if __name__ == "__main__":
         force_genre=args.genre,
         subreddit=args.subreddit,
         rss_url=args.rss_url,
-        ai_naming=ai_naming_val
+        ai_naming=ai_naming_val,
+        style=args.style,
+        color=args.color
     )
 

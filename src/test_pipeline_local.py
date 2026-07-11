@@ -68,10 +68,13 @@ def main():
     parser.add_argument("--name", type=str, default="Apex", help="Rebranded name to use (default: Apex)")
     parser.add_argument("--genre", type=str, default="Trap", choices=["Trap", "RnB", "Lofi", "Phonk", "Hip-Hop", "Reggaeton", "House"], help="Genre category (default: Trap)")
     parser.add_argument("--ai-naming", type=str, choices=["true", "false"], help="Override AI sample naming ('true' or 'false').")
+    parser.add_argument("--style", type=str, choices=["rounded_sidebar", "friendly_glass", "liquid_glass", "pastel_minimalist", "neon_sunset", "floating_badge", "frosted_bubble", "liquid_sunset", "asymmetric_float"], help="Visual style theme.")
+    parser.add_argument("--color", type=str, help="Custom color name, hex, or 'random' override.")
     args = parser.parse_args()
 
-    # Define output folder
-    output_dir = os.path.join(config.BASE_DIR, "test_output")
+    # Define output folder (isolate per run to prevent parallel race conditions)
+    run_id = os.getpid()
+    output_dir = os.path.join(config.BASE_DIR, "test_output", f"run_{run_id}")
     os.makedirs(output_dir, exist_ok=True)
     
     # 1. Setup target zip
@@ -137,9 +140,22 @@ def main():
         # Step 3: Generate cover and 3D mockup graphics
         print("\nStep 3: Rendering cover art & 3D mockup box...")
         pack_type = detect_pack_type(rebranded_full_name, args.name, cats)
-        color_palette = resolve_randomized_palette(args.genre)
-        cover_generator.generate_cover_art(rebranded_full_name, args.genre, cover_path, color_palette, pack_type=pack_type)
-        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_full_name, args.genre, color_palette, pack_type=pack_type)
+        
+        # Resolve E2E cohesive color palette, prioritizing custom color overrides
+        if args.color:
+            color_palette = config.resolve_custom_color_palette(args.color)
+        else:
+            if args.style and args.style in config.MULTIPLE_STYLES:
+                sconfig = config.MULTIPLE_STYLES[args.style]
+                c1, c2 = sconfig["bg_gradient"]
+                text_color = sconfig["text_color"]
+                color_palette = (c1, c2, text_color)
+            else:
+                color_palette = resolve_randomized_palette(args.genre)
+                
+        cover_generator.generate_cover_art(rebranded_full_name, args.genre, cover_path, color_palette, pack_type=pack_type, style=args.style)
+        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_full_name, args.genre, color_palette, pack_type=pack_type, style=args.style)
+
         
         # Step 4: Create Audio Showcase
         print("\nStep 4: Compiling preview showcase audio mix...")
@@ -157,7 +173,7 @@ def main():
         video_generator.create_srt_file(markers, srt_path)
         
         # Now create overlay image using markers dict list
-        video_generator.create_tracklist_overlay(rebranded_full_name, args.genre, markers, overlay_path, color_palette)
+        video_generator.create_tracklist_overlay(rebranded_full_name, args.genre, markers, overlay_path, color_palette, style=args.style)
         
         # Step 6: Compile video files (using FFmpeg)
         # Temporarily append Gyan.FFmpeg to system path if needed to ensure subprocess runs
@@ -170,10 +186,10 @@ def main():
         pexels_bg_path = video_generator.get_pexels_background_video()
         
         print("\nStep 6: Running FFmpeg to compile landscape 16:9 showreel...")
-        v16_9_ok = video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, args.genre, markers, srt_path, color_palette, pexels_video_path=pexels_bg_path)
+        v16_9_ok = video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, args.genre, markers, srt_path, color_palette, pexels_video_path=pexels_bg_path, style=args.style)
         
         print("Step 7: Running FFmpeg to compile vertical 9:16 Shorts showreel...")
-        v9_16_ok = video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, args.genre, rebranded_full_name, markers, color_palette, pexels_video_path=pexels_bg_path)
+        v9_16_ok = video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, args.genre, rebranded_full_name, markers, color_palette, pexels_video_path=pexels_bg_path, style=args.style)
         
         # Step 8: Package Rebranded Zip
         print("\nStep 8: Packaging clean rebranded drumkit volume...")
