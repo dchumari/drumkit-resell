@@ -225,5 +225,250 @@
                 "end": 44.241587301587295
             }
         ]
+    },
+    {
+        "reddit_id": "1ueddpb",
+        "name": "Arqive Aura 27",
+        "genre": "Lofi",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADBWpSYBFxF7UdUPsEAAHABlewEBwj1wACFRwAAmR2mVLw59usyE0jLjwE",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADBWpSYBFxF7UdUPsEAAHABlewEBwj1wACFRwAAmR2mVLw59usyE0jLjwE"
+        ],
+        "stars_price": 150,
+        "youtube_id": "wmyyxQTy7Co",
+        "tg_invoice_link": "https://t.me/c/3737519537/16",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-11T15:24:24.446293",
+        "markers": [
+            {
+                "name": "001 Kick Float - @aq",
+                "category": "KICKS",
+                "start": 0.0,
+                "end": 1.8461678004535147
+            },
+            {
+                "name": "002 Kick Chill - @aq",
+                "category": "KICKS",
+                "start": 1.8461678004535147,
+                "end": 3.6923356009070294
+            },
+            {
+                "name": "003 Kick Puffy - @aq",
+                "category": "KICKS",
+                "start": 3.6923356009070294,
+                "end": 5.538503401360544
+            },
+            {
+                "name": "004 Kick Haze - @aq",
+                "category": "KICKS",
+                "start": 5.538503401360544,
+                "end": 7.384671201814059
+            },
+            {
+                "name": "005 Kick Vinyl - @aq",
+                "category": "KICKS",
+                "start": 7.384671201814059,
+                "end": 9.230839002267574
+            },
+            {
+                "name": "001 Snare Sable - @aq",
+                "category": "SNARES",
+                "start": 9.230839002267574,
+                "end": 10.230839002267574
+            },
+            {
+                "name": "002 Snare Dawn - @aq",
+                "category": "SNARES",
+                "start": 10.230839002267574,
+                "end": 11.230839002267574
+            },
+            {
+                "name": "003 Snare Tape - @aq",
+                "category": "SNARES",
+                "start": 11.230839002267574,
+                "end": 12.230839002267574
+            },
+            {
+                "name": "004 Snare Brushed - @aq",
+                "category": "SNARES",
+                "start": 12.230839002267574,
+                "end": 13.230839002267574
+            },
+            {
+                "name": "005 Snare Vibe - @aq",
+                "category": "SNARES",
+                "start": 13.230839002267574,
+                "end": 14.230839002267574
+            },
+            {
+                "name": "001 Clap Sable - @aq",
+                "category": "CLAPS",
+                "start": 14.230839002267574,
+                "end": 15.230839002267574
+            },
+            {
+                "name": "002 Clap Glow - @aq",
+                "category": "CLAPS",
+                "start": 15.230839002267574,
+                "end": 16.230839002267572
+            },
+            {
+                "name": "003 Clap Vinyl - @aq",
+                "category": "CLAPS",
+                "start": 16.230839002267572,
+                "end": 17.230839002267572
+            },
+            {
+                "name": "001 Hat Velvet - @aq",
+                "category": "HATS",
+                "start": 17.230839002267572,
+                "end": 19.077006802721087
+            },
+            {
+                "name": "002 Hat Tink - @aq",
+                "category": "HATS",
+                "start": 19.077006802721087,
+                "end": 20.9231746031746
+            },
+            {
+                "name": "003 Hat Tape - @aq",
+                "category": "HATS",
+                "start": 20.9231746031746,
+                "end": 21.9231746031746
+            },
+            {
+                "name": "004 Hat Sable - @aq",
+                "category": "HATS",
+                "start": 21.9231746031746,
+                "end": 22.9231746031746
+            },
+            {
+                "name": "005 Hat Closed - @aq",
+                "category": "HATS",
+                "start": 22.9231746031746,
+                "end": 23.9231746031746
+            },
+            {
+                "name": "001 Perc Vinyl - @aq",
+                "category": "PERCS",
+                "start": 23.9231746031746,
+                "end": 24.9231746031746
+            },
+            {
+                "name": "002 Perc Tape - @aq",
+                "category": "PERCS",
+                "start": 24.9231746031746,
+                "end": 25.9231746031746
+            },
+            {
+                "name": "003 Perc Quiet - @aq",
+                "category": "PERCS",
+                "start": 25.9231746031746,
+                "end": 26.9231746031746
+            },
+            {
+                "name": "004 Perc Peace - @aq",
+                "category": "PERCS",
+                "start": 26.9231746031746,
+                "end": 27.9231746031746
+            },
+            {
+                "name": "005 Perc Velvet - @aq",
+                "category": "PERCS",
+                "start": 27.9231746031746,
+                "end": 28.9231746031746
+            },
+            {
+                "name": "001 Clave Whisper - @aq",
+                "category": "CLAVES",
+                "start": 28.9231746031746,
+                "end": 29.9231746031746
+            },
+            {
+                "name": "002 Clave Tone - @aq",
+                "category": "CLAVES",
+                "start": 29.9231746031746,
+                "end": 30.9231746031746
+            },
+            {
+                "name": "001 Cowbell Bell Loop Cozy - @aq",
+                "category": "COWBELL BELL LOOPS",
+                "start": 30.9231746031746,
+                "end": 31.84625850340136
+            },
+            {
+                "name": "002 Cowbell Bell Loop Dawn - @aq",
+                "category": "COWBELL BELL LOOPS",
+                "start": 31.84625850340136,
+                "end": 32.769342403628116
+            },
+            {
+                "name": "003 Cowbell Bell Loop Warm - @aq",
+                "category": "COWBELL BELL LOOPS",
+                "start": 32.769342403628116,
+                "end": 33.69242630385487
+            },
+            {
+                "name": "001 Floor Shimmer - @aq",
+                "category": "FLOORS",
+                "start": 33.69242630385487,
+                "end": 34.69242630385487
+            },
+            {
+                "name": "002 Floor Breeze - @aq",
+                "category": "FLOORS",
+                "start": 34.69242630385487,
+                "end": 35.69242630385487
+            },
+            {
+                "name": "003 Floor Silk - @aq",
+                "category": "FLOORS",
+                "start": 35.69242630385487,
+                "end": 36.69242630385487
+            },
+            {
+                "name": "004 Floor Haze - @aq",
+                "category": "FLOORS",
+                "start": 36.69242630385487,
+                "end": 37.69242630385487
+            },
+            {
+                "name": "005 Floor Dusty - @aq",
+                "category": "FLOORS",
+                "start": 37.69242630385487,
+                "end": 38.69242630385487
+            },
+            {
+                "name": "001 Maraca Tone - @aq",
+                "category": "MARACAS",
+                "start": 38.69242630385487,
+                "end": 39.69242630385487
+            },
+            {
+                "name": "001 Rack OneShot - @aq",
+                "category": "RACKS",
+                "start": 39.69242630385487,
+                "end": 40.69242630385487
+            },
+            {
+                "name": "002 Rack Glow - @aq",
+                "category": "RACKS",
+                "start": 40.69242630385487,
+                "end": 41.69242630385487
+            },
+            {
+                "name": "003 Rack Warm - @aq",
+                "category": "RACKS",
+                "start": 41.69242630385487,
+                "end": 42.69242630385487
+            },
+            {
+                "name": "001 Ride Cozy - @aq",
+                "category": "RIDES",
+                "start": 42.69242630385487,
+                "end": 44.53859410430839
+            }
+        ]
     }
 ]
