@@ -824,5 +824,64 @@
                 "end": 24.7
             }
         ]
+    },
+    {
+        "reddit_id": null,
+        "name": "Arqive Eon 49",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADE2pSjmbHhzh2AhsLN6urcd2otjpsAAJtHAACZHaZUk3B4fJUSb1lPAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADE2pSjmbHhzh2AhsLN6urcd2otjpsAAJtHAACZHaZUk3B4fJUSb1lPAQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "zna7dnXI4Yc",
+        "tg_invoice_link": "https://t.me/c/3737519537/23",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-11T18:42:02.763736",
+        "markers": [
+            {
+                "name": "001 808 Thump - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 5.0
+            },
+            {
+                "name": "001 Kick Beast - @aq",
+                "category": "KICKS",
+                "start": 5.0,
+                "end": 6.5
+            },
+            {
+                "name": "001 Snare Shot - @aq",
+                "category": "SNARES",
+                "start": 6.5,
+                "end": 8.0
+            },
+            {
+                "name": "001 Hat Blast - @aq",
+                "category": "HATS",
+                "start": 8.0,
+                "end": 9.0
+            },
+            {
+                "name": "001 Perc Toxic - @aq",
+                "category": "PERCS",
+                "start": 9.0,
+                "end": 10.2
+            },
+            {
+                "name": "001 Fx Laser - @aq",
+                "category": "FX",
+                "start": 10.2,
+                "end": 12.7
+            },
+            {
+                "name": "001 Lofi Melody Loopam Loop Hiss - @aq",
+                "category": "LOFI MELODY LOOPAM LOOPS",
+                "start": 12.7,
+                "end": 24.7
+            }
+        ]
     }
 ]
