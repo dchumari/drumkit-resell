@@ -1,6 +1,8 @@
 import os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from config import GENRE_COLORS, ASSETS_DIR
+from config import GENRE_COLORS, ASSETS_DIR, MULTIPLE_STYLES
+from font_manager import get_font
+
 
 def solve_linear_system(matrix, vector):
     """Gaussian elimination solver for NxN matrix in pure Python."""
@@ -52,7 +54,7 @@ def get_perspective_coeffs(src_pts, dest_pts):
         vector.append(v)
     return solve_linear_system(matrix, vector)
 
-def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: str = "ARQIVE COLLECTION", pack_type: str = "Default", color_palette=None, genre: str = "Default") -> Image.Image:
+def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: str = "ARQIVE COLLECTION", pack_type: str = "Default", color_palette=None, genre: str = "Default", style: str = None) -> Image.Image:
     """Generates an independent 2D spine strip with a solid matte charcoal background."""
     # 1. Base spine texture: Solid charcoal/black background
     spine = Image.new("RGB", (width, height), (18, 18, 20))
@@ -62,20 +64,23 @@ def generate_spine(cover_path: str, height: int = 1200, width: int = 120, text: 
     draw.line([(width - 1, 0), (width - 1, height)], fill=(35, 35, 40), width=1)
     
     # Resolve accent color for the capsule badge
-    accent_color = (255, 160, 30) # Default orange fallback
+    if style and style in MULTIPLE_STYLES:
+        sconfig = MULTIPLE_STYLES[style]
+        font_family = sconfig["font_family"]
+    else:
+        font_family = "Nunito"
+        
     if color_palette:
         accent_color = color_palette[2]
+    elif style and style in MULTIPLE_STYLES:
+        accent_color = MULTIPLE_STYLES[style]["text_color"]
     else:
         gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
         accent_color = gconfig["text_color"]
         
     # 2. Draw vertical rotated main text
-    try:
-        font_spine = ImageFont.truetype("arialbd.ttf", 26)
-        font_spine_badge = ImageFont.truetype("arialbd.ttf", 16)
-    except IOError:
-        font_spine = ImageFont.load_default()
-        font_spine_badge = ImageFont.load_default()
+    font_spine = get_font(font_family, 26, is_bold=True)
+    font_spine_badge = get_font(font_family, 16, is_bold=True)
         
     bbox = draw.textbbox((0, 0), text, font=font_spine)
     tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
@@ -157,7 +162,7 @@ def draw_neon_outline(canvas: Image.Image, polygon_pts: list, color: tuple):
     gd3.line(pts, fill=(255, 255, 255, 220), width=3, joint="round")
     canvas.alpha_composite(glow3)
 
-def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre: str, color_palette=None, pack_type: str = "Default"):
+def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre: str, color_palette=None, pack_type: str = "Default", style: str = None):
     """Warps cover and spine into a 3D box mockup and saves it."""
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
     
@@ -190,7 +195,7 @@ def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre:
     canvas.paste(shadow_canvas, (0, 0), shadow_canvas)
     
     # 2. Warp Spine Left Face
-    spine_img = generate_spine(cover_path, height=1200, width=120, text=pack_name.upper(), pack_type=pack_type, color_palette=color_palette, genre=genre).convert("RGBA")
+    spine_img = generate_spine(cover_path, height=1200, width=120, text=pack_name.upper(), pack_type=pack_type, color_palette=color_palette, genre=genre, style=style).convert("RGBA")
     spine_coeffs = get_perspective_coeffs(spine_dest, spine_src)
     warped_spine = spine_img.transform(canvas_size, Image.Transform.PERSPECTIVE, spine_coeffs, Image.Resampling.BILINEAR)
     canvas.paste(warped_spine, (0, 0), warped_spine)
@@ -201,14 +206,20 @@ def generate_3d_mockup(cover_path: str, output_path: str, pack_name: str, genre:
     warped_front = cover_img.transform(canvas_size, Image.Transform.PERSPECTIVE, front_coeffs, Image.Resampling.BILINEAR)
     canvas.paste(warped_front, (0, 0), warped_front)
     
-    # 4. Draw Neon outline around the box silhouette
+    # 4. Draw Neon outline around the box silhouette (Skip for pastel_minimalist style)
     silhouette = [B, C, D, G, F, E]
     gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
     if color_palette:
         neon_color = color_palette[2]
+    elif style and style in MULTIPLE_STYLES:
+        neon_color = MULTIPLE_STYLES[style]["text_color"]
     else:
         neon_color = gconfig["text_color"]
-    draw_neon_outline(canvas, silhouette, neon_color)
+        
+    style_key = style if (style and style in MULTIPLE_STYLES) else "Default"
+    if style_key != "pastel_minimalist":
+        draw_neon_outline(canvas, silhouette, neon_color)
+
     
     # Save as transparent PNG
     canvas.save(output_path, "PNG")

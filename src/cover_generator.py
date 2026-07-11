@@ -5,9 +5,11 @@ import random
 import urllib.request
 import hashlib
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from config import GENRE_COLORS, ASSETS_DIR
+from config import GENRE_COLORS, ASSETS_DIR, MULTIPLE_STYLES
+from font_manager import get_font
 
 SIZE = 1200
+
 
 def get_background_image(url: str, cache_dir: str = "assets/cache", cache_key: str = None) -> Image.Image:
     """Downloads a background image from a URL and caches it locally under a cache key."""
@@ -111,22 +113,40 @@ def draw_pack_type_badge(draw, cx, cy, pack_type, color, font):
     tx, ty = cx - tw // 2 - bbox[0], cy - th // 2 - bbox[1]
     draw.text((tx, ty), badge_text, fill=color, font=font)
 
-def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palette=None, pack_type: str = "Default") -> str:
+def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palette=None, pack_type: str = "Default", style: str = None) -> str:
     """
     Generates a full 1200x1200px rebranded cover art image 
     customized by genre and saves it to output_path.
+    Each visual style has a structurally unique cover layout.
     """
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
     
-    # Resolve genre config
-    gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
-    if color_palette:
-        color1, color2 = color_palette[0], color_palette[1]
+    style_key = style if (style and style in MULTIPLE_STYLES) else "Default"
+    
+    # 1. Resolve typography font family
+    if style and style in MULTIPLE_STYLES:
+        font_family = MULTIPLE_STYLES[style]["font_family"]
+        overlay_filename = None
     else:
+        font_family = "Nunito"
+        gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
+        overlay_filename = gconfig["overlay"]
+        
+    # 2. Resolve colors (prioritize passed color_palette override)
+    if color_palette:
+        color1, color2, text_color = color_palette
+        border_color = text_color
+    elif style and style in MULTIPLE_STYLES:
+        sconfig = MULTIPLE_STYLES[style]
+        color1, color2 = sconfig["bg_gradient"]
+        text_color = sconfig["text_color"]
+        border_color = sconfig["border_color"]
+    else:
+        gconfig = GENRE_COLORS.get(genre, GENRE_COLORS["Default"])
         color1, color2 = gconfig["bg_gradient"]
-    text_color = gconfig["text_color"]
-    border_color = gconfig["border_color"]
-    overlay_filename = gconfig["overlay"]
+        text_color = gconfig["text_color"]
+        border_color = gconfig["border_color"]
+
     
     # 1. Base gradient
     img = generate_gradient(SIZE, SIZE, color1, color2)
@@ -151,51 +171,79 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
     if bg_img is not None:
         bg_img = bg_img.resize((SIZE, SIZE), Image.Resampling.LANCZOS)
         bg_gray = bg_img.convert("L")
-        # Blend the grayscale texture onto the base gradient (mix 30% texture + 70% gradient)
+        # Blend the grayscale texture onto the base gradient
         img = Image.blend(img, Image.merge("RGB", (bg_gray, bg_gray, bg_gray)), 0.3)
-    
-    # 2. Topo lines & stardust
-    draw_topographic_lines(img, text_color, count=8)
-    draw_stardust(img, text_color, count=500)
-    
-    # 3. Apply PNG geometric overlay if specified
-    if overlay_filename:
-        overlay_path = os.path.join(ASSETS_DIR, overlay_filename)
-        if os.path.exists(overlay_path):
-            try:
-                overlay_img = Image.open(overlay_path).convert("RGBA")
-                # Resize overlay to fit cover
-                overlay_img = overlay_img.resize((SIZE, SIZE), Image.Resampling.LANCZOS)
-                # Blend using alpha channel
-                base_rgba = img.convert("RGBA")
-                blended = Image.alpha_composite(base_rgba, overlay_img)
-                img = blended.convert("RGB")
-            except Exception as e:
-                print(f"Error loading cover art overlay {overlay_filename}: {e}")
     
     draw = ImageDraw.Draw(img)
     
-    # Load fonts
-    try:
-        font_brand = ImageFont.truetype("arial.ttf", 18)
-        font_title = ImageFont.truetype("arialbd.ttf", 140)
-    except IOError:
-        font_brand = ImageFont.load_default()
-        font_title = ImageFont.load_default()
+    # 2. Draw styled graphics
+    if style_key == "neon_sunset":
+        # Draw background cyberpunk grids
+        for grid_y in range(100, SIZE, 100):
+            draw.line([(0, grid_y), (SIZE, grid_y)], fill=(*border_color, 40), width=1)
+        for grid_x in range(100, SIZE, 100):
+            draw.line([(grid_x, 0), (grid_x, SIZE)], fill=(*border_color, 40), width=1)
+        # Glowing double neon frame
+        draw.rectangle([30, 30, SIZE - 31, SIZE - 31], outline=border_color, width=3)
+        draw.rectangle([40, 40, SIZE - 41, SIZE - 41], outline=border_color, width=1)
+        draw_topographic_lines(img, text_color, count=6)
         
-    cx, cy = SIZE // 2, SIZE // 2
+    elif style_key == "pastel_minimalist":
+        # Pastel Minimalist has clean Swiss layout: no topo lines, no stardust
+        draw.rectangle([40, 40, SIZE - 40, SIZE - 40], outline=border_color, width=2)
+        
+    elif style_key == "rounded_sidebar":
+        # Left sidebar rectangle block
+        draw.rectangle([0, 0, 320, SIZE], fill=(*color1, 255))
+        draw.line([(319, 0), (319, SIZE)], fill=border_color, width=2)
+        draw_topographic_lines(img, text_color, count=8)
+        draw_stardust(img, text_color, count=300)
+        
+    elif style_key == "floating_badge":
+        # Floating badge central card
+        draw_topographic_lines(img, text_color, count=8)
+        draw_stardust(img, text_color, count=500)
+        draw.rounded_rectangle([150, 400, 1050, 800], radius=24, fill=(*color1, 200), outline=border_color, width=3)
+        
+    else:
+        # Standard Arqive design
+        draw_topographic_lines(img, text_color, count=8)
+        draw_stardust(img, text_color, count=500)
+        if overlay_filename:
+            overlay_path = os.path.join(ASSETS_DIR, overlay_filename)
+            if os.path.exists(overlay_path):
+                try:
+                    overlay_img = Image.open(overlay_path).convert("RGBA")
+                    overlay_img = overlay_img.resize((SIZE, SIZE), Image.Resampling.LANCZOS)
+                    base_rgba = img.convert("RGBA")
+                    blended = Image.alpha_composite(base_rgba, overlay_img)
+                    img = blended.convert("RGB")
+                    draw = ImageDraw.Draw(img)
+                except Exception as e:
+                    print(f"Error loading cover art overlay {overlay_filename}: {e}")
+                    
+    # Load style-specific fonts
+    font_brand = get_font(font_family, 18)
+    font_title = get_font(font_family, 140, is_bold=True)
     
+    # Calculate title center depending on sidebar presence
+    cx, cy = SIZE // 2, SIZE // 2
+    if style_key == "rounded_sidebar":
+        cx = (SIZE + 320) // 2  # Offset to the right
+        
     # Format pack name: e.g. uppercase
     display_title = clean_title_for_cover(pack_name)
     
-    # Draw 3D typography shadow layers (dark purple/grey shadows)
-    for depth in range(12, 0, -1):
-        ox, oy = depth * 2, depth * 2
-        shade = int(15 + depth * 3)
-        bbox = draw.textbbox((0, 0), display_title, font=font_title)
-        tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
-        tx, ty = cx - tw // 2 + ox, cy - th // 2 + oy
-        draw.text((tx, ty), display_title, fill=(shade, shade - 5, shade + 8), font=font_title)
+    # Title Shadow Layers (Skip for pastel_minimalist)
+    if style_key != "pastel_minimalist":
+        for depth in range(12, 0, -1):
+            ox, oy = depth * 2, depth * 2
+            shade = int(15 + depth * 3)
+            bbox = draw.textbbox((0, 0), display_title, font=font_title)
+            tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+            tx, ty = cx - tw // 2 + ox, cy - th // 2 + oy
+            draw.text((tx, ty), display_title, fill=(shade, shade - 5, shade + 8), font=font_title)
+
         
     # Draw primary text
     bbox = draw.textbbox((0, 0), display_title, font=font_title)
@@ -214,11 +262,7 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
     draw = ImageDraw.Draw(img)
     draw.text((tx, ty), display_title, fill=(255, 255, 255), font=font_title)
     
-    # Draw Pack Type Capsule Badge
-    try:
-        font_badge = ImageFont.truetype("arialbd.ttf", 36)
-    except IOError:
-        font_badge = ImageFont.load_default()
+    font_badge = get_font(font_family, 36, is_bold=True)
         
     badge_y = ty + th + 60
     draw_pack_type_badge(draw, cx, badge_y, pack_type, text_color, font_badge)
