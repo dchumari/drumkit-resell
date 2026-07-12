@@ -1401,5 +1401,202 @@
                 "end": 176.03655045918367
             }
         ]
+    },
+    {
+        "reddit_id": "1tw0lqk",
+        "name": "Arqive Aura 58",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADHWpTBFDf2gmQ44z71IIyR9Ar8N1SAAK3HQACSWeZUnd8u-xpyySAPAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADHWpTBFDf2gmQ44z71IIyR9Ar8N1SAAK3HQACSWeZUnd8u-xpyySAPAQ"
+        ],
+        "stars_price": 300,
+        "youtube_id": "ea4ngAJm57k",
+        "tg_invoice_link": "https://t.me/c/3737519537/28",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-12T03:05:21.086328",
+        "markers": [
+            {
+                "name": "001 Bass Growl - @aq",
+                "category": "BASS",
+                "start": 0.0,
+                "end": 1.0134013605442176
+            },
+            {
+                "name": "002 Bass Wobble - @aq",
+                "category": "BASS",
+                "start": 1.0134013605442176,
+                "end": 2.142857142857143
+            },
+            {
+                "name": "003 Bass Deep - @aq",
+                "category": "BASS",
+                "start": 2.142857142857143,
+                "end": 4.642857142857142
+            },
+            {
+                "name": "004 Bass Reaper - @aq",
+                "category": "BASS",
+                "start": 4.642857142857142,
+                "end": 5.6919727891156455
+            },
+            {
+                "name": "005 Bass Hollow - @aq",
+                "category": "BASS",
+                "start": 5.6919727891156455,
+                "end": 6.933038548752833
+            },
+            {
+                "name": "001 Lead Creep - @aq",
+                "category": "LEADS",
+                "start": 6.933038548752833,
+                "end": 8.397324263038547
+            },
+            {
+                "name": "002 Lead Pluck - @aq",
+                "category": "LEADS",
+                "start": 8.397324263038547,
+                "end": 10.316961451247163
+            },
+            {
+                "name": "003 Lead Reaper - @aq",
+                "category": "LEADS",
+                "start": 10.316961451247163,
+                "end": 11.901791383219953
+            },
+            {
+                "name": "004 Lead Grave - @aq",
+                "category": "LEADS",
+                "start": 11.901791383219953,
+                "end": 14.401791383219953
+            },
+            {
+                "name": "005 Lead Pulse - @aq",
+                "category": "LEADS",
+                "start": 14.401791383219953,
+                "end": 16.90179138321995
+            },
+            {
+                "name": "001 Pad Lead - @aq",
+                "category": "PADS",
+                "start": 16.90179138321995,
+                "end": 27.446439909297048
+            },
+            {
+                "name": "002 Pad Hollow - @aq",
+                "category": "PADS",
+                "start": 27.446439909297048,
+                "end": 32.45090702947846
+            },
+            {
+                "name": "003 Pad Sharp - @aq",
+                "category": "PADS",
+                "start": 32.45090702947846,
+                "end": 43.25002267573696
+            },
+            {
+                "name": "004 Pad Doom - @aq",
+                "category": "PADS",
+                "start": 43.25002267573696,
+                "end": 53.26789115646258
+            },
+            {
+                "name": "005 Pad Venom - @aq",
+                "category": "PADS",
+                "start": 53.26789115646258,
+                "end": 63.897346938775506
+            },
+            {
+                "name": "001 Pluck Grave - @aq",
+                "category": "PLUCKS",
+                "start": 63.897346938775506,
+                "end": 71.53573696145125
+            },
+            {
+                "name": "002 Pluck Sludge - @aq",
+                "category": "PLUCKS",
+                "start": 71.53573696145125,
+                "end": 77.78573696145125
+            },
+            {
+                "name": "003 Pluck Bright - @aq",
+                "category": "PLUCKS",
+                "start": 77.78573696145125,
+                "end": 84.78126984126985
+            },
+            {
+                "name": "004 Pluck Creep - @aq",
+                "category": "PLUCKS",
+                "start": 84.78126984126985,
+                "end": 92.54020408163265
+            },
+            {
+                "name": "005 Pluck Pluck - @aq",
+                "category": "PLUCKS",
+                "start": 92.54020408163265,
+                "end": 93.54020408163265
+            },
+            {
+                "name": "001 Pulse Phantom - @aq",
+                "category": "PULSES",
+                "start": 93.54020408163265,
+                "end": 95.75448979591836
+            },
+            {
+                "name": "002 Pulse Chirp - @aq",
+                "category": "PULSES",
+                "start": 95.75448979591836,
+                "end": 98.25448979591836
+            },
+            {
+                "name": "003 Pulse Toxic - @aq",
+                "category": "PULSES",
+                "start": 98.25448979591836,
+                "end": 105.08485260770975
+            },
+            {
+                "name": "004 Pulse Sludge - @aq",
+                "category": "PULSES",
+                "start": 105.08485260770975,
+                "end": 111.09825396825397
+            },
+            {
+                "name": "005 Pulse Sound - @aq",
+                "category": "PULSES",
+                "start": 111.09825396825397,
+                "end": 118.0670068027211
+            },
+            {
+                "name": "001 Synth Loop Hollow - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 118.0670068027211,
+                "end": 120.46433106575965
+            },
+            {
+                "name": "002 Synth Loop Volt - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 120.46433106575965,
+                "end": 129.59378684807257
+            },
+            {
+                "name": "003 Synth Loop Venom - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 129.59378684807257,
+                "end": 130.29467120181405
+            },
+            {
+                "name": "004 Synth Loop Sludge - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 130.29467120181405,
+                "end": 132.4866439909297
+            },
+            {
+                "name": "005 Synth Loop Grave - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 132.4866439909297,
+                "end": 139.0580725623583
+            }
+        ]
     }
 ]
