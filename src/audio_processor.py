@@ -371,6 +371,7 @@ def query_ai_sample_names(category: str, count: int, genre: str) -> List[str]:
     
     payload = {
         "model": getattr(config, "OPENROUTER_MODEL", "deepseek/deepseek-v4-flash"),
+        "max_tokens": 1500,
         "messages": [{"role": "user", "content": prompt}]
     }
     
@@ -387,6 +388,79 @@ def query_ai_sample_names(category: str, count: int, genre: str) -> List[str]:
     except Exception as e:
         print(f"DeepSeek AI sample naming query failed: {e}. Using local fallback.")
     return []
+
+def query_ai_batch_sample_names(category_counts: Dict[str, int], genre: str) -> Dict[str, List[str]]:
+    """
+    Queries OpenRouter to generate unique, premium, genre-styled name lists for multiple categories in one single request.
+    Returns a dictionary of category -> list of names.
+    """
+    import json
+    import urllib.request
+    import config
+    import re
+    
+    if not getattr(config, "OPENROUTER_API_KEY", ""):
+        print("OpenRouter API key is missing. Using local fallback pool.")
+        return {}
+        
+    url = f"{config.OPENROUTER_URL}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {config.OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://github.com/arqive-developer/drumkit-reseller",
+    }
+    
+    # Custom style prompt based on genre
+    genre_lower = genre.lower()
+    if "trap" in genre_lower or "phonk" in genre_lower:
+        style_desc = "dark, aggressive, heavy, distorted, gritty, unhinged, underground, street, industrial"
+    elif "lofi" in genre_lower or "rnb" in genre_lower or "chill" in genre_lower or "soul" in genre_lower:
+        style_desc = "smooth, warm, dusty, vinyl, vintage, cozy, velvet, atmospheric, retro, dream, sunset, night"
+    else:
+        style_desc = "premium, clean, modern, sharp, digital, futuristic, space, solid, club, electronic"
+        
+    prompt = (
+        f"You are a music production naming agent.\n"
+        f"Generate unique, creative, short (one-word), premium-sounding name descriptors suitable for naming samples in a drum kit.\n"
+        f"Genre style: {genre.upper()} ({style_desc}).\n\n"
+        f"Target categories and exact counts needed:\n"
+        f"{json.dumps(category_counts, indent=2)}\n\n"
+        f"Instructions:\n"
+        f"1. Generate names like 'Cave', 'Room', 'Swamp', 'Slime', 'Explode', 'Trauma', 'Haze', 'Static', 'Sizzle'.\n"
+        f"2. Names must be single-word adjectives or nouns. Do not include numbers.\n"
+        f"3. Return the response in strict JSON format containing a dictionary where each key is the category in CAPS "
+        f"and the value is a list of exactly the requested number of unique string names. Example response:\n"
+        f"{{\n"
+        f"  \"KICKS\": [\"Punch1\", \"Punch2\"],\n"
+        f"  \"SNARES\": [\"Crack1\", \"Crack2\"]\n"
+        f"}}\n"
+        f"Do not include any explanation or markdown formatting."
+    )
+    
+    payload = {
+        "model": getattr(config, "OPENROUTER_MODEL", "deepseek/deepseek-v4-flash"),
+        "response_format": {"type": "json_object"},
+        "max_tokens": 3000,
+        "messages": [{"role": "user", "content": prompt}]
+    }
+    
+    try:
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=30) as res:
+            res_data = json.loads(res.read().decode("utf-8"))
+            content = res_data["choices"][0]["message"]["content"].strip()
+            content_cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", content, flags=re.MULTILINE).strip()
+            parsed = json.loads(content_cleaned)
+            if isinstance(parsed, dict):
+                # Normalize keys and clean names
+                normalized = {}
+                for k, v in parsed.items():
+                    if isinstance(v, list):
+                        normalized[k.upper()] = [str(w).strip().title() for w in v if w]
+                return normalized
+    except Exception as e:
+        print(f"DeepSeek AI batch sample naming query failed: {e}. Using local fallbacks.")
+    return {}
 
 FALLBACK_NAMES = {
     "808S": {
@@ -471,7 +545,7 @@ FALLBACK_NAMES = {
     }
 }
 
-def get_rebrand_names(category: str, count: int, genre: str, ai_naming: Optional[bool] = None) -> List[str]:
+def get_rebrand_names(category: str, count: int, genre: str, ai_naming: Optional[bool] = None, pre_resolved_names: Optional[List[str]] = None) -> List[str]:
     """Retrieves rebranded sample names, querying AI first if enabled, falling back to local pool."""
     import config
     import random
@@ -522,13 +596,16 @@ def get_rebrand_names(category: str, count: int, genre: str, ai_naming: Optional
     names = []
     
     # 1. Query AI if enabled (pass the actual category for contextual names!)
-    ai_enabled = ai_naming if ai_naming is not None else getattr(config, "AI_UNIQUE_NAMING", True)
-    if ai_enabled:
-        print(f"Querying AI for {count} names for {category} ({genre})...")
-        names = query_ai_sample_names(category, count, genre)
+    if pre_resolved_names is not None:
+        names = [str(n).strip().title() for n in pre_resolved_names if n]
+    else:
+        ai_enabled = ai_naming if ai_naming is not None else getattr(config, "AI_UNIQUE_NAMING", True)
+        if ai_enabled:
+            print(f"Querying AI for {count} names for {category} ({genre})...")
+            names = query_ai_sample_names(category, count, genre)
         
-    # 2. If AI failed/disabled or returned empty, use local fallback pool
-    if not names:
+    # 2. If AI failed/disabled or returned fewer names than needed, pad with local fallback pool
+    if len(names) < count:
         genre_lower = genre.lower()
         if "trap" in genre_lower or "phonk" in genre_lower:
             style = "dark"
@@ -537,7 +614,7 @@ def get_rebrand_names(category: str, count: int, genre: str, ai_naming: Optional
         else:
             style = "clean"
             
-        pool = FALLBACK_NAMES[category_caps][style]
+        pool = FALLBACK_NAMES.get(category_caps, FALLBACK_NAMES["OTHERS"])[style]
         pool_shuffled = list(pool)
         random.shuffle(pool_shuffled)
         
@@ -645,6 +722,16 @@ def process_and_rename_kit(root_dir: str, rebranded_name: str = "Resold", genre:
     final_categories: Dict[str, List[str]] = {}
     final_all_files: List[str] = []
     
+    # Resolve all rebranded names in a single batch query if AI naming mode is selected
+    batch_ai_names: Dict[str, List[str]] = {}
+    mode = getattr(config, "REBRAND_NAMING_MODE", "ai_unique_suffix")
+    ai_enabled = ai_naming if ai_naming is not None else getattr(config, "AI_UNIQUE_NAMING", True)
+    
+    if ai_enabled and mode in ["ai_unique_prefix", "ai_unique_suffix"]:
+        category_counts = {cat: len(files) for cat, files in allowed_files_by_cat.items()}
+        print(f"Querying AI in one single batch for all categories: {category_counts}...")
+        batch_ai_names = query_ai_batch_sample_names(category_counts, genre)
+    
     # Process each category
     for cat_caps, files in allowed_files_by_cat.items():
         cat_dir = os.path.join(temp_rebranded_dir, cat_caps)
@@ -654,9 +741,9 @@ def process_and_rename_kit(root_dir: str, rebranded_name: str = "Resold", genre:
         file_count = len(files)
         # Fetch rebranded names if AI naming mode is selected
         ai_names = []
-        mode = getattr(config, "REBRAND_NAMING_MODE", "ai_unique_suffix")
         if mode in ["ai_unique_prefix", "ai_unique_suffix"]:
-            ai_names = get_rebrand_names(cat_caps, file_count, genre, ai_naming)
+            pre_resolved = batch_ai_names.get(cat_caps)
+            ai_names = get_rebrand_names(cat_caps, file_count, genre, ai_naming, pre_resolved_names=pre_resolved)
             
         for idx, (old_path, filename, descriptor) in enumerate(files, 1):
             file_ext = os.path.splitext(filename)[1].lower()

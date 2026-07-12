@@ -8,6 +8,7 @@ import datetime
 import subprocess
 import urllib.request
 import urllib.parse
+import html
 from typing import List, Optional, Tuple
 
 import config
@@ -214,6 +215,25 @@ def scrape_reddit_links(subreddit: str = "Drumkits", rss_url: Optional[str] = No
     return new_adds
 
 
+def load_genre_names() -> dict:
+    """Loads genre-specific naming pools from data/genre_names.json."""
+    import json
+    path = os.path.join(config.DATA_DIR, "genre_names.json")
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading genre_names.json: {e}")
+    # Built-in fallback matching the initial list
+    return {
+        "Trap": ["Vortex", "Apex", "Cinder", "Pulse", "Rage", "Venom", "Hades", "Plague", "Doom", "Static", "Riot", "Phantom"],
+        "Lofi": ["Aura", "Dusk", "Dawn", "Haze", "Dream", "Clouds", "Swell", "Vibe", "Cozy", "Chill", "Velvet", "Sable"],
+        "RnB": ["Silk", "Lush", "Seduction", "Satin", "Sultry", "Velvet", "Whisper", "Eon", "Nova", "Oasis"],
+        "Default": ["Vortex", "Apex", "Aura", "Dusk", "Dawn", "Static", "Cinder", "Pulse", "Eon", "Nova"]
+    }
+
+
 def query_deepseek_rebrand(title: str, desc: str) -> Tuple[str, str]:
     """Queries OpenRouter to generate a unique single-word rebranded name and genre."""
     if not config.OPENROUTER_API_KEY:
@@ -226,17 +246,30 @@ def query_deepseek_rebrand(title: str, desc: str) -> Tuple[str, str]:
         "HTTP-Referer": "https://github.com/arqive-developer/drumkit-reseller",
     }
     
+    # Load name pools to guide AI naming mood
+    pools = load_genre_names()
+    trap_ex = ", ".join(pools.get("Trap", [])[:10])
+    lofi_ex = ", ".join(pools.get("Lofi", [])[:10])
+    rnb_ex = ", ".join(pools.get("RnB", [])[:10])
+    
     prompt = (
-        f"Generate a rebranded identity for this drumkit. Original title: '{title}'. Description: '{desc}'.\n"
+        f"Generate a rebranded identity for this drumkit.\n"
+        f"Original title: '{title}'. Description: '{desc}'.\n\n"
         f"Instructions:\n"
-        f"1. Generate a single-word or short, premium, unique name (e.g. 'Vortex', 'Apex', 'Ember').\n"
+        f"1. Generate a single-word or short, premium, unique name matching the genre mood:\n"
+        f"   - Trap: aggressive/dark/heavy names (e.g. {trap_ex})\n"
+        f"   - Lofi: soft/cozy/nostalgic names (e.g. {lofi_ex})\n"
+        f"   - RnB: smooth/sexy/velvet names (e.g. {rnb_ex})\n"
+        f"   - Phonk: grim/heavy/shadowy names\n"
+        f"   - House: electronic/pulsing/Neon names\n"
         f"2. Classify the genre as one of: Trap, RnB, Lofi, Phonk, Hip-Hop, Reggaeton, House. Default to Trap.\n"
-        f"Output MUST be in strict JSON format like this: {{\"name\": \"Apex\", \"genre\": \"Trap\"}}"
+        f"3. Return ONLY a raw JSON object: {{\"name\": \"Name\", \"genre\": \"Genre\"}}. Do not include any explanation or markdown formatting."
     )
     
     payload = {
         "model": getattr(config, "OPENROUTER_MODEL", "deepseek/deepseek-v4-flash"),
         "response_format": {"type": "json_object"},
+        "max_tokens": 150,
         "messages": [{"role": "user", "content": prompt}]
     }
     
@@ -247,28 +280,169 @@ def query_deepseek_rebrand(title: str, desc: str) -> Tuple[str, str]:
         parsed = json.loads(content)
         return parsed["name"], parsed["genre"]
 
-def get_fallback_rebrand(title: str) -> Tuple[str, str]:
-    """Local fallback when OpenRouter API fails."""
-    # Deduce genre by scanning title keywords
-    title_lower = title.lower()
-    genre = "Trap"
-    if "rnb" in title_lower or "r&b" in title_lower or "soul" in title_lower:
-        genre = "RnB"
-    elif "lofi" in title_lower or "lo-fi" in title_lower or "chill" in title_lower:
-        genre = "Lofi"
-    elif "phonk" in title_lower or "drift" in title_lower:
-        genre = "Phonk"
-    elif "hiphop" in title_lower or "hip hop" in title_lower or "boom" in title_lower:
-        genre = "Hip-Hop"
-    elif "reggaeton" in title_lower or "afrobeats" in title_lower or "latin" in title_lower:
-        genre = "Reggaeton"
-    elif "house" in title_lower or "edm" in title_lower or "electronic" in title_lower or "techno" in title_lower:
-        genre = "House"
+def get_fallback_rebrand(title: str, genre: str = None) -> Tuple[str, str]:
+    """Local fallback when OpenRouter API fails. Returns the prefix name and genre."""
+    # Deduce genre by scanning title keywords if not provided
+    if not genre:
+        title_lower = title.lower()
+        genre = "Trap"
+        if "rnb" in title_lower or "r&b" in title_lower or "soul" in title_lower:
+            genre = "RnB"
+        elif "lofi" in title_lower or "lo-fi" in title_lower or "chill" in title_lower:
+            genre = "Lofi"
+        elif "phonk" in title_lower or "drift" in title_lower:
+            genre = "Phonk"
+        elif "hiphop" in title_lower or "hip hop" in title_lower or "boom" in title_lower:
+            genre = "Hip-Hop"
+        elif "reggaeton" in title_lower or "afrobeats" in title_lower or "latin" in title_lower:
+            genre = "Reggaeton"
+        elif "house" in title_lower or "edm" in title_lower or "electronic" in title_lower or "techno" in title_lower:
+            genre = "House"
         
-    # Generate random name
-    prefix_names = ["Vortex", "Apex", "Aura", "Dusk", "Dawn", "Static", "Cinder", "Pulse", "Eon", "Nova"]
-    rebranded_name = f"{random.choice(prefix_names)} {random.randint(10, 99)}"
-    return rebranded_name, genre
+    # Generate random prefix name based on genre-themed pools
+    pools = load_genre_names()
+    prefix_names = pools.get(genre, pools.get("Default", ["Vortex", "Apex"]))
+    prefix = random.choice(prefix_names)
+    return prefix, genre
+
+def resolve_rebrand_volume_name(prefix_name: str) -> str:
+    """
+    Checks packs.json to see if prefix_name has been used before,
+    and appends 'Vol. N' if needed. Returns the full rebranded name with Arqive prefix.
+    """
+    # Clean the prefix name (remove Arqive and Vol suffixes just in case)
+    clean_prefix = prefix_name.replace("Arqive ", "").strip()
+    clean_prefix = re.sub(r"\s+Vol\.\s*\d+$", "", clean_prefix, flags=re.IGNORECASE).strip()
+    
+    packs = load_packs()
+    if not packs:
+        return f"Arqive {clean_prefix}"
+        
+    # Count how many packs start with this prefix in packs.json
+    pattern = re.compile(rf"^Arqive\s+{re.escape(clean_prefix)}(?:\s+Vol\.\s*\d+)?$", re.IGNORECASE)
+    count = 0
+    for p in packs:
+        pname = p.get("name", "")
+        if pattern.match(pname):
+            count += 1
+            
+    if count == 0:
+        return f"Arqive {clean_prefix}"
+    else:
+        return f"Arqive {clean_prefix} Vol. {count + 1}"
+
+def query_closest_genre(new_genre: str, available_genres: List[str]) -> str:
+    """Queries OpenRouter to map a new genre to the closest available genre or return 'NONE'."""
+    if not config.OPENROUTER_API_KEY:
+        return "NONE"
+        
+    url = f"{config.OPENROUTER_URL}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {config.OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://github.com/arqive-developer/drumkit-reseller",
+    }
+    
+    prompt = (
+        f"You are a music genre mapping agent.\n"
+        f"Given a new music genre: '{new_genre}'.\n"
+        f"Available target genres: {available_genres}.\n\n"
+        f"Instructions:\n"
+        f"1. Determine if '{new_genre}' is a subgenre of or closely related to one of the target genres.\n"
+        f"2. Return the closest matching genre name from the target genres list.\n"
+        f"3. If it is completely different and cannot be mapped, return 'NONE'.\n"
+        f"Response MUST be a single word (either one of the target genres, or 'NONE'). Do not include formatting, punctuation, or code blocks."
+    )
+    
+    payload = {
+        "model": getattr(config, "OPENROUTER_MODEL", "deepseek/deepseek-v4-flash"),
+        "max_tokens": 50,
+        "messages": [{"role": "user", "content": prompt}]
+    }
+    
+    try:
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=10) as res:
+            res_data = json.loads(res.read().decode("utf-8"))
+            content = res_data["choices"][0]["message"]["content"].strip().strip("'\"` \n\r")
+            if content in available_genres or content == "NONE":
+                return content
+    except Exception as e:
+        print(f"Error during second-pass genre mapping: {e}")
+    return "NONE"
+
+def create_telegram_topic(token: str, chat_id: str, topic_name: str) -> Optional[int]:
+    """Creates a new forum topic in a Telegram supergroup and returns its message_thread_id."""
+    url = f"https://api.telegram.org/bot{token}/createForumTopic"
+    payload = {
+        "chat_id": chat_id,
+        "name": topic_name
+    }
+    headers = {"Content-Type": "application/json"}
+    try:
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=10) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            if res_data.get("ok"):
+                return res_data["result"]["message_thread_id"]
+    except Exception as e:
+        print(f"Failed to create Telegram forum topic '{topic_name}' in chat {chat_id}: {e}")
+    return None
+
+def register_dynamic_genre(genre_name: str, upload: bool = False) -> str:
+    """
+    Dynamically registers a new genre: generates a color palette,
+    creates Telegram forum topics, and saves to data/dynamic_genres.json.
+    """
+    import json
+    gname = genre_name.strip().title()
+    
+    path = os.path.join(config.DATA_DIR, "dynamic_genres.json")
+    existing_dynamic = {}
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                existing_dynamic = json.load(f)
+        except Exception:
+            pass
+            
+    if gname in config.GENRE_COLORS or gname in existing_dynamic:
+        return gname
+        
+    print(f"Registering new dynamic genre: '{gname}'")
+    c1, c2, accent = config.resolve_custom_color_palette("random")
+    
+    topic_a = 1
+    topic_b = 1
+    if upload and config.TELEGRAM_BOT_TOKEN:
+        if config.CHANNEL_A_CHAT_ID:
+            tid_a = create_telegram_topic(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, gname)
+            if tid_a:
+                topic_a = tid_a
+        if config.CHANNEL_B_CHAT_ID:
+            tid_b = create_telegram_topic(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_B_CHAT_ID, gname)
+            if tid_b:
+                topic_b = tid_b
+                
+    existing_dynamic[gname] = {
+        "bg_gradient": [list(c1), list(c2)],
+        "text_color": list(accent),
+        "border_color": list(accent),
+        "overlay": "",
+        "topic_a": topic_a,
+        "topic_b": topic_b,
+        "affiliate": "🎹 Premium VST: https://affiliate.example.com/synth-vst"
+    }
+    
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(existing_dynamic, f, indent=2)
+    except Exception as e:
+        print(f"Failed to write to dynamic_genres.json: {e}")
+        
+    config.load_dynamic_genres()
+    return gname
+
 
 def commit_git_changes(message: str):
     """Commits and pushes updated tracking files to the repository."""
@@ -314,11 +488,13 @@ def run_throwback_release(upload: bool = False):
         video_path = os.path.join(temp_dir, "video.mp4")
         shorts_path = os.path.join(temp_dir, "shorts.mp4")
         
-        # 1. Regenerate visual assets with fresh random colors
+        # 1. Regenerate visual assets with fresh random colors and style mapped to genre
         rebranded_name = f"[VAULT] {old_pack['name']}"
-        color_palette = resolve_randomized_palette(old_pack["genre"])
-        cover_generator.generate_cover_art(rebranded_name, old_pack["genre"], cover_path, color_palette)
-        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, old_pack["genre"], color_palette)
+        genre = old_pack["genre"]
+        style = config.GENRE_STYLE_MAP.get(genre, config.GENRE_STYLE_MAP["Default"])
+        color_palette = config.resolve_custom_color_palette("random")
+        cover_generator.generate_cover_art(rebranded_name, genre, cover_path, color_palette, style=style)
+        mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre, color_palette, style=style)
         
         # 2. Download the original ZIP file from Telegram using the file_id
         local_zip = os.path.join(temp_dir, "old_kit.zip")
@@ -334,8 +510,20 @@ def run_throwback_release(upload: bool = False):
             res_json = json.loads(res.read().decode())
             file_path_tg = res_json["result"]["file_path"]
             
-        # Download the file bytes from local server
-        shutil.copy(file_path_tg, local_zip)
+        # Download the file bytes from local server via HTTP
+        # Note: We download via HTTP to avoid WSL2/Docker Windows volume mount path conflicts.
+        token_part = f"bot{config.TELEGRAM_BOT_TOKEN}"
+        if token_part in file_path_tg:
+            relative_path = file_path_tg.split(token_part)[-1].lstrip("/\\")
+        else:
+            relative_path = file_path_tg.split("/")[-1]  # fallback to filename
+            
+        download_url = f"{telegram_publisher.LOCAL_BOT_API_URL}/file/bot{config.TELEGRAM_BOT_TOKEN}/{relative_path}"
+        print(f"Downloading file from local Bot API via HTTP: {download_url}")
+        
+        with urllib.request.urlopen(download_url, timeout=60) as response:
+            with open(local_zip, "wb") as f_out:
+                shutil.copyfileobj(response, f_out)
         
         # Process and compile just like normal!
         ext_dir = os.path.join(temp_dir, "extracted")
@@ -352,10 +540,10 @@ def run_throwback_release(upload: bool = False):
         
         # Create visual overlay graphic and subtitles.srt with the compiled markers
         video_generator.create_srt_file(markers, srt_path)
-        video_generator.create_tracklist_overlay(rebranded_name, old_pack["genre"], markers, overlay_path, color_palette)
+        video_generator.create_tracklist_overlay(rebranded_name, genre, markers, overlay_path, color_palette, style=style)
         
-        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, old_pack["genre"], markers, srt_path, color_palette)
-        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, old_pack["genre"], rebranded_name, markers, color_palette)
+        video_generator.compile_video_16_9(audio_path, mockup_path, overlay_path, video_path, genre, markers, srt_path, color_palette, style=style)
+        video_generator.compile_video_9_16_shorts(audio_path, mockup_path, shorts_path, genre, rebranded_name, markers, color_palette, style=style)
         
         if not upload:
             print("\n[Local Analysis Mode] Copying generated Vault throwback files to output folder...")
@@ -567,7 +755,7 @@ def process_item(
             print(f"Using forced Name: '{rebranded_name}' and fallback Genre: '{genre}'")
         elif force_genre:
             genre = force_genre
-            rebranded_name, _ = get_fallback_rebrand(title)
+            rebranded_name, _ = get_fallback_rebrand(title, genre=genre)
             rebranded_name = f"Arqive {rebranded_name}"
             print(f"Using forced Genre: '{genre}' and fallback Name: '{rebranded_name}'")
         else:
@@ -580,7 +768,20 @@ def process_item(
                 rebranded_name, genre = get_fallback_rebrand(title)
                 rebranded_name = f"Arqive {rebranded_name}"
                 if upload:
-                    notifier.send_telegram_message(f"⚠️ **DeepSeek Rebrand API Failed**: Used local fallback '{rebranded_name}' for pack.")
+                    notifier.send_telegram_message(f"⚠️ <b>DeepSeek Rebrand API Failed</b>: Used local fallback '{html.escape(rebranded_name)}' for pack.")
+                    
+        # Apply sequential volume numbering to prevent duplicates
+        rebranded_name = resolve_rebrand_volume_name(rebranded_name)
+        
+        # Double-pass genre mapping check
+        available_genres = list(config.GENRE_COLORS.keys())
+        if genre not in available_genres:
+            mapped = query_closest_genre(genre, [g for g in available_genres if g != "Default"])
+            if mapped != "NONE":
+                print(f"AI Genre Mapping: Mapped '{genre}' to closest available: '{mapped}'")
+                genre = mapped
+            else:
+                genre = register_dynamic_genre(genre, upload=upload)
                     
         # 2. Extract & Rebrand
         audio_processor.unzip_pack(download_zip, extracted_dir)
@@ -595,17 +796,12 @@ def process_item(
         # Resolve cover and mockup art colors
         pack_type = detect_pack_type(rebranded_name, title, cats)
         
-        # Resolve E2E cohesive color palette, prioritizing custom color overrides
-        if color:
-            color_palette = config.resolve_custom_color_palette(color)
-        else:
-            if style and style in config.MULTIPLE_STYLES:
-                sconfig = config.MULTIPLE_STYLES[style]
-                c1, c2 = sconfig["bg_gradient"]
-                text_color = sconfig["text_color"]
-                color_palette = (c1, c2, text_color)
-            else:
-                color_palette = resolve_randomized_palette(genre)
+        # Resolve visual style from genre if not explicitly provided
+        if not style:
+            style = config.GENRE_STYLE_MAP.get(genre, config.GENRE_STYLE_MAP["Default"])
+            
+        # Resolve E2E cohesive color palette, prioritizing custom color overrides, defaulting to random
+        color_palette = config.resolve_custom_color_palette(color if color else "random")
                 
         cover_generator.generate_cover_art(rebranded_name, genre, cover_path, color_palette, pack_type=pack_type, style=style)
         mockup_generator.generate_3d_mockup(cover_path, mockup_path, rebranded_name, genre, color_palette, pack_type=pack_type, style=style)
@@ -714,14 +910,18 @@ def process_item(
         
         if is_free_day:
             print("Today is Free Campaign Day! Publishing raw ZIP directly to Channel B.")
-            free_caption = f"🎁 [FREE UNLOCKED] {rebranded_name}\n\n📂 CONTENTS:\n{contents_text}\n\nEnjoy this 100% free pack! No Stars or subscriptions required today!"
+            escaped_name = html.escape(rebranded_name)
+            escaped_contents = html.escape(contents_text)
+            free_caption = f"🎁 [FREE UNLOCKED] <b>{escaped_name}</b>\n\n📂 CONTENTS:\n{escaped_contents}\n\nEnjoy this 100% free pack! No Stars or subscriptions required today!"
             for fid in file_ids:
                 telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_B_CHAT_ID, fid, free_caption, thread_id=topic_b)
             tg_invoice_link = f"https://t.me/c/{str(config.CHANNEL_B_CHAT_ID).replace('-100', '')}/{topic_b}"
         else:
             invoice_desc = f"💳 NEW RELEASE: {rebranded_name}\n\n📂 CONTENTS:\n{contents_text}\n\nDownload immediately by paying Stars below, or subscribe to our Premium Channel for free access!"
             for fid in file_ids:
-                telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, fid, f"📦 PREMIUM RELEASE: {rebranded_name}\n\n{contents_text}", thread_id=None)
+                escaped_name = html.escape(rebranded_name)
+                escaped_contents = html.escape(contents_text)
+                telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, fid, f"📦 PREMIUM RELEASE: <b>{escaped_name}</b>\n\n{escaped_contents}", thread_id=None)
                 
             invoice_msg_id = telegram_publisher.publish_invoice(
                 config.TELEGRAM_BOT_TOKEN, 
