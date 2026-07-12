@@ -22,7 +22,7 @@ dp = Dispatcher()
 
 DB_PATH = os.path.join(config.DATA_DIR, "bot.db")
 PACKS_JSON_PATH = os.path.join(config.DATA_DIR, "packs.json")
-LOCAL_BOT_API_URL = "http://localhost:8081"
+LOCAL_BOT_API_URL = "http://127.0.0.1:8081"
 
 # User coupon states: user_id -> active_coupon_code
 active_user_coupons = {}

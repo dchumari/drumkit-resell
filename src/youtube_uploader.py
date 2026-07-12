@@ -49,6 +49,7 @@ def generate_tags_with_deepseek(pack_name: str, genre: str) -> List[str]:
     
     payload = {
         "model": OPENROUTER_MODEL if 'OPENROUTER_MODEL' in globals() or 'OPENROUTER_MODEL' in locals() else "deepseek/deepseek-v4-flash",
+        "max_tokens": 150,
         "messages": [{"role": "user", "content": prompt}]
     }
     

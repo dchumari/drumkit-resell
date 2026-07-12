@@ -4,6 +4,7 @@ import json
 import traceback
 import urllib.request
 import urllib.parse
+import html
 from config import LOGGING_BOT_TOKEN, ADMIN_CHAT_ID
 
 def send_telegram_message(text: str):
@@ -16,7 +17,7 @@ def send_telegram_message(text: str):
     payload = {
         "chat_id": ADMIN_CHAT_ID,
         "text": text,
-        "parse_mode": "Markdown"
+        "parse_mode": "HTML"
     }
     
     headers = {"Content-Type": "application/json"}
@@ -89,7 +90,7 @@ def send_telegram_document(file_path: str, caption: str):
 def send_log(message: str):
     """Sends a general log notification to the admin chat."""
     print(f"Logging notification: {message}")
-    send_telegram_message(f"ℹ️ **Arqive Reseller Log:**\n{message}")
+    send_telegram_message(f"ℹ️ <b>Arqive Reseller Log:</b>\n{html.escape(message)}")
 
 def send_error(exception: Exception, context: str = ""):
     """Captures the traceback, formats a clean Markdown error message, and uploads it."""
@@ -100,14 +101,14 @@ def send_error(exception: Exception, context: str = ""):
     print(f"Error captured in {context}: {err_type}: {err_msg}", file=sys.stderr)
     print(tb_str, file=sys.stderr)
     
-    summary = f"⚠️ **CRITICAL ERROR** in Arqive Reseller Pipeline\n"
+    summary = f"⚠️ <b>CRITICAL ERROR</b> in Arqive Reseller Pipeline\n"
     if context:
-        summary += f"**Context**: {context}\n"
-    summary += f"**Exception**: `{err_type}`\n"
-    summary += f"**Details**: {err_msg}"
+        summary += f"<b>Context</b>: {html.escape(context)}\n"
+    summary += f"<b>Exception</b>: <code>{html.escape(err_type)}</code>\n"
+    summary += f"<b>Details</b>: {html.escape(err_msg)}"
     
     # If the traceback is small enough, send it in a code block directly
-    full_message = f"{summary}\n\n```python\n{tb_str}\n```"
+    full_message = f"{summary}\n\n<pre><code class=\"language-python\">{html.escape(tb_str)}</code></pre>"
     if len(full_message) <= 4000:
         return send_telegram_message(full_message)
     else:

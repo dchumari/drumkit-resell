@@ -4,7 +4,7 @@ import urllib.request
 import urllib.parse
 from typing import Optional, List
 
-LOCAL_BOT_API_URL = "http://localhost:8081"
+LOCAL_BOT_API_URL = "http://127.0.0.1:8081"
 PUBLIC_BOT_API_URL = "https://api.telegram.org"
 
 def get_bot_username(token: str) -> str:
@@ -101,6 +101,23 @@ def upload_document_local(token: str, chat_id: str, file_path: str, caption: str
                 print(f"Telegram local upload failed: {res_data}")
     except Exception as e:
         print(f"Error during Telegram local upload: {e}")
+        if file_size < 50 * 1024 * 1024:
+            print("Local Bot API server is offline or failed. Falling back to public Telegram Bot API...")
+            public_url = f"{PUBLIC_BOT_API_URL}/bot{token}/sendDocument"
+            try:
+                req = urllib.request.Request(public_url, data=payload, headers=headers, method="POST")
+                with urllib.request.urlopen(req, timeout=120) as response:
+                    res_data = json.loads(response.read().decode("utf-8"))
+                    if res_data.get("ok"):
+                        file_id = res_data["result"]["document"]["file_id"]
+                        print(f"Uploaded successfully to Telegram via public API! File ID: {file_id}")
+                        return file_id
+                    else:
+                        print(f"Telegram public upload failed: {res_data}")
+            except Exception as pub_err:
+                print(f"Error during Telegram public upload fallback: {pub_err}")
+        else:
+            print("File is larger than 50MB. Cannot fall back to public Telegram Bot API.")
         
     return None
 
@@ -156,7 +173,7 @@ def publish_free_doc(token: str, chat_id: str, file_id: str, caption: str, threa
         "chat_id": chat_id,
         "document": file_id,
         "caption": caption,
-        "parse_mode": "Markdown"
+        "parse_mode": "HTML"
     }
     
     if thread_id:
