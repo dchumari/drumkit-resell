@@ -1060,5 +1060,346 @@
                 "end": 24.7
             }
         ]
+    },
+    {
+        "reddit_id": "1unyn54",
+        "name": "Arqive Apex 84",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADG2pS9-eRpz3pXYhpxASsDpmvLBN8AAK1HQACSWeZUjDdOpa38o93PAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADG2pS9-eRpz3pXYhpxASsDpmvLBN8AAK1HQACSWeZUjDdOpa38o93PAQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "0AAUmAiW6rU",
+        "tg_invoice_link": "https://t.me/c/3737519537/27",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-12T02:12:58.687616",
+        "markers": [
+            {
+                "name": "001 808 Cinder - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 1.9285625
+            },
+            {
+                "name": "002 808 Meatgrinder - @aq",
+                "category": "808S",
+                "start": 1.9285625,
+                "end": 3.129458333333333
+            },
+            {
+                "name": "003 808 Gutshriek - @aq",
+                "category": "808S",
+                "start": 3.129458333333333,
+                "end": 4.258916666666666
+            },
+            {
+                "name": "004 808 Thump - @aq",
+                "category": "808S",
+                "start": 4.258916666666666,
+                "end": 5.154381666666666
+            },
+            {
+                "name": "005 808 Venom - @aq",
+                "category": "808S",
+                "start": 5.154381666666666,
+                "end": 6.471339999999999
+            },
+            {
+                "name": "001 Kick Goliath - @aq",
+                "category": "KICKS",
+                "start": 6.471339999999999,
+                "end": 7.471339999999999
+            },
+            {
+                "name": "002 Kick Beast - @aq",
+                "category": "KICKS",
+                "start": 7.471339999999999,
+                "end": 8.471339999999998
+            },
+            {
+                "name": "003 Kick Thump - @aq",
+                "category": "KICKS",
+                "start": 8.471339999999998,
+                "end": 9.471339999999998
+            },
+            {
+                "name": "004 Kick Heavy - @aq",
+                "category": "KICKS",
+                "start": 9.471339999999998,
+                "end": 10.471339999999998
+            },
+            {
+                "name": "005 Kick Lead - @aq",
+                "category": "KICKS",
+                "start": 10.471339999999998,
+                "end": 11.471339999999998
+            },
+            {
+                "name": "001 Snare Metal - @aq",
+                "category": "SNARES",
+                "start": 11.471339999999998,
+                "end": 12.471339999999998
+            },
+            {
+                "name": "002 Snare Blade - @aq",
+                "category": "SNARES",
+                "start": 12.471339999999998,
+                "end": 13.471339999999998
+            },
+            {
+                "name": "003 Snare Clack - @aq",
+                "category": "SNARES",
+                "start": 13.471339999999998,
+                "end": 14.471339999999998
+            },
+            {
+                "name": "004 Snare Explode - @aq",
+                "category": "SNARES",
+                "start": 14.471339999999998,
+                "end": 15.471339999999998
+            },
+            {
+                "name": "005 Snare Sharp - @aq",
+                "category": "SNARES",
+                "start": 15.471339999999998,
+                "end": 16.471339999999998
+            },
+            {
+                "name": "001 Clap Shred - @aq",
+                "category": "CLAPS",
+                "start": 16.471339999999998,
+                "end": 17.471339999999998
+            },
+            {
+                "name": "002 Clap Gritty - @aq",
+                "category": "CLAPS",
+                "start": 17.471339999999998,
+                "end": 18.471339999999998
+            },
+            {
+                "name": "003 Clap Trauma - @aq",
+                "category": "CLAPS",
+                "start": 18.471339999999998,
+                "end": 19.56954833333333
+            },
+            {
+                "name": "004 Clap Viscera - @aq",
+                "category": "CLAPS",
+                "start": 19.56954833333333,
+                "end": 20.56954833333333
+            },
+            {
+                "name": "005 Clap Toxic - @aq",
+                "category": "CLAPS",
+                "start": 20.56954833333333,
+                "end": 21.56954833333333
+            },
+            {
+                "name": "001 Hat Harsh - @aq",
+                "category": "HATS",
+                "start": 21.56954833333333,
+                "end": 24.06954833333333
+            },
+            {
+                "name": "002 Hat Abyss - @aq",
+                "category": "HATS",
+                "start": 24.06954833333333,
+                "end": 26.56954833333333
+            },
+            {
+                "name": "003 Hat Toxic - @aq",
+                "category": "HATS",
+                "start": 26.56954833333333,
+                "end": 28.306152499999996
+            },
+            {
+                "name": "004 Hat Blast - @aq",
+                "category": "HATS",
+                "start": 28.306152499999996,
+                "end": 30.806152499999996
+            },
+            {
+                "name": "005 Hat Spit - @aq",
+                "category": "HATS",
+                "start": 30.806152499999996,
+                "end": 31.806152499999996
+            },
+            {
+                "name": "001 Perc Conga - @aq",
+                "category": "PERCS",
+                "start": 31.806152499999996,
+                "end": 33.81954833333333
+            },
+            {
+                "name": "002 Perc Clack - @aq",
+                "category": "PERCS",
+                "start": 33.81954833333333,
+                "end": 34.81954833333333
+            },
+            {
+                "name": "003 Perc Tabla - @aq",
+                "category": "PERCS",
+                "start": 34.81954833333333,
+                "end": 35.837402499999996
+            },
+            {
+                "name": "004 Perc Clave - @aq",
+                "category": "PERCS",
+                "start": 35.837402499999996,
+                "end": 36.85525666666666
+            },
+            {
+                "name": "005 Perc Tink - @aq",
+                "category": "PERCS",
+                "start": 36.85525666666666,
+                "end": 37.85525666666666
+            },
+            {
+                "name": "001 Fx Buzz - @aq",
+                "category": "FX",
+                "start": 37.85525666666666,
+                "end": 48.32400666666666
+            },
+            {
+                "name": "002 Fx Slasher - @aq",
+                "category": "FX",
+                "start": 48.32400666666666,
+                "end": 50.82400666666666
+            },
+            {
+                "name": "003 Fx Drone - @aq",
+                "category": "FX",
+                "start": 50.82400666666666,
+                "end": 56.832944166666664
+            },
+            {
+                "name": "004 Fx Sweep - @aq",
+                "category": "FX",
+                "start": 56.832944166666664,
+                "end": 59.332944166666664
+            },
+            {
+                "name": "005 Fx Venom - @aq",
+                "category": "FX",
+                "start": 59.332944166666664,
+                "end": 61.832944166666664
+            },
+            {
+                "name": "001 Vox Cinder - @aq",
+                "category": "VOX",
+                "start": 61.832944166666664,
+                "end": 62.832944166666664
+            },
+            {
+                "name": "002 Vox Creep - @aq",
+                "category": "VOX",
+                "start": 62.832944166666664,
+                "end": 68.76598583333333
+            },
+            {
+                "name": "003 Vox Roar - @aq",
+                "category": "VOX",
+                "start": 68.76598583333333,
+                "end": 69.76598583333333
+            },
+            {
+                "name": "004 Vox Sigh - @aq",
+                "category": "VOX",
+                "start": 69.76598583333333,
+                "end": 70.76598583333333
+            },
+            {
+                "name": "005 Vox Scream - @aq",
+                "category": "VOX",
+                "start": 70.76598583333333,
+                "end": 71.76598583333333
+            },
+            {
+                "name": "001 Cowbellorsum Bell Loop Toxic - @aq",
+                "category": "COWBELLORSUM BELL LOOPS",
+                "start": 71.76598583333333,
+                "end": 79.21086083333333
+            },
+            {
+                "name": "001 Dreamz Choir Cinder - @aq",
+                "category": "DREAMZ CHOIRS",
+                "start": 79.21086083333333,
+                "end": 86.65573583333332
+            },
+            {
+                "name": "002 Dreamz Choir Buzz - @aq",
+                "category": "DREAMZ CHOIRS",
+                "start": 86.65573583333332,
+                "end": 94.10766327097505
+            },
+            {
+                "name": "001 Ilikethis Flute Loop Chirp - @aq",
+                "category": "ILIKETHIS FLUTE LOOPS",
+                "start": 94.10766327097505,
+                "end": 101.55253827097505
+            },
+            {
+                "name": "001 Ilikethisflute Flute Loop Blip - @aq",
+                "category": "ILIKETHISFLUTE FLUTE LOOPS",
+                "start": 101.55253827097505,
+                "end": 109.00446570861678
+            },
+            {
+                "name": "001 Lead Cyber - @aq",
+                "category": "LEADS",
+                "start": 109.00446570861678,
+                "end": 116.44934070861677
+            },
+            {
+                "name": "002 Lead Abyss - @aq",
+                "category": "LEADS",
+                "start": 116.44934070861677,
+                "end": 123.9012681462585
+            },
+            {
+                "name": "001 Pad Cinder - @aq",
+                "category": "PADS",
+                "start": 123.9012681462585,
+                "end": 131.3461431462585
+            },
+            {
+                "name": "002 Pad Creep - @aq",
+                "category": "PADS",
+                "start": 131.3461431462585,
+                "end": 138.79807058390023
+            },
+            {
+                "name": "001 Pluck Reaper - @aq",
+                "category": "PLUCKS",
+                "start": 138.79807058390023,
+                "end": 146.24294558390022
+            },
+            {
+                "name": "002 Pluck Abyss - @aq",
+                "category": "PLUCKS",
+                "start": 146.24294558390022,
+                "end": 153.69487302154195
+            },
+            {
+                "name": "001 Sinister Piano Loop Classic - @aq",
+                "category": "SINISTER PIANO LOOPS",
+                "start": 153.69487302154195,
+                "end": 161.13974802154195
+            },
+            {
+                "name": "002 Sinister Piano Loop Toxic - @aq",
+                "category": "SINISTER PIANO LOOPS",
+                "start": 161.13974802154195,
+                "end": 168.59167545918368
+            },
+            {
+                "name": "001 Synth Loop Pluck - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 168.59167545918368,
+                "end": 176.03655045918367
+            }
+        ]
     }
 ]
