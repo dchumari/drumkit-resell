@@ -1001,5 +1001,64 @@
                 "end": 24.7
             }
         ]
+    },
+    {
+        "reddit_id": null,
+        "name": "Arqive Dawn 78",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADGWpS7jR-mW7XSq5xnmndGueXBrffAAKzHQACSWeZUszHnfShVJMZPAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADGWpS7jR-mW7XSq5xnmndGueXBrffAAKzHQACSWeZUszHnfShVJMZPAQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "MxAE-CIqEQc",
+        "tg_invoice_link": "https://t.me/c/3737519537/26",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-12T01:30:48.627463",
+        "markers": [
+            {
+                "name": "001 808 Creep - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 5.0
+            },
+            {
+                "name": "001 Kick Piston - @aq",
+                "category": "KICKS",
+                "start": 5.0,
+                "end": 6.5
+            },
+            {
+                "name": "001 Snare Crush - @aq",
+                "category": "SNARES",
+                "start": 6.5,
+                "end": 8.0
+            },
+            {
+                "name": "001 Hat Slash - @aq",
+                "category": "HATS",
+                "start": 8.0,
+                "end": 9.0
+            },
+            {
+                "name": "001 Perc Triangle - @aq",
+                "category": "PERCS",
+                "start": 9.0,
+                "end": 10.2
+            },
+            {
+                "name": "001 Fx Siren - @aq",
+                "category": "FX",
+                "start": 10.2,
+                "end": 12.7
+            },
+            {
+                "name": "001 Lofi Melody Loopam Loop Pulse - @aq",
+                "category": "LOFI MELODY LOOPAM LOOPS",
+                "start": 12.7,
+                "end": 24.7
+            }
+        ]
     }
 ]
