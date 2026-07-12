@@ -1945,5 +1945,352 @@
                 "end": 95.01879625396826
             }
         ]
+    },
+    {
+        "reddit_id": "1uazemq",
+        "name": "Arqive Vandal Vol. 2",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADIWpTnNCHm0bs2KMKayMyzJg3IZFgAALtHQACSWehUko01q3VkK2_PAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADIWpTnNCHm0bs2KMKayMyzJg3IZFgAALtHQACSWehUko01q3VkK2_PAQ"
+        ],
+        "stars_price": 300,
+        "youtube_id": "B6gmD4C7-Qg",
+        "tg_invoice_link": "https://t.me/c/3737519537/30",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-12T13:55:56.174348",
+        "markers": [
+            {
+                "name": "001 808 Abyss - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 5.995532879818594
+            },
+            {
+                "name": "002 808 Anvil - @aq",
+                "category": "808S",
+                "start": 5.995532879818594,
+                "end": 6.3115188798185935
+            },
+            {
+                "name": "003 808 Ash - @aq",
+                "category": "808S",
+                "start": 6.3115188798185935,
+                "end": 9.075373879818594
+            },
+            {
+                "name": "004 808 Brine - @aq",
+                "category": "808S",
+                "start": 9.075373879818594,
+                "end": 12.190747879818595
+            },
+            {
+                "name": "005 808 Choke - @aq",
+                "category": "808S",
+                "start": 12.190747879818595,
+                "end": 13.03458007936508
+            },
+            {
+                "name": "001 Kick Abyss - @aq",
+                "category": "KICKS",
+                "start": 13.03458007936508,
+                "end": 14.03458007936508
+            },
+            {
+                "name": "002 Kick Anvil - @aq",
+                "category": "KICKS",
+                "start": 14.03458007936508,
+                "end": 15.03458007936508
+            },
+            {
+                "name": "003 Kick Ash - @aq",
+                "category": "KICKS",
+                "start": 15.03458007936508,
+                "end": 16.034580079365078
+            },
+            {
+                "name": "004 Kick Axe - @aq",
+                "category": "KICKS",
+                "start": 16.034580079365078,
+                "end": 17.034580079365078
+            },
+            {
+                "name": "005 Kick Basilisk - @aq",
+                "category": "KICKS",
+                "start": 17.034580079365078,
+                "end": 18.034580079365078
+            },
+            {
+                "name": "001 Snare Abyss - @aq",
+                "category": "SNARES",
+                "start": 18.034580079365078,
+                "end": 19.58297007936508
+            },
+            {
+                "name": "002 Snare Anvil - @aq",
+                "category": "SNARES",
+                "start": 19.58297007936508,
+                "end": 21.874011746031748
+            },
+            {
+                "name": "003 Snare Asphalt - @aq",
+                "category": "SNARES",
+                "start": 21.874011746031748,
+                "end": 22.874011746031748
+            },
+            {
+                "name": "004 Snare Axe - @aq",
+                "category": "SNARES",
+                "start": 22.874011746031748,
+                "end": 23.874011746031748
+            },
+            {
+                "name": "005 Snare Basilisk - @aq",
+                "category": "SNARES",
+                "start": 23.874011746031748,
+                "end": 24.874011746031748
+            },
+            {
+                "name": "001 Clap Abyss - @aq",
+                "category": "CLAPS",
+                "start": 24.874011746031748,
+                "end": 26.87403442176871
+            },
+            {
+                "name": "002 Clap Anvil - @aq",
+                "category": "CLAPS",
+                "start": 26.87403442176871,
+                "end": 27.87403442176871
+            },
+            {
+                "name": "003 Clap Ash - @aq",
+                "category": "CLAPS",
+                "start": 27.87403442176871,
+                "end": 28.87403442176871
+            },
+            {
+                "name": "004 Clap Brine - @aq",
+                "category": "CLAPS",
+                "start": 28.87403442176871,
+                "end": 29.87403442176871
+            },
+            {
+                "name": "005 Clap Brutal - @aq",
+                "category": "CLAPS",
+                "start": 29.87403442176871,
+                "end": 31.71158542176871
+            },
+            {
+                "name": "001 Hat Cave - @aq",
+                "category": "HATS",
+                "start": 31.71158542176871,
+                "end": 34.21158542176871
+            },
+            {
+                "name": "002 Hat Rift - @aq",
+                "category": "HATS",
+                "start": 34.21158542176871,
+                "end": 36.71158542176871
+            },
+            {
+                "name": "003 Hat Slag - @aq",
+                "category": "HATS",
+                "start": 36.71158542176871,
+                "end": 39.21158542176871
+            },
+            {
+                "name": "004 Hat Venom - @aq",
+                "category": "HATS",
+                "start": 39.21158542176871,
+                "end": 40.94294642176871
+            },
+            {
+                "name": "005 Hat Havoc - @aq",
+                "category": "HATS",
+                "start": 40.94294642176871,
+                "end": 42.64720942176871
+            },
+            {
+                "name": "001 Perc Rust - @aq",
+                "category": "PERCS",
+                "start": 42.64720942176871,
+                "end": 43.64720942176871
+            },
+            {
+                "name": "002 Perc Gore - @aq",
+                "category": "PERCS",
+                "start": 43.64720942176871,
+                "end": 44.64720942176871
+            },
+            {
+                "name": "003 Perc Venom - @aq",
+                "category": "PERCS",
+                "start": 44.64720942176871,
+                "end": 45.64720942176871
+            },
+            {
+                "name": "004 Perc Grit - @aq",
+                "category": "PERCS",
+                "start": 45.64720942176871,
+                "end": 46.64720942176871
+            },
+            {
+                "name": "005 Perc Rumble - @aq",
+                "category": "PERCS",
+                "start": 46.64720942176871,
+                "end": 47.64720942176871
+            },
+            {
+                "name": "001 Fx Abyss - @aq",
+                "category": "FX",
+                "start": 47.64720942176871,
+                "end": 49.45723242176871
+            },
+            {
+                "name": "002 Fx Anvil - @aq",
+                "category": "FX",
+                "start": 49.45723242176871,
+                "end": 51.27786742176871
+            },
+            {
+                "name": "003 Fx Ash - @aq",
+                "category": "FX",
+                "start": 51.27786742176871,
+                "end": 52.99215942176871
+            },
+            {
+                "name": "004 Fx Atoll - @aq",
+                "category": "FX",
+                "start": 52.99215942176871,
+                "end": 53.99215942176871
+            },
+            {
+                "name": "005 Fx Blight - @aq",
+                "category": "FX",
+                "start": 53.99215942176871,
+                "end": 59.45982382086168
+            },
+            {
+                "name": "001 Vox Abyss - @aq",
+                "category": "VOX",
+                "start": 59.45982382086168,
+                "end": 60.69943882086168
+            },
+            {
+                "name": "002 Vox Anvil - @aq",
+                "category": "VOX",
+                "start": 60.69943882086168,
+                "end": 61.69943882086168
+            },
+            {
+                "name": "003 Vox Ash - @aq",
+                "category": "VOX",
+                "start": 61.69943882086168,
+                "end": 63.4181916553288
+            },
+            {
+                "name": "004 Vox Axe - @aq",
+                "category": "VOX",
+                "start": 63.4181916553288,
+                "end": 64.4181916553288
+            },
+            {
+                "name": "005 Vox Basilisk - @aq",
+                "category": "VOX",
+                "start": 64.4181916553288,
+                "end": 65.43186512471655
+            },
+            {
+                "name": "001 Extra Blaze - @aq",
+                "category": "EXTRAS",
+                "start": 65.43186512471655,
+                "end": 77.43186512471655
+            },
+            {
+                "name": "002 Extra Rust - @aq",
+                "category": "EXTRAS",
+                "start": 77.43186512471655,
+                "end": 79.93186512471655
+            },
+            {
+                "name": "003 Extra Venom - @aq",
+                "category": "EXTRAS",
+                "start": 79.93186512471655,
+                "end": 91.93186512471655
+            },
+            {
+                "name": "004 Extra Static - @aq",
+                "category": "EXTRAS",
+                "start": 91.93186512471655,
+                "end": 94.43186512471655
+            },
+            {
+                "name": "005 Extra Grit - @aq",
+                "category": "EXTRAS",
+                "start": 94.43186512471655,
+                "end": 99.57646829931973
+            },
+            {
+                "name": "001 Snap Rust - @aq",
+                "category": "SNAPS",
+                "start": 99.57646829931973,
+                "end": 100.57646829931973
+            },
+            {
+                "name": "002 Snap Venom - @aq",
+                "category": "SNAPS",
+                "start": 100.57646829931973,
+                "end": 101.57646829931973
+            },
+            {
+                "name": "003 Snap Scald - @aq",
+                "category": "SNAPS",
+                "start": 101.57646829931973,
+                "end": 102.57646829931973
+            },
+            {
+                "name": "004 Snap Brine - @aq",
+                "category": "SNAPS",
+                "start": 102.57646829931973,
+                "end": 103.85701251700681
+            },
+            {
+                "name": "005 Snap Shard - @aq",
+                "category": "SNAPS",
+                "start": 103.85701251700681,
+                "end": 104.85701251700681
+            },
+            {
+                "name": "001 Tag Rust - @aq",
+                "category": "TAGS",
+                "start": 104.85701251700681,
+                "end": 107.35701251700681
+            },
+            {
+                "name": "002 Tag Scrape - @aq",
+                "category": "TAGS",
+                "start": 107.35701251700681,
+                "end": 108.35701251700681
+            },
+            {
+                "name": "003 Tag Shard - @aq",
+                "category": "TAGS",
+                "start": 108.35701251700681,
+                "end": 110.85701251700681
+            },
+            {
+                "name": "004 Tag Smolder - @aq",
+                "category": "TAGS",
+                "start": 110.85701251700681,
+                "end": 111.85701251700681
+            },
+            {
+                "name": "005 Tag Splinter - @aq",
+                "category": "TAGS",
+                "start": 111.85701251700681,
+                "end": 114.35701251700681
+            }
+        ]
     }
 ]
