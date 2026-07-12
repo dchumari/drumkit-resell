@@ -90,7 +90,7 @@ def send_telegram_document(file_path: str, caption: str):
 def send_log(message: str):
     """Sends a general log notification to the admin chat."""
     print(f"Logging notification: {message}")
-    send_telegram_message(f"ℹ️ <b>Arqive Reseller Log:</b>\n{html.escape(message)}")
+    send_telegram_message(f"ℹ️ <b>Arqive Reseller Log:</b>\n{message}")
 
 def send_error(exception: Exception, context: str = ""):
     """Captures the traceback, formats a clean Markdown error message, and uploads it."""

@@ -345,7 +345,7 @@ COUPON_CODES = {
 }
 
 # Static YouTube Title Template
-YT_TITLE_TEMPLATE = "*FREE* {rebranded_name} {genre} Drum Kit (Direct Download)"
+YT_TITLE_TEMPLATE = "*FREE* {clean_name} {genre} Drum Kit (Direct Download) - @by.arqive Beats"
 
 # Static YouTube Description Template
 STATIC_DESC_TEMPLATE = """📦 ARQIVE DRUMKIT RELEASE: {pack_name}
@@ -360,6 +360,12 @@ Checkout/Download Links:
 
 ---
 {affiliate_recommendations}
+
+---
+🏷️ TAGS:
+{tags_list}
+
+{hashtags}
 
 ---
 Note: Compiled and presented by Arqive Collection. All files are royalty-free. Pinned comment contains direct checkout links for mobile users.

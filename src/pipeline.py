@@ -928,19 +928,24 @@ def process_item(
                 
             tg_invoice_link = f"https://t.me/c/{str(config.CHANNEL_B_CHAT_ID).replace('-100', '')}/{topic_b}"
         else:
-            # Post mockup photo first to Channel B (Storefront Channel)
+            # Post mockup photo to Channel B (Storefront Channel) with inline checkout buttons directly attached!
             storefront_caption = f"💳 NEW RELEASE: <b>{escaped_name}</b>\n\n📂 CONTENTS:\n{escaped_contents}\n\nDownload immediately by paying Stars below, or subscribe to our Premium Channel for free access!"
-            telegram_publisher.publish_photo(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_B_CHAT_ID, mockup_path, storefront_caption, thread_id=topic_b)
             
-            # Post Stars Invoice below it
-            invoice_msg_id = telegram_publisher.publish_invoice(
+            reply_markup = {
+                "inline_keyboard": [
+                    [
+                        {"text": f"💳 Pay {stars_price} Stars ⭐️", "url": f"https://t.me/{bot_uname}?start=dl_{file_ids[0]}"},
+                        {"text": "📥 Download via Subscription", "url": f"https://t.me/{bot_uname}?start=sub_{file_ids[0]}"}
+                    ]
+                ]
+            }
+            
+            invoice_msg_id = telegram_publisher.publish_photo(
                 config.TELEGRAM_BOT_TOKEN, 
                 config.CHANNEL_B_CHAT_ID, 
-                bot_uname, 
-                file_ids[0], 
-                rebranded_name, 
-                f"Download {rebranded_name} immediately!", 
-                stars_price, 
+                mockup_path, 
+                storefront_caption, 
+                reply_markup=reply_markup,
                 thread_id=topic_b
             )
             if invoice_msg_id:
@@ -950,7 +955,9 @@ def process_item(
         yt_token = youtube_uploader.get_access_token()
         yt_tags = youtube_uploader.generate_tags_with_deepseek(rebranded_name, genre)
         
-        yt_title = config.YT_TITLE_TEMPLATE.format(rebranded_name=rebranded_name, genre=genre)
+        # Format the YouTube title using the clean name (removing "Arqive")
+        clean_name = rebranded_name.replace("Arqive", "").strip()
+        yt_title = config.YT_TITLE_TEMPLATE.format(clean_name=clean_name, genre=genre)
         if is_free_day:
             yt_title = f"[100% UNLOCKED] {yt_title}"
             
@@ -959,11 +966,13 @@ def process_item(
             tg_invoice_link=tg_invoice_link if tg_invoice_link else f"https://t.me/{bot_uname}",
             tg_subscription_link=tg_subscription_link,
             pack_contents=contents_text,
-            affiliate_recommendations=config.AFFILIATE_LINKS.get(genre, "")
+            affiliate_recommendations=config.AFFILIATE_LINKS.get(genre, ""),
+            tags_list=", ".join(yt_tags),
+            hashtags=" ".join([f"#{t.lower().replace(' ', '')}" for t in yt_tags[:4]])
         )
         
         yt_video_id = youtube_uploader.upload_video(video_path, yt_title, desc, yt_tags, yt_token)
-        youtube_uploader.upload_video(shorts_path, f"{rebranded_name} #shorts #{genre.lower()}", desc, [genre.lower(), "shorts"], yt_token)
+        youtube_uploader.upload_video(shorts_path, f"{clean_name} #shorts #{genre.lower()}", desc, [genre.lower(), "shorts"], yt_token)
         
         comment_text = f"📥 Direct Download Link (No payment on Free Friday / Checkout Invoice): {tg_invoice_link if tg_invoice_link else tg_subscription_link}"
         youtube_uploader.add_comment_to_video(yt_video_id, comment_text, yt_token)
@@ -994,10 +1003,15 @@ def process_item(
         if reddit_id:
             save_processed_link(reddit_id)
             
+        escaped_rebrand = html.escape(rebranded_name)
+        escaped_genre = html.escape(genre)
+        yt_link = f"https://youtu.be/{yt_video_id}"
+        tg_store_txt = f'<a href="{tg_invoice_link}">{tg_invoice_link}</a>' if tg_invoice_link else 'Raw ZIP posted (Free Day)'
+        
         notifier.send_log(
-            f"Successfully processed & uploaded: **{rebranded_name}** ({genre})\n"
-            f"YouTube ID: {yt_video_id}\n"
-            f"Telegram Store Post: {tg_invoice_link if tg_invoice_link else 'Raw ZIP posted (Free Day)'}"
+            f"Successfully processed & uploaded: <b>{escaped_rebrand}</b> ({escaped_genre})\n"
+            f"YouTube Video: <a href=\"{yt_link}\">{yt_link}</a>\n"
+            f"Telegram Store Post: {tg_store_txt}"
         )
         
         commit_git_changes(f"Auto-commit: Published {rebranded_name}")

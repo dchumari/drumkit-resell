@@ -121,9 +121,9 @@ def upload_document_local(token: str, chat_id: str, file_path: str, caption: str
         
     return None
 
-def publish_photo(token: str, chat_id: str, photo_path: str, caption: str = "", thread_id: Optional[int] = None) -> Optional[int]:
+def publish_photo(token: str, chat_id: str, photo_path: str, caption: str = "", reply_markup: Optional[dict] = None, thread_id: Optional[int] = None) -> Optional[int]:
     """
-    Uploads and sends a photo to a Telegram channel.
+    Uploads and sends a photo to a Telegram channel, with optional reply markup keyboard.
     Returns the message_id on success.
     """
     if not os.path.exists(photo_path):
@@ -160,6 +160,13 @@ def publish_photo(token: str, chat_id: str, photo_path: str, caption: str = "", 
     body.append(b"")
     body.append(b"HTML")
     
+    # reply_markup
+    if reply_markup:
+        body.append(f"--{boundary}".encode("utf-8"))
+        body.append(f'Content-Disposition: form-data; name="reply_markup"'.encode("utf-8"))
+        body.append(b"")
+        body.append(json.dumps(reply_markup).encode("utf-8"))
+        
     # thread_id
     if thread_id:
         body.append(f"--{boundary}".encode("utf-8"))
