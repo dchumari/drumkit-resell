@@ -34,8 +34,7 @@ def load_env_file():
                     key, val = line.split("=", 1)
                     key = key.strip()
                     val = val.strip().strip("'\"")
-                    if key not in os.environ:
-                        os.environ[key] = val
+                    os.environ[key] = val
 
 load_env_file()
 
@@ -256,6 +255,20 @@ MULTIPLE_STYLES = {
     }
 }
 
+# Alias mapping asymmetric_flow to asymmetric_float
+MULTIPLE_STYLES["asymmetric_flow"] = MULTIPLE_STYLES["asymmetric_float"]
+
+GENRE_STYLE_MAP = {
+    "RnB": "pastel_minimalist",
+    "Trap": "liquid_glass",
+    "Lofi": "pastel_minimalist",
+    "Phonk": "rounded_sidebar",
+    "Hip-Hop": "rounded_sidebar",
+    "Reggaeton": "liquid_glass",
+    "House": "liquid_glass",
+    "Default": "asymmetric_float"
+}
+
 COLOR_MAP = {
     "red": (255, 30, 30),
     "orange": (255, 127, 0),
@@ -362,4 +375,36 @@ PREVIEW_ONESHOT_MAX_DURATION = float(os.getenv("PREVIEW_ONESHOT_MAX_DURATION", "
 
 # Minimum number of allowed samples in a pack to process
 MIN_PACK_SAMPLES = int(os.getenv("MIN_PACK_SAMPLES", "5"))
+
+def load_dynamic_genres():
+    """Loads dynamically created genres from data/dynamic_genres.json and merges them."""
+    import json
+    path = os.path.join(DATA_DIR, "dynamic_genres.json")
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for gname, info in data.items():
+                if "bg_gradient" in info:
+                    bg_grad = tuple(tuple(c) for c in info["bg_gradient"])
+                    txt_c = tuple(info["text_color"])
+                    border_c = tuple(info["border_color"])
+                    GENRE_COLORS[gname] = {
+                        "bg_gradient": bg_grad,
+                        "text_color": txt_c,
+                        "border_color": border_c,
+                        "overlay": info.get("overlay", "")
+                    }
+                if "topic_a" in info:
+                    GENRE_TOPICS_A[gname] = info["topic_a"]
+                if "topic_b" in info:
+                    GENRE_TOPICS_B[gname] = info["topic_b"]
+                if "affiliate" in info:
+                    AFFILIATE_LINKS[gname] = info["affiliate"]
+        except Exception as e:
+            print(f"Error loading dynamic_genres.json: {e}")
+
+# Initial load
+load_dynamic_genres()
+
 

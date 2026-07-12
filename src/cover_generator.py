@@ -200,10 +200,14 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
         draw_stardust(img, text_color, count=300)
         
     elif style_key == "floating_badge":
-        # Floating badge central card
+        # Floating badge (no background card)
         draw_topographic_lines(img, text_color, count=8)
         draw_stardust(img, text_color, count=500)
-        draw.rounded_rectangle([150, 400, 1050, 800], radius=24, fill=(*color1, 200), outline=border_color, width=3)
+        
+    elif style_key in ("asymmetric_float", "asymmetric_flow"):
+        # Asymmetric float (no background card)
+        draw_topographic_lines(img, text_color, count=10)
+        draw_stardust(img, text_color, count=400)
         
     else:
         # Standard Arqive design
@@ -262,6 +266,17 @@ def generate_cover_art(pack_name: str, genre: str, output_path: str, color_palet
     draw = ImageDraw.Draw(img)
     draw.text((tx, ty), display_title, fill=(255, 255, 255), font=font_title)
     
+    # Draw Genre Badge above the title
+    font_genre_badge = get_font(font_family, 32, is_bold=True)
+    genre_text = f"  {genre.upper()}  "
+    bbox_g = draw.textbbox((0, 0), genre_text, font=font_genre_badge)
+    gw, gh = bbox_g[2] - bbox_g[0], bbox_g[3] - bbox_g[1]
+    
+    gbx0, gby0 = cx - gw // 2 - 12, ty - 75
+    gbx1, gby1 = cx + gw // 2 + 12, ty - 75 + gh + 14
+    draw.rounded_rectangle([gbx0, gby0, gbx1, gby1], radius=6, outline=text_color, width=2)
+    draw.text((cx - gw // 2 - bbox_g[0], gby0 + 7 - bbox_g[1]), genre_text, fill=text_color, font=font_genre_badge)
+
     font_badge = get_font(font_family, 36, is_bold=True)
         
     badge_y = ty + th + 60
