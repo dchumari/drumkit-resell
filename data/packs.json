@@ -942,5 +942,64 @@
                 "end": 24.7
             }
         ]
+    },
+    {
+        "reddit_id": null,
+        "name": "Arqive Cinder 10",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADF2pS7TwoNIltv5EUufTZdf_Jd14OAAKyHQACSWeZUiuz7yq6jGg1PAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADF2pS7TwoNIltv5EUufTZdf_Jd14OAAKyHQACSWeZUiuz7yq6jGg1PAQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "j453Gu6nxZs",
+        "tg_invoice_link": "https://t.me/c/3737519537/25",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-12T01:27:09.781659",
+        "markers": [
+            {
+                "name": "001 808 Hades - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 5.0
+            },
+            {
+                "name": "001 Kick Mammoth - @aq",
+                "category": "KICKS",
+                "start": 5.0,
+                "end": 6.5
+            },
+            {
+                "name": "001 Snare Metal - @aq",
+                "category": "SNARES",
+                "start": 6.5,
+                "end": 8.0
+            },
+            {
+                "name": "001 Hat Explode - @aq",
+                "category": "HATS",
+                "start": 8.0,
+                "end": 9.0
+            },
+            {
+                "name": "001 Perc Slasher - @aq",
+                "category": "PERCS",
+                "start": 9.0,
+                "end": 10.2
+            },
+            {
+                "name": "001 Fx Buzz - @aq",
+                "category": "FX",
+                "start": 10.2,
+                "end": 12.7
+            },
+            {
+                "name": "001 Lofi Melody Loopam Loop Pulse - @aq",
+                "category": "LOFI MELODY LOOPAM LOOPS",
+                "start": 12.7,
+                "end": 24.7
+            }
+        ]
     }
 ]
