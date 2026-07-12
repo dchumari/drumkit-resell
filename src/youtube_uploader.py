@@ -59,7 +59,21 @@ def generate_tags_with_deepseek(pack_name: str, genre: str) -> List[str]:
             res_data = json.loads(res.read().decode("utf-8"))
             content = res_data["choices"][0]["message"]["content"].strip()
             tags = [t.strip() for t in content.split(",") if t.strip()]
-            return tags[:15] if tags else default_tags
+            if not tags:
+                tags = default_tags
+                
+            # YouTube API has a strict 500-character limit for all tags combined.
+            # We enforce a safe limit of 480 characters here to prevent API errors.
+            valid_tags = []
+            current_len = 0
+            for tag in tags[:20]:
+                tag_len = len(tag) + 1  # tag length plus comma separator
+                if current_len + tag_len < 480:
+                    valid_tags.append(tag)
+                    current_len += tag_len
+                else:
+                    break
+            return valid_tags if valid_tags else default_tags
     except Exception as e:
         print(f"DeepSeek tag generation failed, using defaults: {e}")
         return default_tags

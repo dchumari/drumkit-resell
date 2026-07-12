@@ -235,7 +235,7 @@ def load_genre_names() -> dict:
 
 
 def query_deepseek_rebrand(title: str, desc: str) -> Tuple[str, str]:
-    """Queries OpenRouter to generate a unique single-word rebranded name and genre."""
+    """Queries OpenRouter to classify the genre, then selects a random name from the local genre pool."""
     if not config.OPENROUTER_API_KEY:
         raise ValueError("OpenRouter API key is missing.")
         
@@ -246,24 +246,12 @@ def query_deepseek_rebrand(title: str, desc: str) -> Tuple[str, str]:
         "HTTP-Referer": "https://github.com/arqive-developer/drumkit-reseller",
     }
     
-    # Load name pools to guide AI naming mood
-    pools = load_genre_names()
-    trap_ex = ", ".join(pools.get("Trap", [])[:10])
-    lofi_ex = ", ".join(pools.get("Lofi", [])[:10])
-    rnb_ex = ", ".join(pools.get("RnB", [])[:10])
-    
     prompt = (
-        f"Generate a rebranded identity for this drumkit.\n"
+        f"Analyze this drumkit and classify its genre.\n"
         f"Original title: '{title}'. Description: '{desc}'.\n\n"
         f"Instructions:\n"
-        f"1. Generate a single-word or short, premium, unique name matching the genre mood:\n"
-        f"   - Trap: aggressive/dark/heavy names (e.g. {trap_ex})\n"
-        f"   - Lofi: soft/cozy/nostalgic names (e.g. {lofi_ex})\n"
-        f"   - RnB: smooth/sexy/velvet names (e.g. {rnb_ex})\n"
-        f"   - Phonk: grim/heavy/shadowy names\n"
-        f"   - House: electronic/pulsing/Neon names\n"
-        f"2. Classify the genre as one of: Trap, RnB, Lofi, Phonk, Hip-Hop, Reggaeton, House. Default to Trap.\n"
-        f"3. Return ONLY a raw JSON object: {{\"name\": \"Name\", \"genre\": \"Genre\"}}. Do not include any explanation or markdown formatting."
+        f"1. Classify the genre as one of: Trap, RnB, Lofi, Phonk, Hip-Hop, Reggaeton, House. Default to Trap if unclear.\n"
+        f"2. Return ONLY a raw JSON object: {{\"genre\": \"Genre\"}}. Do not include any explanation or markdown formatting."
     )
     
     payload = {
@@ -273,12 +261,23 @@ def query_deepseek_rebrand(title: str, desc: str) -> Tuple[str, str]:
         "messages": [{"role": "user", "content": prompt}]
     }
     
-    req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
-    with urllib.request.urlopen(req, timeout=15) as res:
-        res_data = json.loads(res.read().decode("utf-8"))
-        content = res_data["choices"][0]["message"]["content"].strip()
-        parsed = json.loads(content)
-        return parsed["name"], parsed["genre"]
+    genre = "Trap"
+    try:
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=15) as res:
+            res_data = json.loads(res.read().decode("utf-8"))
+            content = res_data["choices"][0]["message"]["content"].strip()
+            parsed = json.loads(content)
+            genre = parsed.get("genre", "Trap")
+    except Exception as e:
+        print(f"Failed to query AI for genre classification: {e}. Defaulting to Trap.")
+        
+    # Pick a random name from the local name pool for this genre
+    pools = load_genre_names()
+    genre_pool = pools.get(genre, pools.get("Default", ["Aura"]))
+    random_name = random.choice(genre_pool)
+    
+    return random_name, genre
 
 def get_fallback_rebrand(title: str, genre: str = None) -> Tuple[str, str]:
     """Local fallback when OpenRouter API fails. Returns the prefix name and genre."""
@@ -951,9 +950,9 @@ def process_item(
         yt_token = youtube_uploader.get_access_token()
         yt_tags = youtube_uploader.generate_tags_with_deepseek(rebranded_name, genre)
         
-        yt_title = f"{rebranded_name} - {genre} Drum Kit Showcase [FREE]"
+        yt_title = config.YT_TITLE_TEMPLATE.format(rebranded_name=rebranded_name, genre=genre)
         if is_free_day:
-            yt_title = f"[100% UNLOCKED] {rebranded_name} - {genre} Drum Kit [FREE DOWNLOAD]"
+            yt_title = f"[100% UNLOCKED] {yt_title}"
             
         desc = config.STATIC_DESC_TEMPLATE.format(
             pack_name=rebranded_name,
