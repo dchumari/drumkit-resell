@@ -866,7 +866,8 @@ def process_item(
         # 6. Upload rebranded files to Telegram
         file_ids = []
         for zf in zip_files:
-            fid = telegram_publisher.upload_document_local(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, zf)
+            clean_cap = f"💾 Download: <b>{html.escape(rebranded_name)}</b>"
+            fid = telegram_publisher.upload_document_local(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, zf, caption=clean_cap)
             if not fid:
                 raise ValueError(f"Failed to upload zip part {zf} to Telegram.")
             file_ids.append(fid)
@@ -908,28 +909,38 @@ def process_item(
                 contents_summary.append(f"• {cat}: {len(files)} files")
         contents_text = "\n".join(contents_summary)
         
+        escaped_name = html.escape(rebranded_name)
+        escaped_contents = html.escape(contents_text)
+        
+        # Always publish Mockup Photo to Channel A (Premium Channel) with the full description
+        tg_premium_caption = f"📦 PREMIUM RELEASE: <b>{escaped_name}</b>\n\n📂 CONTENTS:\n{escaped_contents}"
+        telegram_publisher.publish_photo(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, mockup_path, tg_premium_caption)
+        
         if is_free_day:
-            print("Today is Free Campaign Day! Publishing raw ZIP directly to Channel B.")
-            escaped_name = html.escape(rebranded_name)
-            escaped_contents = html.escape(contents_text)
+            print("Today is Free Campaign Day! Publishing Mockup and ZIP directly to Channel B.")
             free_caption = f"🎁 [FREE UNLOCKED] <b>{escaped_name}</b>\n\n📂 CONTENTS:\n{escaped_contents}\n\nEnjoy this 100% free pack! No Stars or subscriptions required today!"
+            
+            # Post mockup photo first to Channel B
+            telegram_publisher.publish_photo(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_B_CHAT_ID, mockup_path, free_caption, thread_id=topic_b)
+            
+            # Post ZIP files below it
             for fid in file_ids:
-                telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_B_CHAT_ID, fid, free_caption, thread_id=topic_b)
+                telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_B_CHAT_ID, fid, f"💾 Download: <b>{escaped_name}</b>", thread_id=topic_b)
+                
             tg_invoice_link = f"https://t.me/c/{str(config.CHANNEL_B_CHAT_ID).replace('-100', '')}/{topic_b}"
         else:
-            invoice_desc = f"💳 NEW RELEASE: {rebranded_name}\n\n📂 CONTENTS:\n{contents_text}\n\nDownload immediately by paying Stars below, or subscribe to our Premium Channel for free access!"
-            for fid in file_ids:
-                escaped_name = html.escape(rebranded_name)
-                escaped_contents = html.escape(contents_text)
-                telegram_publisher.publish_free_doc(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_A_CHAT_ID, fid, f"📦 PREMIUM RELEASE: <b>{escaped_name}</b>\n\n{escaped_contents}", thread_id=None)
-                
+            # Post mockup photo first to Channel B (Storefront Channel)
+            storefront_caption = f"💳 NEW RELEASE: <b>{escaped_name}</b>\n\n📂 CONTENTS:\n{escaped_contents}\n\nDownload immediately by paying Stars below, or subscribe to our Premium Channel for free access!"
+            telegram_publisher.publish_photo(config.TELEGRAM_BOT_TOKEN, config.CHANNEL_B_CHAT_ID, mockup_path, storefront_caption, thread_id=topic_b)
+            
+            # Post Stars Invoice below it
             invoice_msg_id = telegram_publisher.publish_invoice(
                 config.TELEGRAM_BOT_TOKEN, 
                 config.CHANNEL_B_CHAT_ID, 
                 bot_uname, 
                 file_ids[0], 
                 rebranded_name, 
-                invoice_desc, 
+                f"Download {rebranded_name} immediately!", 
                 stars_price, 
                 thread_id=topic_b
             )

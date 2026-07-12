@@ -62,7 +62,7 @@ def upload_document_local(token: str, chat_id: str, file_path: str, caption: str
     body.append(f"--{boundary}".encode("utf-8"))
     body.append(f'Content-Disposition: form-data; name="parse_mode"'.encode("utf-8"))
     body.append(b"")
-    body.append(b"Markdown")
+    body.append(b"HTML")
     
     # Add message_thread_id if provided
     if thread_id:
@@ -119,6 +119,83 @@ def upload_document_local(token: str, chat_id: str, file_path: str, caption: str
         else:
             print("File is larger than 50MB. Cannot fall back to public Telegram Bot API.")
         
+    return None
+
+def publish_photo(token: str, chat_id: str, photo_path: str, caption: str = "", thread_id: Optional[int] = None) -> Optional[int]:
+    """
+    Uploads and sends a photo to a Telegram channel.
+    Returns the message_id on success.
+    """
+    if not os.path.exists(photo_path):
+        print(f"Photo file {photo_path} not found.")
+        return None
+        
+    url = f"{PUBLIC_BOT_API_URL}/bot{token}/sendPhoto"
+    boundary = "---ArqiveTelegramPhotoBoundary---"
+    
+    try:
+        with open(photo_path, "rb") as f:
+            photo_data = f.read()
+    except Exception as e:
+        print(f"Failed to read photo file: {e}")
+        return None
+
+    body = []
+    
+    # chat_id
+    body.append(f"--{boundary}".encode("utf-8"))
+    body.append(f'Content-Disposition: form-data; name="chat_id"'.encode("utf-8"))
+    body.append(b"")
+    body.append(str(chat_id).encode("utf-8"))
+    
+    # caption
+    body.append(f"--{boundary}".encode("utf-8"))
+    body.append(f'Content-Disposition: form-data; name="caption"'.encode("utf-8"))
+    body.append(b"")
+    body.append(caption.encode("utf-8"))
+    
+    # parse_mode
+    body.append(f"--{boundary}".encode("utf-8"))
+    body.append(f'Content-Disposition: form-data; name="parse_mode"'.encode("utf-8"))
+    body.append(b"")
+    body.append(b"HTML")
+    
+    # thread_id
+    if thread_id:
+        body.append(f"--{boundary}".encode("utf-8"))
+        body.append(f'Content-Disposition: form-data; name="message_thread_id"'.encode("utf-8"))
+        body.append(b"")
+        body.append(str(thread_id).encode("utf-8"))
+        
+    # photo
+    filename = os.path.basename(photo_path)
+    body.append(f"--{boundary}".encode("utf-8"))
+    body.append(f'Content-Disposition: form-data; name="photo"; filename="{filename}"'.encode("utf-8"))
+    body.append(b"Content-Type: image/png")
+    body.append(b"")
+    body.append(photo_data)
+    
+    body.append(f"--{boundary}--".encode("utf-8"))
+    body.append(b"")
+    
+    payload = b"\r\n".join(body)
+    headers = {
+        "Content-Type": f"multipart/form-data; boundary={boundary}",
+        "Content-Length": str(len(payload))
+    }
+    
+    try:
+        req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=60) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            if res_data.get("ok"):
+                message_id = res_data["result"]["message_id"]
+                print(f"Photo sent successfully! Msg ID: {message_id}")
+                return message_id
+            else:
+                print(f"Failed to send photo: {res_data}")
+    except Exception as e:
+        print(f"Error sending photo to Telegram: {e}")
     return None
 
 def publish_invoice(token: str, chat_id: str, bot_username: str, file_id: str, title: str, description: str, price_stars: int, thread_id: Optional[int] = None) -> Optional[int]:
