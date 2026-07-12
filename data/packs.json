@@ -1598,5 +1598,352 @@
                 "end": 139.0580725623583
             }
         ]
+    },
+    {
+        "reddit_id": "1tyt0iv",
+        "name": "Arqive Vandal",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADH2pTlbAvQFeel8FujLTEWs0MzhNwAALOHQACSWehUhtjCNvK-pIZPAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADH2pTlbAvQFeel8FujLTEWs0MzhNwAALOHQACSWehUhtjCNvK-pIZPAQ"
+        ],
+        "stars_price": 300,
+        "youtube_id": "MPvD4SZLhUU",
+        "tg_invoice_link": "https://t.me/c/3737519537/29",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-12T13:25:52.850855",
+        "markers": [
+            {
+                "name": "001 808 Abyss - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 2.5542083333333334
+            },
+            {
+                "name": "002 808 Rumble - @aq",
+                "category": "808S",
+                "start": 2.5542083333333334,
+                "end": 5.313142333333333
+            },
+            {
+                "name": "003 808 Quake - @aq",
+                "category": "808S",
+                "start": 5.313142333333333,
+                "end": 8.313142333333333
+            },
+            {
+                "name": "004 808 Gutter - @aq",
+                "category": "808S",
+                "start": 8.313142333333333,
+                "end": 9.707360333333334
+            },
+            {
+                "name": "005 808 Steel - @aq",
+                "category": "808S",
+                "start": 9.707360333333334,
+                "end": 15.25200885941043
+            },
+            {
+                "name": "001 Kick Impact - @aq",
+                "category": "KICKS",
+                "start": 15.25200885941043,
+                "end": 16.25200885941043
+            },
+            {
+                "name": "002 Kick Thump - @aq",
+                "category": "KICKS",
+                "start": 16.25200885941043,
+                "end": 17.25200885941043
+            },
+            {
+                "name": "003 Kick Drive - @aq",
+                "category": "KICKS",
+                "start": 17.25200885941043,
+                "end": 18.25200885941043
+            },
+            {
+                "name": "004 Kick Crash - @aq",
+                "category": "KICKS",
+                "start": 18.25200885941043,
+                "end": 19.25200885941043
+            },
+            {
+                "name": "005 Kick Boom - @aq",
+                "category": "KICKS",
+                "start": 19.25200885941043,
+                "end": 20.25200885941043
+            },
+            {
+                "name": "001 Snare Crack - @aq",
+                "category": "SNARES",
+                "start": 20.25200885941043,
+                "end": 21.800398859410432
+            },
+            {
+                "name": "002 Snare Snap - @aq",
+                "category": "SNARES",
+                "start": 21.800398859410432,
+                "end": 22.800398859410432
+            },
+            {
+                "name": "003 Snare Pop - @aq",
+                "category": "SNARES",
+                "start": 22.800398859410432,
+                "end": 23.800398859410432
+            },
+            {
+                "name": "004 Snare Crush - @aq",
+                "category": "SNARES",
+                "start": 23.800398859410432,
+                "end": 24.800398859410432
+            },
+            {
+                "name": "005 Snare Hit - @aq",
+                "category": "SNARES",
+                "start": 24.800398859410432,
+                "end": 26.337904528344673
+            },
+            {
+                "name": "001 Clap Snap - @aq",
+                "category": "CLAPS",
+                "start": 26.337904528344673,
+                "end": 28.337927204081634
+            },
+            {
+                "name": "002 Clap Crack - @aq",
+                "category": "CLAPS",
+                "start": 28.337927204081634,
+                "end": 29.337927204081634
+            },
+            {
+                "name": "003 Clap Smack - @aq",
+                "category": "CLAPS",
+                "start": 29.337927204081634,
+                "end": 30.337927204081634
+            },
+            {
+                "name": "004 Clap Blast - @aq",
+                "category": "CLAPS",
+                "start": 30.337927204081634,
+                "end": 31.337927204081634
+            },
+            {
+                "name": "005 Clap Strike - @aq",
+                "category": "CLAPS",
+                "start": 31.337927204081634,
+                "end": 33.175478204081635
+            },
+            {
+                "name": "001 Hat Flick - @aq",
+                "category": "HATS",
+                "start": 33.175478204081635,
+                "end": 35.675478204081635
+            },
+            {
+                "name": "002 Hat Zing - @aq",
+                "category": "HATS",
+                "start": 35.675478204081635,
+                "end": 38.175478204081635
+            },
+            {
+                "name": "003 Hat Spark - @aq",
+                "category": "HATS",
+                "start": 38.175478204081635,
+                "end": 40.675478204081635
+            },
+            {
+                "name": "004 Hat Sizzle - @aq",
+                "category": "HATS",
+                "start": 40.675478204081635,
+                "end": 42.406839204081635
+            },
+            {
+                "name": "005 Hat Hiss - @aq",
+                "category": "HATS",
+                "start": 42.406839204081635,
+                "end": 44.11110220408163
+            },
+            {
+                "name": "001 Perc Tap - @aq",
+                "category": "PERCS",
+                "start": 44.11110220408163,
+                "end": 45.11110220408163
+            },
+            {
+                "name": "002 Perc Click - @aq",
+                "category": "PERCS",
+                "start": 45.11110220408163,
+                "end": 46.11110220408163
+            },
+            {
+                "name": "003 Perc Ping - @aq",
+                "category": "PERCS",
+                "start": 46.11110220408163,
+                "end": 47.11110220408163
+            },
+            {
+                "name": "004 Perc Pop - @aq",
+                "category": "PERCS",
+                "start": 47.11110220408163,
+                "end": 48.11110220408163
+            },
+            {
+                "name": "005 Perc Snap - @aq",
+                "category": "PERCS",
+                "start": 48.11110220408163,
+                "end": 49.11110220408163
+            },
+            {
+                "name": "001 Fx Riser - @aq",
+                "category": "FX",
+                "start": 49.11110220408163,
+                "end": 50.92112520408163
+            },
+            {
+                "name": "002 Fx Downer - @aq",
+                "category": "FX",
+                "start": 50.92112520408163,
+                "end": 52.741760204081636
+            },
+            {
+                "name": "003 Fx Sweep - @aq",
+                "category": "FX",
+                "start": 52.741760204081636,
+                "end": 54.45605220408164
+            },
+            {
+                "name": "004 Fx Shimmer - @aq",
+                "category": "FX",
+                "start": 54.45605220408164,
+                "end": 55.45605220408164
+            },
+            {
+                "name": "005 Fx Burst - @aq",
+                "category": "FX",
+                "start": 55.45605220408164,
+                "end": 60.923716603174604
+            },
+            {
+                "name": "001 Vox Oracle - @aq",
+                "category": "VOX",
+                "start": 60.923716603174604,
+                "end": 61.923716603174604
+            },
+            {
+                "name": "002 Vox Wraith - @aq",
+                "category": "VOX",
+                "start": 61.923716603174604,
+                "end": 63.64246943764172
+            },
+            {
+                "name": "003 Vox Cipher - @aq",
+                "category": "VOX",
+                "start": 63.64246943764172,
+                "end": 64.64246943764172
+            },
+            {
+                "name": "004 Vox Raven - @aq",
+                "category": "VOX",
+                "start": 64.64246943764172,
+                "end": 65.65614290702948
+            },
+            {
+                "name": "005 Vox Spect - @aq",
+                "category": "VOX",
+                "start": 65.65614290702948,
+                "end": 66.65614290702948
+            },
+            {
+                "name": "001 Extra Dust - @aq",
+                "category": "EXTRAS",
+                "start": 66.65614290702948,
+                "end": 69.15614290702948
+            },
+            {
+                "name": "002 Extra Glow - @aq",
+                "category": "EXTRAS",
+                "start": 69.15614290702948,
+                "end": 71.65614290702948
+            },
+            {
+                "name": "003 Extra Mist - @aq",
+                "category": "EXTRAS",
+                "start": 71.65614290702948,
+                "end": 76.80074608163265
+            },
+            {
+                "name": "004 Extra Rime - @aq",
+                "category": "EXTRAS",
+                "start": 76.80074608163265,
+                "end": 78.52396603628118
+            },
+            {
+                "name": "005 Extra Smoke - @aq",
+                "category": "EXTRAS",
+                "start": 78.52396603628118,
+                "end": 80.23825203628118
+            },
+            {
+                "name": "001 Snap Snap - @aq",
+                "category": "SNAPS",
+                "start": 80.23825203628118,
+                "end": 81.23825203628118
+            },
+            {
+                "name": "002 Snap Crack - @aq",
+                "category": "SNAPS",
+                "start": 81.23825203628118,
+                "end": 82.23825203628118
+            },
+            {
+                "name": "003 Snap Pop - @aq",
+                "category": "SNAPS",
+                "start": 82.23825203628118,
+                "end": 83.23825203628118
+            },
+            {
+                "name": "004 Snap Click - @aq",
+                "category": "SNAPS",
+                "start": 83.23825203628118,
+                "end": 84.51879625396826
+            },
+            {
+                "name": "005 Snap Tap - @aq",
+                "category": "SNAPS",
+                "start": 84.51879625396826,
+                "end": 85.51879625396826
+            },
+            {
+                "name": "001 Tag Dust - @aq",
+                "category": "TAGS",
+                "start": 85.51879625396826,
+                "end": 88.01879625396826
+            },
+            {
+                "name": "002 Tag Grit - @aq",
+                "category": "TAGS",
+                "start": 88.01879625396826,
+                "end": 89.01879625396826
+            },
+            {
+                "name": "003 Tag Mud - @aq",
+                "category": "TAGS",
+                "start": 89.01879625396826,
+                "end": 91.51879625396826
+            },
+            {
+                "name": "004 Tag Rust - @aq",
+                "category": "TAGS",
+                "start": 91.51879625396826,
+                "end": 92.51879625396826
+            },
+            {
+                "name": "005 Tag Ash - @aq",
+                "category": "TAGS",
+                "start": 92.51879625396826,
+                "end": 95.01879625396826
+            }
+        ]
     }
 ]
