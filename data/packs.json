@@ -2292,5 +2292,124 @@
                 "end": 114.35701251700681
             }
         ]
+    },
+    {
+        "reddit_id": "1uhm39o",
+        "name": "Arqive Bark",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADI2pTwD7arqo6-MIHU5A0we3gloNSAAIWHgACSWehUukwu-55SQgrPAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADI2pTwD7arqo6-MIHU5A0we3gloNSAAIWHgACSWehUukwu-55SQgrPAQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "nZLkho0zoXo",
+        "tg_invoice_link": "https://t.me/c/3737519537/32",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-12T16:27:27.348558",
+        "markers": [
+            {
+                "name": "001 Loop Gutter - @aq",
+                "category": "LOOPS",
+                "start": 0.0,
+                "end": 12.0
+            },
+            {
+                "name": "002 Loop Riot - @aq",
+                "category": "LOOPS",
+                "start": 12.0,
+                "end": 24.0
+            },
+            {
+                "name": "001 Kick Boulder - @aq",
+                "category": "KICKS",
+                "start": 24.0,
+                "end": 25.846146
+            },
+            {
+                "name": "002 Kick Quake - @aq",
+                "category": "KICKS",
+                "start": 25.846146,
+                "end": 27.692292000000002
+            },
+            {
+                "name": "003 Kick Hammer - @aq",
+                "category": "KICKS",
+                "start": 27.692292000000002,
+                "end": 29.538438000000003
+            },
+            {
+                "name": "004 Kick Anchor - @aq",
+                "category": "KICKS",
+                "start": 29.538438000000003,
+                "end": 31.384584000000004
+            },
+            {
+                "name": "001 Snare Snap - @aq",
+                "category": "SNARES",
+                "start": 31.384584000000004,
+                "end": 33.23073
+            },
+            {
+                "name": "002 Snare Wire - @aq",
+                "category": "SNARES",
+                "start": 33.23073,
+                "end": 35.076876
+            },
+            {
+                "name": "001 Hat Shards - @aq",
+                "category": "HATS",
+                "start": 35.076876,
+                "end": 36.923021999999996
+            },
+            {
+                "name": "002 Hat Chrome - @aq",
+                "category": "HATS",
+                "start": 36.923021999999996,
+                "end": 38.76916799999999
+            },
+            {
+                "name": "003 Hat Glass - @aq",
+                "category": "HATS",
+                "start": 38.76916799999999,
+                "end": 40.61531399999999
+            },
+            {
+                "name": "004 Hat Needle - @aq",
+                "category": "HATS",
+                "start": 40.61531399999999,
+                "end": 42.46145999999999
+            },
+            {
+                "name": "005 Hat Razor - @aq",
+                "category": "HATS",
+                "start": 42.46145999999999,
+                "end": 54.46145999999999
+            },
+            {
+                "name": "001 Lead Ravage - @aq",
+                "category": "LEADS",
+                "start": 54.46145999999999,
+                "end": 66.46145999999999
+            },
+            {
+                "name": "001 Rumbler Sludge - @aq",
+                "category": "RUMBLERS",
+                "start": 66.46145999999999,
+                "end": 68.30760599999999
+            },
+            {
+                "name": "002 Rumbler Quake - @aq",
+                "category": "RUMBLERS",
+                "start": 68.30760599999999,
+                "end": 70.153752
+            },
+            {
+                "name": "001 Synth Loop Fume - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 70.153752,
+                "end": 77.538356
+            }
+        ]
     }
 ]
