@@ -2626,5 +2626,148 @@
                 "end": 62.068390022675736
             }
         ]
+    },
+    {
+        "reddit_id": "1tz85r8",
+        "name": "Arqive Mosaic",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADK2pURL9gE3bW9ddD0Aa9dY42gPhYAAIfIAACSWepUkY9W26s-vhsPAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADK2pURL9gE3bW9ddD0Aa9dY42gPhYAAIfIAACSWepUkY9W26s-vhsPAQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "EBFFt2nYVLM",
+        "tg_invoice_link": "https://t.me/c/3737519537/34",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-13T01:52:20.750144",
+        "markers": [
+            {
+                "name": "001 808 Anvil - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 0.160726
+            },
+            {
+                "name": "002 808 Boulder - @aq",
+                "category": "808S",
+                "start": 0.160726,
+                "end": 0.28127
+            },
+            {
+                "name": "003 808 Claw - @aq",
+                "category": "808S",
+                "start": 0.28127,
+                "end": 0.827098
+            },
+            {
+                "name": "004 808 Dread - @aq",
+                "category": "808S",
+                "start": 0.827098,
+                "end": 2.626214
+            },
+            {
+                "name": "005 808 Fang - @aq",
+                "category": "808S",
+                "start": 2.626214,
+                "end": 6.318526925170068
+            },
+            {
+                "name": "001 Snare Barrage - @aq",
+                "category": "SNARES",
+                "start": 6.318526925170068,
+                "end": 8.318526925170069
+            },
+            {
+                "name": "002 Snare Blade - @aq",
+                "category": "SNARES",
+                "start": 8.318526925170069,
+                "end": 9.318526925170069
+            },
+            {
+                "name": "003 Snare Brute - @aq",
+                "category": "SNARES",
+                "start": 9.318526925170069,
+                "end": 10.318526925170069
+            },
+            {
+                "name": "004 Snare Clamp - @aq",
+                "category": "SNARES",
+                "start": 10.318526925170069,
+                "end": 11.318526925170069
+            },
+            {
+                "name": "005 Snare Crack - @aq",
+                "category": "SNARES",
+                "start": 11.318526925170069,
+                "end": 12.318526925170069
+            },
+            {
+                "name": "001 Hat Blade - @aq",
+                "category": "HATS",
+                "start": 12.318526925170069,
+                "end": 13.318526925170069
+            },
+            {
+                "name": "002 Hat Chrome - @aq",
+                "category": "HATS",
+                "start": 13.318526925170069,
+                "end": 14.318526925170069
+            },
+            {
+                "name": "003 Hat Cipher - @aq",
+                "category": "HATS",
+                "start": 14.318526925170069,
+                "end": 15.318526925170069
+            },
+            {
+                "name": "004 Hat Crackle - @aq",
+                "category": "HATS",
+                "start": 15.318526925170069,
+                "end": 16.31852692517007
+            },
+            {
+                "name": "005 Hat Dark - @aq",
+                "category": "HATS",
+                "start": 16.31852692517007,
+                "end": 17.31852692517007
+            },
+            {
+                "name": "001 Perc Ash - @aq",
+                "category": "PERCS",
+                "start": 17.31852692517007,
+                "end": 19.03281292517007
+            },
+            {
+                "name": "002 Perc Bite - @aq",
+                "category": "PERCS",
+                "start": 19.03281292517007,
+                "end": 24.71585192517007
+            },
+            {
+                "name": "003 Perc Bolt - @aq",
+                "category": "PERCS",
+                "start": 24.71585192517007,
+                "end": 27.21585192517007
+            },
+            {
+                "name": "004 Perc Break - @aq",
+                "category": "PERCS",
+                "start": 27.21585192517007,
+                "end": 28.21585192517007
+            },
+            {
+                "name": "005 Perc Crunch - @aq",
+                "category": "PERCS",
+                "start": 28.21585192517007,
+                "end": 30.71585192517007
+            },
+            {
+                "name": "001 Underground Trap Drill Plugg Secret Sauce Arcane - @aq",
+                "category": "UNDERGROUND TRAP DRILL PLUGG SECRET SAUCES",
+                "start": 30.71585192517007,
+                "end": 42.71585192517007
+            }
+        ]
     }
 ]
