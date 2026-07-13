@@ -2816,5 +2816,52 @@
                 "end": 60.0
             }
         ]
+    },
+    {
+        "reddit_id": "1u0h9jm",
+        "name": "Arqive Scrap",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADN2pUvx7rPA6ijvTbw5lPZQTA15ghAAJuIAACSWepUr919spG9kFjPAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADN2pUvx7rPA6ijvTbw5lPZQTA15ghAAJuIAACSWepUr919spG9kFjPAQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "nzdJuQ3joJs",
+        "tg_invoice_link": "https://t.me/c/3737519537/38",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-13T10:34:37.476933",
+        "markers": [
+            {
+                "name": "001 Kick Rupture - @aq",
+                "category": "KICKS",
+                "start": 0.0,
+                "end": 2.5
+            },
+            {
+                "name": "002 Kick Quake - @aq",
+                "category": "KICKS",
+                "start": 2.5,
+                "end": 12.5375
+            },
+            {
+                "name": "003 Kick Gore - @aq",
+                "category": "KICKS",
+                "start": 12.5375,
+                "end": 17.803125
+            },
+            {
+                "name": "004 Kick Mire - @aq",
+                "category": "KICKS",
+                "start": 17.803125,
+                "end": 23.25625
+            },
+            {
+                "name": "005 Kick Rust - @aq",
+                "category": "KICKS",
+                "start": 23.25625,
+                "end": 25.75625
+            }
+        ]
     }
 ]
