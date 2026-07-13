@@ -2769,5 +2769,52 @@
                 "end": 42.71585192517007
             }
         ]
+    },
+    {
+        "reddit_id": "1ucvyf9",
+        "name": "Arqive Fury",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADLWpUSJ2f5NrjTHWRt56woRIdbnqDAAIhIAACSWepUgjDNdyEgvzbPAQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADLWpUSJ2f5NrjTHWRt56woRIdbnqDAAIhIAACSWepUgjDNdyEgvzbPAQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "-O-df1XupjA",
+        "tg_invoice_link": "https://t.me/c/3737519537/35",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-13T02:09:31.759104",
+        "markers": [
+            {
+                "name": "001 Mini Sample Gore - @aq",
+                "category": "MINI SAMPLES",
+                "start": 0.0,
+                "end": 12.0
+            },
+            {
+                "name": "002 Mini Sample Rust - @aq",
+                "category": "MINI SAMPLES",
+                "start": 12.0,
+                "end": 24.0
+            },
+            {
+                "name": "003 Mini Sample Venom - @aq",
+                "category": "MINI SAMPLES",
+                "start": 24.0,
+                "end": 36.0
+            },
+            {
+                "name": "004 Mini Sample Brute - @aq",
+                "category": "MINI SAMPLES",
+                "start": 36.0,
+                "end": 48.0
+            },
+            {
+                "name": "005 Mini Sample Filth - @aq",
+                "category": "MINI SAMPLES",
+                "start": 48.0,
+                "end": 60.0
+            }
+        ]
     }
 ]
