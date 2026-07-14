@@ -2863,5 +2863,184 @@
                 "end": 25.75625
             }
         ]
+    },
+    {
+        "reddit_id": "1udoqu7",
+        "name": "Arqive Gloom",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADOWpVlsnfESuYSiS_5YYvse9fYRBbAAL-HwACHjSxUnPZkW-esTfDPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADOWpVlsnfESuYSiS_5YYvse9fYRBbAAL-HwACHjSxUnPZkW-esTfDPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "47A_9_ychxw",
+        "tg_invoice_link": "https://t.me/c/3737519537/39",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-14T01:54:54.054350",
+        "markers": [
+            {
+                "name": "001 Loop Omen - @aq",
+                "category": "LOOPS",
+                "start": 0.0,
+                "end": 4.615374149659864
+            },
+            {
+                "name": "001 Kick Beast - @aq",
+                "category": "KICKS",
+                "start": 4.615374149659864,
+                "end": 5.615374149659864
+            },
+            {
+                "name": "002 Kick Bolt - @aq",
+                "category": "KICKS",
+                "start": 5.615374149659864,
+                "end": 6.615374149659864
+            },
+            {
+                "name": "003 Kick Bruise - @aq",
+                "category": "KICKS",
+                "start": 6.615374149659864,
+                "end": 7.615374149659864
+            },
+            {
+                "name": "004 Kick Cave - @aq",
+                "category": "KICKS",
+                "start": 7.615374149659864,
+                "end": 8.615374149659864
+            },
+            {
+                "name": "005 Kick Crush - @aq",
+                "category": "KICKS",
+                "start": 8.615374149659864,
+                "end": 9.615374149659864
+            },
+            {
+                "name": "001 Snare Bite - @aq",
+                "category": "SNARES",
+                "start": 9.615374149659864,
+                "end": 10.615374149659864
+            },
+            {
+                "name": "002 Snare Break - @aq",
+                "category": "SNARES",
+                "start": 10.615374149659864,
+                "end": 11.615374149659864
+            },
+            {
+                "name": "003 Snare Brute - @aq",
+                "category": "SNARES",
+                "start": 11.615374149659864,
+                "end": 12.841337868480725
+            },
+            {
+                "name": "004 Snare Burnt - @aq",
+                "category": "SNARES",
+                "start": 12.841337868480725,
+                "end": 13.841337868480725
+            },
+            {
+                "name": "005 Snare Crash - @aq",
+                "category": "SNARES",
+                "start": 13.841337868480725,
+                "end": 14.841337868480725
+            },
+            {
+                "name": "001 Clap Gavel - @aq",
+                "category": "CLAPS",
+                "start": 14.841337868480725,
+                "end": 16.562494331065757
+            },
+            {
+                "name": "002 Clap Rictus - @aq",
+                "category": "CLAPS",
+                "start": 16.562494331065757,
+                "end": 17.562494331065757
+            },
+            {
+                "name": "003 Clap Grime - @aq",
+                "category": "CLAPS",
+                "start": 17.562494331065757,
+                "end": 18.562494331065757
+            },
+            {
+                "name": "001 Hat Blade - @aq",
+                "category": "HATS",
+                "start": 18.562494331065757,
+                "end": 20.759614512471654
+            },
+            {
+                "name": "002 Hat Cipher - @aq",
+                "category": "HATS",
+                "start": 20.759614512471654,
+                "end": 21.759614512471654
+            },
+            {
+                "name": "003 Hat Cutter - @aq",
+                "category": "HATS",
+                "start": 21.759614512471654,
+                "end": 22.759614512471654
+            },
+            {
+                "name": "004 Hat Dagger - @aq",
+                "category": "HATS",
+                "start": 22.759614512471654,
+                "end": 23.759614512471654
+            },
+            {
+                "name": "005 Hat Fang - @aq",
+                "category": "HATS",
+                "start": 23.759614512471654,
+                "end": 24.759614512471654
+            },
+            {
+                "name": "001 Perc Clack - @aq",
+                "category": "PERCS",
+                "start": 24.759614512471654,
+                "end": 25.759614512471654
+            },
+            {
+                "name": "002 Perc Tap - @aq",
+                "category": "PERCS",
+                "start": 25.759614512471654,
+                "end": 26.759614512471654
+            },
+            {
+                "name": "003 Perc Strike - @aq",
+                "category": "PERCS",
+                "start": 26.759614512471654,
+                "end": 27.759614512471654
+            },
+            {
+                "name": "001 Fx Blight - @aq",
+                "category": "FX",
+                "start": 27.759614512471654,
+                "end": 30.259614512471654
+            },
+            {
+                "name": "002 Fx Crack - @aq",
+                "category": "FX",
+                "start": 30.259614512471654,
+                "end": 31.514421768707482
+            },
+            {
+                "name": "003 Fx Fangs - @aq",
+                "category": "FX",
+                "start": 31.514421768707482,
+                "end": 32.51442176870748
+            },
+            {
+                "name": "004 Fx Hiss - @aq",
+                "category": "FX",
+                "start": 32.51442176870748,
+                "end": 34.80768707482993
+            },
+            {
+                "name": "005 Fx Rattle - @aq",
+                "category": "FX",
+                "start": 34.80768707482993,
+                "end": 36.735578231292514
+            }
+        ]
     }
 ]
