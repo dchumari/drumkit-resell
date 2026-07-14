@@ -498,31 +498,44 @@ def run_throwback_release(upload: bool = False):
         # 2. Download the original ZIP file from Telegram using the file_id
         local_zip = os.path.join(temp_dir, "old_kit.zip")
         print(f"Downloading old pack ZIP from Telegram using file_id: {old_pack['file_id']}")
-        dl_url = f"https://api.telegram.org/bot{config.TELEGRAM_BOT_TOKEN}/getFile"
-        # Since the bot is running, we can check file path
-        req = urllib.request.Request(dl_url, data=urllib.parse.urlencode({"file_id": old_pack["file_id"]}).encode())
-        # Wait, if local Bot API server is running, we can download it directly from localhost:8081
-        req_local = urllib.request.Request(f"{telegram_publisher.LOCAL_BOT_API_URL}/bot{config.TELEGRAM_BOT_TOKEN}/getFile?file_id={old_pack['file_id']}")
         
-        # Pull file path from response
-        with urllib.request.urlopen(req_local, timeout=20) as res:
-            res_json = json.loads(res.read().decode())
-            file_path_tg = res_json["result"]["file_path"]
+        # Try fetching file path via local Bot API server first
+        file_path_tg = None
+        try:
+            req_local = urllib.request.Request(f"{telegram_publisher.LOCAL_BOT_API_URL}/bot{config.TELEGRAM_BOT_TOKEN}/getFile?file_id={old_pack['file_id']}")
+            with urllib.request.urlopen(req_local, timeout=15) as res:
+                res_json = json.loads(res.read().decode())
+                if res_json.get("ok"):
+                    file_path_tg = res_json["result"]["file_path"]
+                    token_part = f"bot{config.TELEGRAM_BOT_TOKEN}"
+                    if token_part in file_path_tg:
+                        relative_path = file_path_tg.split(token_part)[-1].lstrip("/\\")
+                    else:
+                        relative_path = file_path_tg.split("/")[-1]
+                    download_url = f"{telegram_publisher.LOCAL_BOT_API_URL}/file/bot{config.TELEGRAM_BOT_TOKEN}/{relative_path}"
+                    print(f"Downloading file from local Bot API via HTTP: {download_url}")
+                    with urllib.request.urlopen(download_url, timeout=60) as response:
+                        with open(local_zip, "wb") as f_out:
+                            shutil.copyfileobj(response, f_out)
+        except Exception as e:
+            print(f"Local Bot API server file fetch failed: {e}. Falling back to public Telegram Bot API...")
+            file_path_tg = None
             
-        # Download the file bytes from local server via HTTP
-        # Note: We download via HTTP to avoid WSL2/Docker Windows volume mount path conflicts.
-        token_part = f"bot{config.TELEGRAM_BOT_TOKEN}"
-        if token_part in file_path_tg:
-            relative_path = file_path_tg.split(token_part)[-1].lstrip("/\\")
-        else:
-            relative_path = file_path_tg.split("/")[-1]  # fallback to filename
-            
-        download_url = f"{telegram_publisher.LOCAL_BOT_API_URL}/file/bot{config.TELEGRAM_BOT_TOKEN}/{relative_path}"
-        print(f"Downloading file from local Bot API via HTTP: {download_url}")
-        
-        with urllib.request.urlopen(download_url, timeout=60) as response:
-            with open(local_zip, "wb") as f_out:
-                shutil.copyfileobj(response, f_out)
+        # Fallback to public Telegram Bot API if local failed
+        if not os.path.exists(local_zip) or not file_path_tg:
+            pub_url = f"https://api.telegram.org/bot{config.TELEGRAM_BOT_TOKEN}/getFile"
+            req_pub = urllib.request.Request(pub_url, data=urllib.parse.urlencode({"file_id": old_pack["file_id"]}).encode())
+            with urllib.request.urlopen(req_pub, timeout=20) as res:
+                res_json = json.loads(res.read().decode())
+                if not res_json.get("ok"):
+                    raise ValueError(f"Failed to get file info from public Telegram API: {res_json}")
+                file_path_tg = res_json["result"]["file_path"]
+                
+            download_url = f"https://api.telegram.org/file/bot{config.TELEGRAM_BOT_TOKEN}/{file_path_tg}"
+            print(f"Downloading file from public Telegram Bot API: {download_url}")
+            with urllib.request.urlopen(download_url, timeout=90) as response:
+                with open(local_zip, "wb") as f_out:
+                    shutil.copyfileobj(response, f_out)
         
         # Process and compile just like normal!
         ext_dir = os.path.join(temp_dir, "extracted")
@@ -571,33 +584,48 @@ def run_throwback_release(upload: bool = False):
         yt_token = youtube_uploader.get_access_token()
         yt_tags = youtube_uploader.generate_tags_with_deepseek(rebranded_name, old_pack["genre"])
         
-        desc = config.STATIC_DESC_TEMPLATE.format(
-            pack_name=rebranded_name,
-            tg_invoice_link=old_pack.get("tg_invoice_link", "https://t.me/arqive"),
-            tg_subscription_link=f"https://t.me/{telegram_publisher.get_bot_username(config.TELEGRAM_BOT_TOKEN)}",
-            pack_contents=f"Vault Throwback Release of {old_pack['name']} (Genre: {old_pack['genre']})",
-            affiliate_recommendations=config.AFFILIATE_LINKS.get(old_pack["genre"], "")
-        )
-        
-        vid_id = youtube_uploader.upload_video(video_path, f"[VAULT RELEASE] {rebranded_name} [FREE]", desc, yt_tags, yt_token)
-        youtube_uploader.add_comment_to_video(vid_id, f"📥 Get this Vault release here: {old_pack.get('tg_invoice_link')}", yt_token)
-        
-        # 4. Post New Storefront Invoice on Channel B referencing the old file_id
-        # (No need to re-upload the ZIP to Telegram, we already have the file_id!)
+        # Post storefront invoice link layout referencing the old file_id
         bot_uname = telegram_publisher.get_bot_username(config.TELEGRAM_BOT_TOKEN)
         thread_id = config.GENRE_TOPICS_B.get(old_pack["genre"], config.GENRE_TOPICS_B["Default"])
         
-        invoice_desc = f"📼 [VAULT THROWBACK] {rebranded_name}\nOne of our top-rated classic kits is back with a fresh layout. Download now!"
-        telegram_publisher.publish_invoice(
+        storefront_caption = (
+            f"📼 [VAULT THROWBACK] <b>{html.escape(rebranded_name)}</b>\n\n"
+            f"One of our top-rated classic kits is back with a fresh layout!\n\n"
+            f"Download immediately by paying Stars below, or subscribe to our Premium Channel for free access!"
+        )
+        
+        reply_markup = {
+            "inline_keyboard": [
+                [
+                    {"text": f"💳 Pay {old_pack['stars_price']} Stars ⭐️", "url": f"https://t.me/{bot_uname}?start=dl_{old_pack['file_id']}"},
+                    {"text": "📥 Download via Subscription", "url": f"https://t.me/{bot_uname}?start=sub_{old_pack['file_id']}"}
+                ]
+            ]
+        }
+        
+        invoice_msg_id = telegram_publisher.publish_photo(
             config.TELEGRAM_BOT_TOKEN, 
             config.CHANNEL_B_CHAT_ID, 
-            bot_uname, 
-            old_pack["file_id"], 
-            rebranded_name, 
-            invoice_desc, 
-            old_pack["stars_price"], 
+            mockup_path, 
+            storefront_caption, 
+            reply_markup=reply_markup,
             thread_id=thread_id
         )
+        
+        tg_invoice_link = f"https://t.me/c/{str(config.CHANNEL_B_CHAT_ID).replace('-100', '')}/{invoice_msg_id}" if invoice_msg_id else old_pack.get("tg_invoice_link", f"https://t.me/{bot_uname}")
+        
+        desc = config.STATIC_DESC_TEMPLATE.format(
+            pack_name=rebranded_name,
+            tg_invoice_link=tg_invoice_link,
+            tg_subscription_link=f"https://t.me/{bot_uname}",
+            pack_contents=f"Vault Throwback Release of {old_pack['name']} (Genre: {old_pack['genre']})",
+            affiliate_recommendations=config.AFFILIATE_LINKS.get(old_pack["genre"], ""),
+            tags_list=", ".join(yt_tags),
+            hashtags=" ".join([f"#{t.lower().replace(' ', '')}" for t in yt_tags[:4]])
+        )
+        
+        vid_id = youtube_uploader.upload_video(video_path, f"[VAULT RELEASE] {rebranded_name} [FREE]", desc, yt_tags, yt_token)
+        youtube_uploader.add_comment_to_video(vid_id, f"📥 Get this Vault release here: {tg_invoice_link}", yt_token)
         
         notifier.send_log(f"Published Vault/Throwback Release: {rebranded_name} (YouTube ID: {vid_id})")
     except Exception as e:
