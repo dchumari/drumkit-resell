@@ -215,6 +215,108 @@ def scrape_reddit_links(subreddit: str = "Drumkits", rss_url: Optional[str] = No
     return new_adds
 
 
+def scrape_dynasty_links(limit_pages: int = 10) -> int:
+    """
+    Scrapes Dynastyblog posts page-by-page.
+    Extracts the first valid download link from the post body.
+    Stops pagination once new unprocessed links are successfully queued.
+    """
+    import xml.etree.ElementTree as ET
+    import urllib.request
+    import html
+    import re
+    import datetime
+
+    processed = load_processed_links()
+    queue = load_queue()
+    queued_urls = {item["url"] for item in queue}
+
+    new_adds = 0
+    start_index = 1
+    max_results = 25
+
+    for page in range(limit_pages):
+        url = f"https://www.dynastyblog.site/feeds/posts/default?alt=rss&start-index={start_index}&max-results={max_results}"
+        print(f"Fetching Dynastyblog page {page + 1}: {url}")
+        try:
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"}
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as response:
+                xml_data = response.read()
+
+            root = ET.fromstring(xml_data)
+            channel = root.find("channel")
+            items = channel.findall("item") if channel is not None else []
+
+            if not items:
+                print("No more items found in Dynastyblog feed.")
+                break
+
+            page_processed_count = 0
+            page_adds = 0
+
+            for item in items:
+                guid_elem = item.find("guid")
+                guid = guid_elem.text if guid_elem is not None else ""
+
+                # Check if already processed
+                if guid in processed:
+                    page_processed_count += 1
+                    continue
+
+                title_elem = item.find("title")
+                title = title_elem.text if title_elem is not None else "Untitled Dynasty Pack"
+
+                desc_elem = item.find("description")
+                desc_html = desc_elem.text if desc_elem is not None else ""
+                desc_text = html.unescape(desc_html)
+
+                # Find download links in the post HTML body
+                found_links = []
+                links = re.findall(r'href="([^"]+)"', desc_html)
+                # Fallback for plain text links
+                links.extend(re.findall(r'https?://[^\s()<>"]+', desc_text))
+
+                for link in links:
+                    ltype = downloader.get_link_type(link)
+                    if ltype != "unsupported" and link not in queued_urls:
+                        found_links.append((link, ltype))
+
+                if found_links:
+                    target_link, ltype = found_links[0]
+                    queue.append({
+                        "reddit_id": guid,  # Reuse reddit_id field as unique post identifier/GUID
+                        "title": title,
+                        "description": f"Dynastyblog release: {title}",
+                        "url": target_link,
+                        "host": ltype,
+                        "date_added": datetime.datetime.utcnow().isoformat()
+                    })
+                    queued_urls.add(target_link)
+                    new_adds += 1
+                    page_adds += 1
+                    print(f"Queued new Dynasty pack: {title} ({ltype})")
+
+            print(f"Page {page + 1} processing complete: {page_adds} added, {page_processed_count} already processed.")
+
+            # If we successfully queued new packs, we can stop to avoid over-scraping
+            if page_adds > 0:
+                break
+
+            # If every item on this page was already processed, paginator moves to the next page
+            start_index += max_results
+
+        except Exception as e:
+            print(f"Error scraping Dynastyblog page {page + 1}: {e}")
+            break
+
+    if new_adds > 0:
+        save_queue(queue)
+
+    print(f"Dynastyblog scraping completed. Added {new_adds} new links to queue.")
+    return new_adds
+
+
 def load_genre_names() -> dict:
     """Loads genre-specific naming pools from data/genre_names.json."""
     import json
@@ -540,7 +642,7 @@ def run_throwback_release(upload: bool = False):
         # Process and compile just like normal!
         ext_dir = os.path.join(temp_dir, "extracted")
         audio_processor.unzip_pack(local_zip, ext_dir)
-        cats, all_files = audio_processor.process_and_rename_kit(ext_dir, rebranded_name=rebranded_name, genre=old_pack["genre"])
+        cats, all_files, rebranded_dir = audio_processor.process_and_rename_kit(ext_dir, rebranded_name=rebranded_name, genre=old_pack["genre"])
         showcase = audio_processor.select_preview_showcase(cats)
         
         voice_tag = os.path.join(config.ASSETS_DIR, "voice_tag.wav")
@@ -812,7 +914,7 @@ def process_item(
                     
         # 2. Extract & Rebrand
         audio_processor.unzip_pack(download_zip, extracted_dir)
-        cats, all_files = audio_processor.process_and_rename_kit(extracted_dir, rebranded_name=rebranded_name, genre=genre, ai_naming=ai_naming)
+        cats, all_files, rebranded_dir = audio_processor.process_and_rename_kit(extracted_dir, rebranded_name=rebranded_name, genre=genre, ai_naming=ai_naming)
         
         # Verify file count threshold
         total_samples = len(all_files)
@@ -860,7 +962,7 @@ def process_item(
         clean_rebranded = rebranded_name.replace("Arqive", "").replace("[AQ]", "").strip()
         target_root_name = f"{clean_rebranded.upper()} {genre.upper()} PACK (Produced by Arqive)"
         zip_base_name = os.path.join(temp_dir, target_root_name)
-        zip_files = audio_processor.zip_pack(extracted_dir, zip_base_name)
+        zip_files = audio_processor.zip_pack(rebranded_dir, zip_base_name)
         
         if not upload:
             print("\n[Local Analysis Mode] Copying generated files to output folder...")
@@ -1071,7 +1173,8 @@ def run_pipeline(
     rss_url: Optional[str] = None,
     ai_naming: Optional[bool] = None,
     style: Optional[str] = None,
-    color: Optional[str] = None
+    color: Optional[str] = None,
+    source: str = "random"
 ):
     """Main pipeline routine."""
     # If explicit inputs are given, process directly
@@ -1094,9 +1197,25 @@ def run_pipeline(
         )
         return
 
-    # Normal flow: scrape Reddit for any new posts
-    scrape_reddit_links(subreddit=subreddit, rss_url=rss_url)
-    
+    # Normal flow: determine source and scrape
+    import random
+    chosen_source = source.lower()
+    if chosen_source == "random":
+        chosen_source = random.choice(["reddit", "dynasty"])
+        print(f"Randomly selected scraping source: {chosen_source}")
+
+    new_adds = 0
+    if chosen_source == "dynasty":
+        new_adds = scrape_dynasty_links()
+        if new_adds == 0:
+            print("Dynastyblog returned 0 new packs. Falling back to Reddit...")
+            new_adds = scrape_reddit_links(subreddit=subreddit, rss_url=rss_url)
+    else: # reddit
+        new_adds = scrape_reddit_links(subreddit=subreddit, rss_url=rss_url)
+        if new_adds == 0:
+            print("Reddit returned 0 new packs. Falling back to Dynastyblog...")
+            new_adds = scrape_dynasty_links()
+            
     queue = load_queue()
     if not queue:
         # If queue is empty, trigger Vault/Throwback Release if possible, otherwise explain how to run mock
@@ -1203,6 +1322,7 @@ if __name__ == "__main__":
     parser.add_argument("--ai-naming", type=str, choices=["true", "false"], help="Override AI sample naming ('true' or 'false').")
     parser.add_argument("--style", type=str, choices=["rounded_sidebar", "friendly_glass", "liquid_glass", "pastel_minimalist", "neon_sunset", "floating_badge", "frosted_bubble", "liquid_sunset", "asymmetric_float"], help="Visual style theme.")
     parser.add_argument("--color", type=str, help="Custom color name (e.g. mint, red, cyan), hex (e.g. #FF0055), or 'random' to override theme color scheme.")
+    parser.add_argument("--source", type=str, choices=["reddit", "dynasty", "random"], default="random", help="Scraping source: reddit, dynasty, or random (default: random).")
     args = parser.parse_args()
     
     ai_naming_val = None
@@ -1220,6 +1340,7 @@ if __name__ == "__main__":
         rss_url=args.rss_url,
         ai_naming=ai_naming_val,
         style=args.style,
-        color=args.color
+        color=args.color,
+        source=args.source
     )
 

@@ -82,8 +82,13 @@ def compile_preview_audio(showcase_files: List[Tuple[str, str]], output_audio_pa
             "-ar", "44100", "-ac", "2", "-c:a", "pcm_s16le", part_wav
         ]
         try:
-            subprocess.run(cmd_part, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(cmd_part, check=True, capture_output=True, text=True)
             temp_part_files.append(part_wav)
+        except subprocess.CalledProcessError as e:
+            print(f"Error standardizing showcase audio segment {fpath}: exit status {e.returncode}")
+            print(f"FFmpeg stdout: {e.stdout}")
+            print(f"FFmpeg stderr: {e.stderr}")
+            continue
         except Exception as e:
             print(f"Error standardizing showcase audio segment {fpath}: {e}")
             continue

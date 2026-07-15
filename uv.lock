@@ -1,6 +1,13 @@
 version = 1
 revision = 3
 requires-python = ">=3.12"
+resolution-markers = [
+    "python_full_version == '9.9.*'",
+    "python_full_version != '9.9.*'",
+]
+
+[manifest]
+overrides = [{ name = "pycrypto", marker = "python_full_version == '9.9.*'" }]
 
 [[package]]
 name = "aiofiles"
@@ -266,7 +273,9 @@ dependencies = [
     { name = "gdown" },
     { name = "mega-py" },
     { name = "pillow" },
+    { name = "pycryptodome" },
     { name = "requests" },
+    { name = "tenacity" },
 ]
 
 [package.metadata]
@@ -275,7 +284,9 @@ requires-dist = [
     { name = "gdown" },
     { name = "mega-py" },
     { name = "pillow" },
+    { name = "pycryptodome" },
     { name = "requests", specifier = ">=2.34.2" },
+    { name = "tenacity", specifier = ">=9.0.0" },
 ]
 
 [[package]]
@@ -411,17 +422,17 @@ wheels = [
 
 [[package]]
 name = "mega-py"
-version = "1.0.8"
+version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pathlib" },
-    { name = "pycryptodome" },
+    { name = "pycrypto", marker = "python_full_version == '9.9.*'" },
+    { name = "python2-secrets" },
     { name = "requests" },
-    { name = "tenacity" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/47/0d/211ed7689526f27bc6138f611267553ff27ad539bb4529095e80dd48f21b/mega.py-1.0.8.tar.gz", hash = "sha256:0632664abda8b7e4d0bbd68460da4b331d3d7d63db9afe7d3ce6fcb4f137c1a9", size = 18608, upload-time = "2020-06-25T20:44:27.728Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/17/c9/6f522bcc3fdb396082cb5bbd4ab506c93dbcd16675899b2231399c786ee6/mega.py-1.0.0.tar.gz", hash = "sha256:185f9070cb3666e5304c97fbdc9a5dd7da97fe5db33f92ecb834f3fefe9ebf32", size = 16663, upload-time = "2019-10-31T22:38:15.29Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a3/51/44a1085a091c27ade09e122d5abdafb4b6400265081879a7c4e32973a175/mega.py-1.0.8-py2.py3-none-any.whl", hash = "sha256:863b2dd59f8e639402fef3c67778fd63895fc1b678127e7006df1544f04e737c", size = 19529, upload-time = "2020-06-25T20:44:26.485Z" },
+    { url = "https://files.pythonhosted.org/packages/79/6f/d9b172136da6bd9e4e7eff4140ea52a01031cc92abdb77cccf1bc2c603cc/mega.py-1.0.0-py2.py3-none-any.whl", hash = "sha256:8d8215c282ff7685cee5cbf8fe476a3f0a2235d58bab798fb304e1ef5ea0dbc4", size = 14210, upload-time = "2019-10-31T22:38:13.121Z" },
 ]
 
 [[package]]
@@ -696,6 +707,12 @@ wheels = [
 ]
 
 [[package]]
+name = "pycrypto"
+version = "2.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/60/db/645aa9af249f059cc3a368b118de33889219e0362141e75d4eaf6f80f163/pycrypto-2.6.1.tar.gz", hash = "sha256:f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c", size = 446240, upload-time = "2014-06-20T08:10:20.813Z" }
+
+[[package]]
 name = "pycryptodome"
 version = "3.23.0"
 source = { registry = "https://pypi.org/simple" }
@@ -825,6 +842,15 @@ wheels = [
 ]
 
 [[package]]
+name = "python2-secrets"
+version = "1.0.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/46/b5/a5397e02c04d890062b6a35a3742f187039e21ce23fbb3963d265fe71743/python2-secrets-1.0.5.tar.gz", hash = "sha256:82405f28fa613ea7788d3bb6cc468668e7a8baed101e994e5f77e99db96093bb", size = 3328, upload-time = "2019-01-29T09:10:13.72Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/33/c5/5f5d6c754970cc890e152a55d2d179ec68426dc0d87625f28071621f18c6/python2_secrets-1.0.5-py2.py3-none-any.whl", hash = "sha256:d7448efe9b64c2bf4062e805f482ebe13477a33a8a36b8f2e885347802f67ac7", size = 3255, upload-time = "2019-01-29T09:10:10.481Z" },
+]
+
+[[package]]
 name = "requests"
 version = "2.34.2"
 source = { registry = "https://pypi.org/simple" }
@@ -845,15 +871,6 @@ socks = [
 ]
 
 [[package]]
-name = "six"
-version = "1.17.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81", size = 34031, upload-time = "2024-12-04T17:35:28.174Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274", size = 11050, upload-time = "2024-12-04T17:35:26.475Z" },
-]
-
-[[package]]
 name = "soupsieve"
 version = "2.8.4"
 source = { registry = "https://pypi.org/simple" }
@@ -864,14 +881,11 @@ wheels = [
 
 [[package]]
 name = "tenacity"
-version = "5.1.5"
+version = "9.1.4"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/2d/7a/b5494aa3940974d92de47f7b57384a0eb8b56142ea47f82028c661359c6f/tenacity-5.1.5.tar.gz", hash = "sha256:e664bd94f088b17f46da33255ae33911ca6a0fe04b156d334b601a4ef66d3c5f", size = 31364, upload-time = "2019-10-30T12:57:00.236Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/c6/ee486fd809e357697ee8a44d3d69222b344920433d3b6666ccd9b374630c/tenacity-9.1.4.tar.gz", hash = "sha256:adb31d4c263f2bd041081ab33b498309a57c77f9acf2db65aadf0898179cf93a", size = 49413, upload-time = "2026-02-07T10:45:33.841Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/67/67bb1db087678bc5c6f20766cf18914dfe37b0b9d4e4c5bb87408460b75f/tenacity-5.1.5-py2.py3-none-any.whl", hash = "sha256:3a916e734559f1baa2cab965ee00061540c41db71c3bf25375b81540a19758fc", size = 34922, upload-time = "2019-10-30T12:57:02.559Z" },
+    { url = "https://files.pythonhosted.org/packages/d7/c1/eb8f9debc45d3b7918a32ab756658a0904732f75e555402972246b0b8e71/tenacity-9.1.4-py3-none-any.whl", hash = "sha256:6095a360c919085f28c6527de529e76a06ad89b23659fa881ae0649b867a9d55", size = 28926, upload-time = "2026-02-07T10:45:32.24Z" },
 ]
 
 [[package]]

@@ -41,7 +41,11 @@ def extract_nested_zips(directory: str):
                             print(f"Failed to extract nested zip {archive_path} with zipfile: {err}. Trying 7z...")
                     
                     if not extracted:
-                        cmd = ["7z", "x", archive_path, f"-o{extract_dir}", "-y"]
+                        exe_7z = "7z"
+                        default_win_7z = r"C:\Program Files\7-Zip\7z.exe"
+                        if os.path.exists(default_win_7z):
+                            exe_7z = default_win_7z
+                        cmd = [exe_7z, "x", archive_path, f"-o{extract_dir}", "-y"]
                         try:
                             subprocess.run(cmd, check=True, capture_output=True, text=True)
                             extracted = True
@@ -76,7 +80,13 @@ def unzip_pack(zip_path: str, extract_to: str):
             print(f"Extracted {zip_path} to {extract_to} using standard zipfile.")
         except Exception as zip_err:
             print(f"Standard zipfile extraction failed: {zip_err}. Trying 7z fallback...")
-            cmd = ["7z", "x", zip_path, f"-o{extract_to}", "-y"]
+            # Use absolute path fallback for 7z on Windows if not on PATH
+            exe_7z = "7z"
+            default_win_7z = r"C:\Program Files\7-Zip\7z.exe"
+            if os.path.exists(default_win_7z):
+                exe_7z = default_win_7z
+                
+            cmd = [exe_7z, "x", zip_path, f"-o{extract_to}", "-y"]
             try:
                 subprocess.run(cmd, check=True, capture_output=True, text=True)
                 print(f"Extracted {zip_path} to {extract_to} using 7z.")
@@ -711,9 +721,12 @@ def process_and_rename_kit(root_dir: str, rebranded_name: str = "Resold", genre:
     clean_rebranded = rebranded_name.replace("Arqive", "").replace("[AQ]", "").strip()
     target_root_name = f"{clean_rebranded.upper()} {genre.upper()} PACK (Produced by Arqive)"
     
-    temp_rebranded_parent = root_dir + "_rebranded_temp"
+    temp_rebranded_parent = os.path.join(os.path.dirname(root_dir), "rebranded")
     if os.path.exists(temp_rebranded_parent):
-        shutil.rmtree(temp_rebranded_parent)
+        try:
+            shutil.rmtree(temp_rebranded_parent)
+        except Exception as e:
+            print(f"Error removing existing rebranded directory: {e}")
     os.makedirs(temp_rebranded_parent, exist_ok=True)
     
     temp_rebranded_dir = os.path.join(temp_rebranded_parent, target_root_name)
@@ -803,26 +816,20 @@ def process_and_rename_kit(root_dir: str, rebranded_name: str = "Resold", genre:
             
             try:
                 shutil.copy2(old_path, new_path)
-                # Compute the final path in root_dir since we'll rename temp_rebranded_parent to root_dir
-                final_path = os.path.join(root_dir, target_root_name, cat_caps, new_name)
+                # Compute the final path in rebranded directory directly
+                final_path = os.path.join(temp_rebranded_parent, target_root_name, cat_caps, new_name)
                 final_categories[cat_caps].append(final_path)
                 final_all_files.append(final_path)
             except Exception as e:
                 print(f"Error copying renamed file {old_path} to {new_path}: {e}")
                 
-    # Delete the entire original root_dir
+    # Delete the entire original root_dir (ignore failures due to Windows Defender file locks)
     try:
         shutil.rmtree(root_dir)
     except Exception as e:
         print(f"Error removing original root_dir: {e}")
         
-    # Move temp_rebranded_parent to root_dir
-    try:
-        shutil.move(temp_rebranded_parent, root_dir)
-    except Exception as e:
-        print(f"Error moving rebranded folder: {e}")
-            
-    return final_categories, final_all_files
+    return final_categories, final_all_files, temp_rebranded_dir
 
 def select_preview_showcase(categories: Dict[str, List[str]], max_per_cat: int = 5) -> List[Tuple[str, str]]:
     """
@@ -874,8 +881,13 @@ def zip_pack(source_dir: str, output_zip_base: str) -> List[str]:
         if os.path.exists(output_zip):
             os.remove(output_zip)
             
+        exe_7z = "7z"
+        default_win_7z = r"C:\Program Files\7-Zip\7z.exe"
+        if os.path.exists(default_win_7z):
+            exe_7z = default_win_7z
+            
         # Command: 7z a -v1900m <output_zip> <source_dir>/*
-        cmd = ["7z", "a", "-v1900m", output_zip, os.path.join(source_dir, "*")]
+        cmd = [exe_7z, "a", "-v1900m", output_zip, os.path.join(source_dir, "*")]
         try:
             subprocess.run(cmd, check=True)
             # Find generated split files: output.zip.001, output.zip.002, etc.

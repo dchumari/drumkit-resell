@@ -198,23 +198,153 @@ def download_file(url: str, output_path: str) -> bool:
         # Below is a subprocess wrapper that checks for mega-get command or uses mega-dl.
         # Alternatively, we can use a python mega wrapper.
         try:
-            from mega import Mega
-            print(f"Downloading from Mega via mega.py: {url}")
-            mega = Mega()
-            m = mega.login()
-            m.download_url(url, dest_path=os.path.dirname(output_path), dest_filename=os.path.basename(output_path))
+            # 1. Translate URL from modern format to legacy format
+            translated_url = url
+            if "file/" in url and "#" in url:
+                parts = url.split("file/")
+                subparts = parts[1].split("#")
+                translated_url = f"{parts[0]}#!{subparts[0]}!{subparts[1]}"
+                print(f"Translated Mega URL for legacy library parser: {translated_url}")
+
+            # 2. Apply monkeypatch to mega library dynamically to make it bytes-safe on Python 3
+            import mega
+            from Crypto.Cipher import AES
+            from Crypto.Util import Counter
+            import requests
+            import tempfile
+
+            # Monkeypatch AES.new if not already patched
+            if not getattr(AES, "_patched_for_mega", False):
+                original_aes_new = AES.new
+
+                def patched_aes_new(key, *args, **kwargs):
+                    if isinstance(key, str):
+                        key = key.encode("utf-8")
+                    args_list = list(args)
+                    if len(args_list) >= 2 and isinstance(args_list[1], str):
+                        args_list[1] = args_list[1].encode("utf-8")
+                    iv_val = kwargs.get("IV") or kwargs.get("iv")
+                    if iv_val and isinstance(iv_val, str):
+                        if "IV" in kwargs:
+                            kwargs["IV"] = iv_val.encode("utf-8")
+                        if "iv" in kwargs:
+                            kwargs["iv"] = iv_val.encode("utf-8")
+                    return original_aes_new(key, *args_list, **kwargs)
+
+                AES.new = patched_aes_new
+                AES._patched_for_mega = True
+
+            # Monkeypatch mega.Mega._download_file if not already patched
+            if not getattr(mega.Mega, "_patched_for_py3", False):
+                def patched_download_file(
+                    self,
+                    file_handle,
+                    file_key,
+                    dest_path=None,
+                    dest_filename=None,
+                    is_public=False,
+                    file=None
+                ):
+                    from mega.crypto import (
+                        base64_to_a32, base64_url_decode, decrypt_attr, a32_to_str,
+                        get_chunks, str_to_a32
+                    )
+                    from mega.errors import RequestError
+                    
+                    if file is None:
+                        if is_public:
+                            file_key = base64_to_a32(file_key)
+                            file_data = self._api_request({'a': 'g', 'g': 1, 'p': file_handle})
+                        else:
+                            file_data = self._api_request({'a': 'g', 'g': 1, 'n': file_handle})
+
+                        k = (
+                            file_key[0] ^ file_key[4], file_key[1] ^ file_key[5],
+                            file_key[2] ^ file_key[6], file_key[3] ^ file_key[7]
+                        )
+                        iv = file_key[4:6] + (0, 0)
+                        meta_mac = file_key[6:8]
+                    else:
+                        file_data = self._api_request({'a': 'g', 'g': 1, 'n': file['h']})
+                        k = file['k']
+                        iv = file['iv']
+                        meta_mac = file['meta_mac']
+
+                    if 'g' not in file_data:
+                        raise RequestError('File not accessible anymore')
+                    file_url = file_data['g']
+                    file_size = file_data['s']
+                    attribs = base64_url_decode(file_data['at'])
+                    attribs = decrypt_attr(attribs, k)
+
+                    if dest_filename is not None:
+                        file_name = dest_filename
+                    else:
+                        file_name = attribs['n']
+
+                    input_file = requests.get(file_url, stream=True).raw
+
+                    if dest_path is None:
+                        dest_path = ''
+                    else:
+                        dest_path += '/'
+
+                    temp_output_file = tempfile.NamedTemporaryFile(
+                        mode='w+b', prefix='megapy_', delete=False
+                    )
+
+                    k_str = a32_to_str(k)
+                    counter = Counter.new(128, initial_value=((iv[0] << 32) + iv[1]) << 64)
+                    aes = AES.new(k_str, AES.MODE_CTR, counter=counter)
+
+                    mac_str = b'\0' * 16
+                    mac_encryptor = AES.new(k_str, AES.MODE_CBC, mac_str)
+                    iv_str = a32_to_str([iv[0], iv[1], iv[0], iv[1]])
+
+                    for chunk_start, chunk_size in get_chunks(file_size):
+                        chunk = input_file.read(chunk_size)
+                        chunk = aes.decrypt(chunk)
+                        temp_output_file.write(chunk)
+
+                        encryptor = AES.new(k_str, AES.MODE_CBC, iv_str)
+                        for i in range(0, len(chunk) - 16, 16):
+                            block = chunk[i:i + 16]
+                            encryptor.encrypt(block)
+
+                        if file_size > 16:
+                            i += 16
+                        else:
+                            i = 0
+
+                        block = chunk[i:i + 16]
+                        if len(block) % 16:
+                            block += b'\0' * (16 - (len(block) % 16))
+                        mac_str = mac_encryptor.encrypt(encryptor.encrypt(block))
+
+                    file_mac = str_to_a32(mac_str)
+                    temp_output_file.close()
+
+                    if (file_mac[0] ^ file_mac[1], file_mac[2] ^ file_mac[3]) != meta_mac:
+                        raise ValueError('Mismatched mac')
+
+                    shutil.move(temp_output_file.name, dest_path + file_name)
+
+                mega.Mega._download_file = patched_download_file
+                mega.Mega._patched_for_py3 = True
+
+            print(f"Downloading from Mega via patched mega.py: {translated_url}")
+            m = mega.Mega().login()
+            m.download_url(translated_url, dest_path=os.path.dirname(output_path), dest_filename=os.path.basename(output_path))
             return os.path.exists(output_path)
         except Exception as e:
             print(f"mega.py download failed: {e}. Trying megacmd fallback.")
             # Fallback to megacmd if installed
-            # command: mega-get <link> <dest>
             cmd = ["mega-get", url, output_path]
             try:
                 res = subprocess.run(cmd, check=True)
                 return res.returncode == 0
             except Exception as e2:
                 print(f"megacmd download failed: {e2}")
-                # Try raw curl megadl wrapper if available
                 return False
                 
     return False
