@@ -3256,5 +3256,250 @@
                 "end": 10.203104166666666
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-8225578028289435146",
+        "name": "Arqive Sickle",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADP2pXyVgTMWnMrZx6Owlex_2nXS67AAL0HAACcnrAUvN5ZlZ7p9tmPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADP2pXyVgTMWnMrZx6Owlex_2nXS67AAL0HAACcnrAUvN5ZlZ7p9tmPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "MXfWWNOsGt4",
+        "tg_invoice_link": "https://t.me/c/3737519537/42",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-15T17:55:28.704554",
+        "markers": [
+            {
+                "name": "001 808 Gore - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 1.4857823129251702
+            },
+            {
+                "name": "002 808 Rust - @aq",
+                "category": "808S",
+                "start": 1.4857823129251702,
+                "end": 6.354875283446711
+            },
+            {
+                "name": "003 808 Brute - @aq",
+                "category": "808S",
+                "start": 6.354875283446711,
+                "end": 9.787913832199546
+            },
+            {
+                "name": "004 808 Filth - @aq",
+                "category": "808S",
+                "start": 9.787913832199546,
+                "end": 13.2456462585034
+            },
+            {
+                "name": "005 808 Quake - @aq",
+                "category": "808S",
+                "start": 13.2456462585034,
+                "end": 16.58331065759637
+            },
+            {
+                "name": "001 Snare Crack - @aq",
+                "category": "SNARES",
+                "start": 16.58331065759637,
+                "end": 17.58331065759637
+            },
+            {
+                "name": "002 Snare Snap - @aq",
+                "category": "SNARES",
+                "start": 17.58331065759637,
+                "end": 18.58331065759637
+            },
+            {
+                "name": "003 Snare Thud - @aq",
+                "category": "SNARES",
+                "start": 18.58331065759637,
+                "end": 19.58331065759637
+            },
+            {
+                "name": "004 Snare Bash - @aq",
+                "category": "SNARES",
+                "start": 19.58331065759637,
+                "end": 20.58331065759637
+            },
+            {
+                "name": "005 Snare Crush - @aq",
+                "category": "SNARES",
+                "start": 20.58331065759637,
+                "end": 22.50829931972789
+            },
+            {
+                "name": "001 Clap Smack - @aq",
+                "category": "CLAPS",
+                "start": 22.50829931972789,
+                "end": 25.00829931972789
+            },
+            {
+                "name": "002 Clap Crack - @aq",
+                "category": "CLAPS",
+                "start": 25.00829931972789,
+                "end": 26.00829931972789
+            },
+            {
+                "name": "003 Clap Snap - @aq",
+                "category": "CLAPS",
+                "start": 26.00829931972789,
+                "end": 27.00829931972789
+            },
+            {
+                "name": "004 Clap Thud - @aq",
+                "category": "CLAPS",
+                "start": 27.00829931972789,
+                "end": 28.00829931972789
+            },
+            {
+                "name": "005 Clap Bash - @aq",
+                "category": "CLAPS",
+                "start": 28.00829931972789,
+                "end": 40.00829931972789
+            },
+            {
+                "name": "001 Hat Glitch - @aq",
+                "category": "HATS",
+                "start": 40.00829931972789,
+                "end": 47.62004531972789
+            },
+            {
+                "name": "002 Hat Shiver - @aq",
+                "category": "HATS",
+                "start": 47.62004531972789,
+                "end": 52.76290231972789
+            },
+            {
+                "name": "003 Hat Static - @aq",
+                "category": "HATS",
+                "start": 52.76290231972789,
+                "end": 55.26290231972789
+            },
+            {
+                "name": "004 Hat Hiss - @aq",
+                "category": "HATS",
+                "start": 55.26290231972789,
+                "end": 57.76290231972789
+            },
+            {
+                "name": "005 Hat Buzz - @aq",
+                "category": "HATS",
+                "start": 57.76290231972789,
+                "end": 60.26290231972789
+            },
+            {
+                "name": "001 Perc Thump - @aq",
+                "category": "PERCS",
+                "start": 60.26290231972789,
+                "end": 61.88875265986395
+            },
+            {
+                "name": "002 Perc Snap - @aq",
+                "category": "PERCS",
+                "start": 61.88875265986395,
+                "end": 62.88875265986395
+            },
+            {
+                "name": "003 Perc Tap - @aq",
+                "category": "PERCS",
+                "start": 62.88875265986395,
+                "end": 63.88875265986395
+            },
+            {
+                "name": "004 Perc Crush - @aq",
+                "category": "PERCS",
+                "start": 63.88875265986395,
+                "end": 64.88875265986394
+            },
+            {
+                "name": "005 Perc Rattle - @aq",
+                "category": "PERCS",
+                "start": 64.88875265986394,
+                "end": 65.88875265986394
+            },
+            {
+                "name": "001 Fx Rupture - @aq",
+                "category": "FX",
+                "start": 65.88875265986394,
+                "end": 74.7548297573696
+            },
+            {
+                "name": "002 Fx Break - @aq",
+                "category": "FX",
+                "start": 74.7548297573696,
+                "end": 86.7548297573696
+            },
+            {
+                "name": "003 Fx Fray - @aq",
+                "category": "FX",
+                "start": 86.7548297573696,
+                "end": 88.31732408843537
+            },
+            {
+                "name": "004 Fx Quake - @aq",
+                "category": "FX",
+                "start": 88.31732408843537,
+                "end": 100.31732408843537
+            },
+            {
+                "name": "005 Fx Slash - @aq",
+                "category": "FX",
+                "start": 100.31732408843537,
+                "end": 112.31732408843537
+            },
+            {
+                "name": "001 Vox Omen - @aq",
+                "category": "VOX",
+                "start": 112.31732408843537,
+                "end": 120.41716535827663
+            },
+            {
+                "name": "002 Vox Ghoul - @aq",
+                "category": "VOX",
+                "start": 120.41716535827663,
+                "end": 132.41716535827663
+            },
+            {
+                "name": "003 Vox Rite - @aq",
+                "category": "VOX",
+                "start": 132.41716535827663,
+                "end": 144.41716535827663
+            },
+            {
+                "name": "004 Vox Curse - @aq",
+                "category": "VOX",
+                "start": 144.41716535827663,
+                "end": 156.41716535827663
+            },
+            {
+                "name": "001 One Shot Ravage - @aq",
+                "category": "ONE SHOTS",
+                "start": 156.41716535827663,
+                "end": 158.1091381473923
+            },
+            {
+                "name": "002 One Shot Break - @aq",
+                "category": "ONE SHOTS",
+                "start": 158.1091381473923,
+                "end": 167.2584125238095
+            },
+            {
+                "name": "003 One Shot Quake - @aq",
+                "category": "ONE SHOTS",
+                "start": 167.2584125238095,
+                "end": 174.22269823809523
+            },
+            {
+                "name": "004 One Shot Thud - @aq",
+                "category": "ONE SHOTS",
+                "start": 174.22269823809523,
+                "end": 176.72269823809523
+            }
+        ]
     }
 ]
