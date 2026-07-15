@@ -498,6 +498,92 @@ async def handle_genres(message: Message):
         
     await message.answer("\n".join(lines), parse_mode="Markdown")
 
+def is_admin(user_id: int) -> bool:
+    """Helper to check if user_id is the authorized administrator."""
+    try:
+        if not config.ADMIN_CHAT_ID:
+            return False
+        return user_id == int(config.ADMIN_CHAT_ID)
+    except (ValueError, TypeError):
+        return False
+
+@dp.message(Command("sync"))
+async def handle_sync(message: Message):
+    """Admin-only command to manually trigger Git pull and packs.json sync."""
+    if not is_admin(message.from_user.id):
+        await message.answer("❌ **Permission Denied:** This command is restricted to the administrator.")
+        return
+        
+    await message.answer("🔄 **Manual Sync Initiated:** Pulling latest repository updates and merging packs.json...")
+    try:
+        sync_packs_from_json()
+        await message.answer("✅ **Database Sync Complete:** Local SQLite tables are now up to date with packs.json!")
+    except Exception as e:
+        await message.answer(f"⚠️ **Sync Failed:** {e}")
+
+@dp.message(Command("add_coupon"))
+async def handle_add_coupon(message: Message, command: CommandObject):
+    """Admin-only command to insert a custom discount coupon code.
+    Usage: /add_coupon [CODE] [DISCOUNT_PCT] [MAX_USES] (e.g. /add_coupon SPECIAL50 50 1)
+    """
+    if not is_admin(message.from_user.id):
+        await message.answer("❌ **Permission Denied:** This command is restricted to the administrator.")
+        return
+        
+    args = command.args
+    if not args or len(args.split()) < 3:
+        await message.answer("👉 **Usage:** `/add_coupon [CODE] [DISCOUNT_PCT] [MAX_USES]` (e.g. `/add_coupon SPECIAL50 50 1`)", parse_mode="Markdown")
+        return
+        
+    code_raw, pct_str, max_str = args.split()[:3]
+    code = code_raw.upper().strip()
+    
+    try:
+        pct = int(pct_str)
+        max_uses = int(max_str)
+        if not (1 <= pct <= 100) or max_uses < 1:
+            raise ValueError
+    except ValueError:
+        await message.answer("❌ **Invalid arguments:** Discount must be between 1-100%, and Max Uses must be 1 or greater.")
+        return
+        
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT OR REPLACE INTO coupons (code, discount_pct, max_uses) VALUES (?, ?, ?)",
+            (code, pct, max_uses)
+        )
+        conn.commit()
+        await message.answer(f"✅ **Coupon Added/Updated:** `{code}` is now active offering {pct}% OFF for up to {max_uses} uses.", parse_mode="Markdown")
+    except Exception as e:
+        await message.answer(f"⚠️ **Failed to save coupon:** {e}")
+    finally:
+        conn.close()
+
+@dp.message(Command("list_coupons"))
+async def handle_list_coupons(message: Message):
+    """Admin-only command to list all currently configured coupons and discount values."""
+    if not is_admin(message.from_user.id):
+        await message.answer("❌ **Permission Denied:** This command is restricted to the administrator.")
+        return
+        
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT code, discount_pct, max_uses FROM coupons")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    if not rows:
+        await message.answer("🎫 No discount coupons are currently configured.")
+        return
+        
+    lines = ["🎫 **Current Discount Coupons:**"]
+    for row in rows:
+        lines.append(f"• `{row['code']}` — **{row['discount_pct']}% OFF** (Max {row['max_uses']} use(s))")
+        
+    await message.answer("\n".join(lines), parse_mode="Markdown")
+
 async def main():
     init_db()
     # Initial sync from packs.json on startup
