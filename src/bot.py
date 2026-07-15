@@ -95,6 +95,17 @@ def init_db():
     )
     """)
     
+    # Sales/revenue transactions table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS sales (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        file_id TEXT,
+        stars_amount INTEGER,
+        timestamp TEXT
+    )
+    """)
+    
     # Seed default coupons
     for code, details in config.COUPON_CODES.items():
         cursor.execute(
@@ -326,11 +337,22 @@ async def process_successful_payment(message: Message):
         
     # Apply coupon usage logs if coupon was used
     coupon_code = active_user_coupons.pop(user_id, None)
-    if coupon_code:
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute("INSERT OR IGNORE INTO coupon_usages (user_id, code, timestamp) VALUES (?, ?, date('now'))", (user_id, coupon_code))
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        # Record the transaction/sale
+        stars_paid = message.successful_payment.total_amount
+        cursor.execute(
+            "INSERT INTO sales (user_id, file_id, stars_amount, timestamp) VALUES (?, ?, ?, datetime('now'))",
+            (user_id, file_id, stars_paid)
+        )
+        if coupon_code:
+            cursor.execute("INSERT OR IGNORE INTO coupon_usages (user_id, code, timestamp) VALUES (?, ?, date('now'))", (user_id, coupon_code))
         conn.commit()
+    except Exception as db_err:
+        print(f"Error logging transaction sale: {db_err}")
+    finally:
         conn.close()
 
     await message.answer(f"🎉 **Thank you for your purchase!**\nDelivering your kit **{pack['name']}** now:")
@@ -583,6 +605,151 @@ async def handle_list_coupons(message: Message):
         lines.append(f"• `{row['code']}` — **{row['discount_pct']}% OFF** (Max {row['max_uses']} use(s))")
         
     await message.answer("\n".join(lines), parse_mode="Markdown")
+
+@dp.message(Command("admin"))
+async def handle_admin_menu(message: Message):
+    """Admin-only control panel displaying interactive menu buttons."""
+    if not is_admin(message.from_user.id):
+        await message.answer("❌ **Permission Denied:** This command is restricted to the administrator.")
+        return
+        
+    kbd = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="🔄 Sync Database", callback_data="admin_sync"),
+            InlineKeyboardButton(text="🎫 List Coupons", callback_data="admin_coupons")
+        ],
+        [
+            InlineKeyboardButton(text="📊 View Insights", callback_data="admin_insights")
+        ],
+        [
+            InlineKeyboardButton(text="❌ Close Menu", callback_data="admin_close")
+        ]
+    ])
+    
+    await message.answer(
+        "🛠️ **Arqive Reseller Admin Panel**\n\n"
+        "Click the buttons below to manage the bot and view metrics/insights.",
+        reply_markup=kbd,
+        parse_mode="Markdown"
+    )
+
+@dp.callback_query(F.data.startswith("admin_"))
+async def process_admin_callbacks(callback: types.CallbackQuery):
+    """Processes callback queries initiated from the Admin Panel buttons."""
+    if not is_admin(callback.from_user.id):
+        await callback.answer("❌ Permission Denied", show_alert=True)
+        return
+        
+    action = callback.data
+    
+    if action == "admin_close":
+        await callback.message.delete()
+        await callback.answer()
+        return
+        
+    elif action == "admin_sync":
+        await callback.answer("Syncing database...")
+        try:
+            sync_packs_from_json()
+            await callback.message.edit_text(
+                "✅ **Database Sync Complete:** Local SQLite tables are now up to date with packs.json!",
+                reply_markup=callback.message.reply_markup,
+                parse_mode="Markdown"
+            )
+        except Exception as e:
+            await callback.message.edit_text(
+                f"⚠️ **Sync Failed:** {e}",
+                reply_markup=callback.message.reply_markup,
+                parse_mode="Markdown"
+            )
+            
+    elif action == "admin_coupons":
+        await callback.answer()
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT code, discount_pct, max_uses FROM coupons")
+        rows = cursor.fetchall()
+        conn.close()
+        
+        if not rows:
+            text = "🎫 No discount coupons are currently configured."
+        else:
+            lines = ["🎫 **Current Discount Coupons:**"]
+            for row in rows:
+                lines.append(f"• `{row['code']}` — **{row['discount_pct']}% OFF** (Max {row['max_uses']} use(s))")
+            text = "\n".join(lines)
+            
+        await callback.message.edit_text(
+            text,
+            reply_markup=callback.message.reply_markup,
+            parse_mode="Markdown"
+        )
+        
+    elif action == "admin_insights":
+        await callback.answer("Calculating insights...")
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # 1. Total users
+        cursor.execute("SELECT COUNT(*) FROM users")
+        total_users = cursor.fetchone()[0]
+        
+        # 2. Total packs
+        cursor.execute("SELECT COUNT(*) FROM packs")
+        total_packs = cursor.fetchone()[0]
+        
+        # 3. Rated vs Unrated packs
+        cursor.execute("SELECT COUNT(*) FROM packs WHERE rating > 0")
+        rated_packs = cursor.fetchone()[0]
+        unrated_packs = total_packs - rated_packs
+        
+        # 4. Coupon usage count
+        cursor.execute("SELECT COUNT(*) FROM coupon_usages")
+        total_coupon_usages = cursor.fetchone()[0]
+        
+        # 5. Sales metrics
+        cursor.execute("SELECT COUNT(*), SUM(stars_amount) FROM sales")
+        sales_row = cursor.fetchone()
+        total_sales = sales_row[0] or 0
+        total_stars = sales_row[1] or 0
+        
+        # 6. Top selling packs
+        cursor.execute("""
+            SELECT p.name, COUNT(s.id) as sales_count 
+            FROM sales s 
+            JOIN packs p ON s.file_id = p.file_id 
+            GROUP BY s.file_id 
+            ORDER BY sales_count DESC 
+            LIMIT 3
+        """)
+        top_sales = cursor.fetchall()
+        
+        conn.close()
+        
+        # Format Top Selling Packs text
+        top_selling_str = ""
+        if top_sales:
+            top_selling_str = "\n\n🔥 **Top Selling Packs:**\n" + "\n".join(
+                f" {idx}. {row['name']} ({row['sales_count']} sales)"
+                for idx, row in enumerate(top_sales, 1)
+            )
+            
+        insights_text = (
+            "📊 **Arqive Reseller Dashboard Insights**\n\n"
+            f"👤 **Total Users**: `{total_users}`\n"
+            f"📦 **Total Rebranded Packs**: `{total_packs}`\n"
+            f"  └ ⭐ Rated: `{rated_packs}` | 🌑 Unrated: `{unrated_packs}`\n\n"
+            f"💳 **Total Transactions**: `{total_sales}`\n"
+            f"⭐️ **Total Revenue**: `{total_stars} Stars`\n"
+            f"🎟️ **Coupon Redemptions**: `{total_coupon_usages}`"
+            f"{top_selling_str}"
+        )
+        
+        await callback.message.edit_text(
+            insights_text,
+            reply_markup=callback.message.reply_markup,
+            parse_mode="Markdown"
+        )
 
 async def main():
     init_db()
