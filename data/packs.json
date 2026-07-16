@@ -3548,5 +3548,52 @@
                 "end": 60.0
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-2255918021549393123",
+        "name": "Arqive Mirror",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADQ2pZL0E7E1cmEirW0wJVJNgQeyWbAAKlHgAC-7HIUmNUcoJBcJ_zPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADQ2pZL0E7E1cmEirW0wJVJNgQeyWbAAKlHgAC-7HIUmNUcoJBcJ_zPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "xc_wpDq0i90",
+        "tg_invoice_link": "https://t.me/c/3737519537/44",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-16T19:22:02.278462",
+        "markers": [
+            {
+                "name": "001 Vox Blight - @aq",
+                "category": "VOX",
+                "start": 0.0,
+                "end": 1.259208
+            },
+            {
+                "name": "002 Vox Bloat - @aq",
+                "category": "VOX",
+                "start": 1.259208,
+                "end": 2.272836
+            },
+            {
+                "name": "003 Vox Bleed - @aq",
+                "category": "VOX",
+                "start": 2.272836,
+                "end": 3.272836
+            },
+            {
+                "name": "004 Vox Blind - @aq",
+                "category": "VOX",
+                "start": 3.272836,
+                "end": 4.272836
+            },
+            {
+                "name": "005 Vox Bruise - @aq",
+                "category": "VOX",
+                "start": 4.272836,
+                "end": 6.672836
+            }
+        ]
     }
 ]
