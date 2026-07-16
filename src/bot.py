@@ -6,7 +6,7 @@ import asyncio
 from typing import Optional
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command, CommandObject
-from aiogram.types import PreCheckoutQuery, Message, LabeledPrice, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import PreCheckoutQuery, Message, LabeledPrice, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
 import config
 
@@ -207,15 +207,23 @@ async def handle_start(message: Message, command: CommandObject):
     conn.commit()
     conn.close()
     
+    # Create bottom persistent reply keyboard
+    buttons = [
+        [KeyboardButton(text="🔍 Search Kits"), KeyboardButton(text="🎵 Genres")],
+        [KeyboardButton(text="🎟️ Apply Coupon")]
+    ]
+    if is_admin(user_id):
+        buttons.append([KeyboardButton(text="🛠️ Admin Panel")])
+        
+    main_menu_kbd = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True, persistent=True)
+    
     if not args:
         welcome_txt = (
             "👋 Welcome to the **Arqive Checkout Bot**!\n\n"
             "This bot handles safe checkout transactions and premium subscriptions.\n"
-            "👉 Use `/search [keyword]` to browse packs.\n"
-            "👉 Use `/genres` to view available styles.\n"
-            "👉 Use `/coupon [code]` to apply a discount coupon."
+            "👉 Use the interactive menu buttons below to navigate quickly!"
         )
-        await message.answer(welcome_txt, parse_mode="Markdown")
+        await message.answer(welcome_txt, reply_markup=main_menu_kbd, parse_mode="Markdown")
         return
 
     # Handle sub_FILEID (Subscription checkout link)
@@ -519,6 +527,22 @@ async def handle_genres(message: Message):
         lines.append(f"• **{g}** (Use `/search {g.lower()}` to view)")
         
     await message.answer("\n".join(lines), parse_mode="Markdown")
+
+@dp.message(F.text == "🔍 Search Kits")
+async def btn_search_kits(message: Message):
+    await message.answer("🔍 **Search Vault:**\n\n👉 Type `/search [keyword]` to find kits (e.g., `/search trap`).")
+
+@dp.message(F.text == "🎵 Genres")
+async def btn_genres(message: Message):
+    await handle_genres(message)
+
+@dp.message(F.text == "🎟️ Apply Coupon")
+async def btn_coupon(message: Message):
+    await message.answer("🎟️ **Apply Coupon:**\n\n👉 Type `/coupon [CODE]` to apply a discount code (e.g., `/coupon OFF30`).")
+
+@dp.message(F.text == "🛠️ Admin Panel")
+async def btn_admin_panel(message: Message):
+    await handle_admin_menu(message)
 
 def is_admin(user_id: int) -> bool:
     """Helper to check if user_id is the authorized administrator."""
