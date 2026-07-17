@@ -3642,5 +3642,52 @@
                 "end": 29.64678004535147
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-675787372458446957",
+        "name": "Arqive Button",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADR2pZivh14EuIu_sCsWZnrX_dyJfeAAIlHwAC-7HIUriFd10tKxPnPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADR2pZivh14EuIu_sCsWZnrX_dyJfeAAIlHwAC-7HIUriFd10tKxPnPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "ILRsilXGDRQ",
+        "tg_invoice_link": "https://t.me/c/3737519537/2",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-17T01:53:18.713935",
+        "markers": [
+            {
+                "name": "001 Vox Rattle - @aq",
+                "category": "VOX",
+                "start": 0.0,
+                "end": 5.517233560090703
+            },
+            {
+                "name": "002 Vox Gore - @aq",
+                "category": "VOX",
+                "start": 5.517233560090703,
+                "end": 8.017233560090702
+            },
+            {
+                "name": "003 Vox Junk - @aq",
+                "category": "VOX",
+                "start": 8.017233560090702,
+                "end": 10.517233560090702
+            },
+            {
+                "name": "004 Vox Rust - @aq",
+                "category": "VOX",
+                "start": 10.517233560090702,
+                "end": 13.017233560090702
+            },
+            {
+                "name": "005 Vox Filth - @aq",
+                "category": "VOX",
+                "start": 13.017233560090702,
+                "end": 15.517233560090702
+            }
+        ]
     }
 ]
