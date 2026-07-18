@@ -3783,5 +3783,52 @@
                 "end": 39.42857142857143
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-4245195051654495453",
+        "name": "Arqive Rope Vol. 3",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADTWpbxUh8kLIpsLXGJUc_GNUy_HwwAALRGwACgw7ZUry7ejH-D9_HPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADTWpbxUh8kLIpsLXGJUc_GNUy_HwwAALRGwACgw7ZUry7ejH-D9_HPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "xqMiP-Y3euM",
+        "tg_invoice_link": "https://t.me/c/3737519537/50",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-18T18:26:42.250796",
+        "markers": [
+            {
+                "name": "002 Violin Vol.5 Rust - @aq",
+                "category": "VIOLIN VOL.5S",
+                "start": 0.0,
+                "end": 12.0
+            },
+            {
+                "name": "004 Violin Vol.5 Grave - @aq",
+                "category": "VIOLIN VOL.5S",
+                "start": 12.0,
+                "end": 24.0
+            },
+            {
+                "name": "005 Violin Vol.5 Filth - @aq",
+                "category": "VIOLIN VOL.5S",
+                "start": 24.0,
+                "end": 36.0
+            },
+            {
+                "name": "006 Violin Vol.5 Shard - @aq",
+                "category": "VIOLIN VOL.5S",
+                "start": 36.0,
+                "end": 48.0
+            },
+            {
+                "name": "009 Violin Vol.5 Havoc - @aq",
+                "category": "VIOLIN VOL.5S",
+                "start": 48.0,
+                "end": 60.0
+            }
+        ]
     }
 ]
