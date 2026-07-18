@@ -3736,5 +3736,52 @@
                 "end": 5.950793650793651
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-905510219338312854",
+        "name": "Arqive Fresco",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADS2pbTJdXJZoAAfTzpRTG1BEbjf7vlAACeBoAAoMO2VKvjJ8Wu2EpdT0E",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADS2pbTJdXJZoAAfTzpRTG1BEbjf7vlAACeBoAAoMO2VKvjJ8Wu2EpdT0E"
+        ],
+        "stars_price": 150,
+        "youtube_id": "0q1PQd4UVvo",
+        "tg_invoice_link": "https://t.me/c/3737519537/49",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-18T09:51:39.007577",
+        "markers": [
+            {
+                "name": "001 Atmosphere Vol.4 Loop Gloom - @aq",
+                "category": "ATMOSPHERE VOL.4 LOOPS",
+                "start": 0.0,
+                "end": 3.4285714285714284
+            },
+            {
+                "name": "002 Atmosphere Vol.4 Loop Rust - @aq",
+                "category": "ATMOSPHERE VOL.4 LOOPS",
+                "start": 3.4285714285714284,
+                "end": 8.571428571428571
+            },
+            {
+                "name": "003 Atmosphere Vol.4 Loop Venom - @aq",
+                "category": "ATMOSPHERE VOL.4 LOOPS",
+                "start": 8.571428571428571,
+                "end": 20.57142857142857
+            },
+            {
+                "name": "004 Atmosphere Vol.4 Loop Grave - @aq",
+                "category": "ATMOSPHERE VOL.4 LOOPS",
+                "start": 20.57142857142857,
+                "end": 27.428571428571427
+            },
+            {
+                "name": "005 Atmosphere Vol.4 Loop Fracture - @aq",
+                "category": "ATMOSPHERE VOL.4 LOOPS",
+                "start": 27.428571428571427,
+                "end": 39.42857142857143
+            }
+        ]
     }
 ]
