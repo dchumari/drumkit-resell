@@ -3689,5 +3689,52 @@
                 "end": 15.517233560090702
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-1886976030477348194",
+        "name": "Arqive Rope Vol. 2",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADSWpa3GC0uO5K8bj_DN2u4jdZTdJQAAL9GwACgw7RUjMQ4ZtOA2g7PQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADSWpa3GC0uO5K8bj_DN2u4jdZTdJQAAL9GwACgw7RUjMQ4ZtOA2g7PQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "xC8KPEVesKc",
+        "tg_invoice_link": "https://t.me/c/3737519537/48",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-18T01:52:48.851017",
+        "markers": [
+            {
+                "name": "001 Vox Riot - @aq",
+                "category": "VOX",
+                "start": 0.0,
+                "end": 1.2164172335600907
+            },
+            {
+                "name": "002 Vox Rage - @aq",
+                "category": "VOX",
+                "start": 1.2164172335600907,
+                "end": 2.5517460317460317
+            },
+            {
+                "name": "003 Vox Hush - @aq",
+                "category": "VOX",
+                "start": 2.5517460317460317,
+                "end": 3.7518820861678
+            },
+            {
+                "name": "004 Vox Vein - @aq",
+                "category": "VOX",
+                "start": 3.7518820861678,
+                "end": 4.7518820861678
+            },
+            {
+                "name": "005 Vox Curse - @aq",
+                "category": "VOX",
+                "start": 4.7518820861678,
+                "end": 5.950793650793651
+            }
+        ]
     }
 ]
