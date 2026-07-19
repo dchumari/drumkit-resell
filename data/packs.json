@@ -3877,5 +3877,82 @@
                 "end": 60.0
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-1712280410567763299",
+        "name": "Arqive Crunch",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADUWpcn3XGEEk4ny29Br9VwtNGnXVbAAKfHAACgw7hUtzNfCuYbXMtPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADUWpcn3XGEEk4ny29Br9VwtNGnXVbAAKfHAACgw7hUtzNfCuYbXMtPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "h_7ZazSykg8",
+        "tg_invoice_link": "https://t.me/c/3737519537/52",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-19T09:58:17.603557",
+        "markers": [
+            {
+                "name": "001 Acoustic Percussion Guitar Loop Rust - @aq",
+                "category": "ACOUSTIC PERCUSSION GUITAR LOOPS",
+                "start": 0.0,
+                "end": 0.37498866213151927
+            },
+            {
+                "name": "002 Acoustic Percussion Guitar Loop Filth - @aq",
+                "category": "ACOUSTIC PERCUSSION GUITAR LOOPS",
+                "start": 0.37498866213151927,
+                "end": 0.7499773242630385
+            },
+            {
+                "name": "003 Acoustic Percussion Guitar Loop Ash - @aq",
+                "category": "ACOUSTIC PERCUSSION GUITAR LOOPS",
+                "start": 0.7499773242630385,
+                "end": 1.1249659863945578
+            },
+            {
+                "name": "004 Acoustic Percussion Guitar Loop Brine - @aq",
+                "category": "ACOUSTIC PERCUSSION GUITAR LOOPS",
+                "start": 1.1249659863945578,
+                "end": 1.499954648526077
+            },
+            {
+                "name": "005 Acoustic Percussion Guitar Loop Venom - @aq",
+                "category": "ACOUSTIC PERCUSSION GUITAR LOOPS",
+                "start": 1.499954648526077,
+                "end": 1.8749433106575963
+            },
+            {
+                "name": "001 One Shots Guitar Loop Ravage - @aq",
+                "category": "ONE SHOTS GUITAR LOOPS",
+                "start": 1.8749433106575963,
+                "end": 5.777392290249433
+            },
+            {
+                "name": "002 One Shots Guitar Loop Blight - @aq",
+                "category": "ONE SHOTS GUITAR LOOPS",
+                "start": 5.777392290249433,
+                "end": 9.679841269841269
+            },
+            {
+                "name": "003 One Shots Guitar Loop Quake - @aq",
+                "category": "ONE SHOTS GUITAR LOOPS",
+                "start": 9.679841269841269,
+                "end": 13.582290249433106
+            },
+            {
+                "name": "004 One Shots Guitar Loop Fracture - @aq",
+                "category": "ONE SHOTS GUITAR LOOPS",
+                "start": 13.582290249433106,
+                "end": 17.484739229024942
+            },
+            {
+                "name": "005 One Shots Guitar Loop Static - @aq",
+                "category": "ONE SHOTS GUITAR LOOPS",
+                "start": 17.484739229024942,
+                "end": 21.387188208616777
+            }
+        ]
     }
 ]
