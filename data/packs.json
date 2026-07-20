@@ -4001,5 +4001,52 @@
                 "end": 14.533968
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-4284440091287191709",
+        "name": "Arqive Climb",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADVWpd8K1Wi9zBUv_2q0SJpx0g7YSmAAJOIgACPQPxUv8xdukWTZ_WPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADVWpd8K1Wi9zBUv_2q0SJpx0g7YSmAAJOIgACPQPxUv8xdukWTZ_WPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "gRxe5xeOOyY",
+        "tg_invoice_link": "https://t.me/c/3737519537/54",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-20T09:56:30.721084",
+        "markers": [
+            {
+                "name": "001 Vox Ravage - @aq",
+                "category": "VOX",
+                "start": 0.0,
+                "end": 12.0
+            },
+            {
+                "name": "002 Vox Rift - @aq",
+                "category": "VOX",
+                "start": 12.0,
+                "end": 24.0
+            },
+            {
+                "name": "003 Vox Rust - @aq",
+                "category": "VOX",
+                "start": 24.0,
+                "end": 36.0
+            },
+            {
+                "name": "004 Vox Rot - @aq",
+                "category": "VOX",
+                "start": 36.0,
+                "end": 46.66668934240363
+            },
+            {
+                "name": "005 Vox Riot - @aq",
+                "category": "VOX",
+                "start": 46.66668934240363,
+                "end": 49.16668934240363
+            }
+        ]
     }
 ]
