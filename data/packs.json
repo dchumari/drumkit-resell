@@ -4048,5 +4048,52 @@
                 "end": 49.16668934240363
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-4284440091287191709",
+        "name": "Arqive Climb Vol. 2",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADV2peYLVvXS_WP3I26qKin4xqrS9aAAIZGQACPQP5UgdK2Q50026xPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADV2peYLVvXS_WP3I26qKin4xqrS9aAAIZGQACPQP5UgdK2Q50026xPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "Xsf4ZBAOATE",
+        "tg_invoice_link": "https://t.me/c/3737519537/55",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-20T17:54:20.987450",
+        "markers": [
+            {
+                "name": "001 Vox Rapture - @aq",
+                "category": "VOX",
+                "start": 0.0,
+                "end": 2.5
+            },
+            {
+                "name": "002 Vox Gore - @aq",
+                "category": "VOX",
+                "start": 2.5,
+                "end": 14.5
+            },
+            {
+                "name": "003 Vox Fang - @aq",
+                "category": "VOX",
+                "start": 14.5,
+                "end": 26.5
+            },
+            {
+                "name": "004 Vox Rust - @aq",
+                "category": "VOX",
+                "start": 26.5,
+                "end": 38.5
+            },
+            {
+                "name": "005 Vox Vein - @aq",
+                "category": "VOX",
+                "start": 38.5,
+                "end": 46.18
+            }
+        ]
     }
 ]
