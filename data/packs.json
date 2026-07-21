@@ -4142,5 +4142,52 @@
                 "end": 53.80514739229025
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-4284440091287191709",
+        "name": "Arqive Rope Vol. 4",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADW2pfR1SiRRzOTP2tlHeQo-t_JrH3AAJWHAACF-X4UlgyZBjDxohGPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADW2pfR1SiRRzOTP2tlHeQo-t_JrH3AAJWHAACF-X4UlgyZBjDxohGPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "NRIc-kv_flk",
+        "tg_invoice_link": "https://t.me/c/3737519537/57",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-21T10:18:23.271829",
+        "markers": [
+            {
+                "name": "001 Vox Gutter - @aq",
+                "category": "VOX",
+                "start": 0.0,
+                "end": 10.666666666666666
+            },
+            {
+                "name": "002 Vox Rattle - @aq",
+                "category": "VOX",
+                "start": 10.666666666666666,
+                "end": 19.80952380952381
+            },
+            {
+                "name": "003 Vox Vein - @aq",
+                "category": "VOX",
+                "start": 19.80952380952381,
+                "end": 29.91480725623583
+            },
+            {
+                "name": "004 Vox Knife - @aq",
+                "category": "VOX",
+                "start": 29.91480725623583,
+                "end": 39.51480725623583
+            },
+            {
+                "name": "005 Vox Grave - @aq",
+                "category": "VOX",
+                "start": 39.51480725623583,
+                "end": 49.11480725623583
+            }
+        ]
     }
 ]
