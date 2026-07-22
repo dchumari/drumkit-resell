@@ -4236,5 +4236,202 @@
                 "end": 60.0
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-8388742576626232449",
+        "name": "Arqive Rope Vol. 6",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADX2pgL99J51n4G1AdvulaqTCCxDWiAAJ9IAACF-UAAVMHufdoquGttj0E",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADX2pgL99J51n4G1AdvulaqTCCxDWiAAJ9IAACF-UAAVMHufdoquGttj0E"
+        ],
+        "stars_price": 150,
+        "youtube_id": "SuHETANwEF4",
+        "tg_invoice_link": "https://t.me/c/3737519537/59",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-22T02:52:46.079805",
+        "markers": [
+            {
+                "name": "001 Kick Tomb - @aq",
+                "category": "KICKS",
+                "start": 0.0,
+                "end": 1.0
+            },
+            {
+                "name": "002 Kick Boulder - @aq",
+                "category": "KICKS",
+                "start": 1.0,
+                "end": 2.0
+            },
+            {
+                "name": "003 Kick Hammer - @aq",
+                "category": "KICKS",
+                "start": 2.0,
+                "end": 3.0
+            },
+            {
+                "name": "004 Kick Thud - @aq",
+                "category": "KICKS",
+                "start": 3.0,
+                "end": 4.0
+            },
+            {
+                "name": "005 Kick Crush - @aq",
+                "category": "KICKS",
+                "start": 4.0,
+                "end": 5.0
+            },
+            {
+                "name": "001 Snare Snap - @aq",
+                "category": "SNARES",
+                "start": 5.0,
+                "end": 6.0
+            },
+            {
+                "name": "002 Snare Crack - @aq",
+                "category": "SNARES",
+                "start": 6.0,
+                "end": 7.0
+            },
+            {
+                "name": "003 Snare Wire - @aq",
+                "category": "SNARES",
+                "start": 7.0,
+                "end": 8.0
+            },
+            {
+                "name": "004 Snare Snarl - @aq",
+                "category": "SNARES",
+                "start": 8.0,
+                "end": 9.0
+            },
+            {
+                "name": "005 Snare Grit - @aq",
+                "category": "SNARES",
+                "start": 9.0,
+                "end": 10.0
+            },
+            {
+                "name": "001 Hat Teeth - @aq",
+                "category": "HATS",
+                "start": 10.0,
+                "end": 11.0
+            },
+            {
+                "name": "002 Hat Glass - @aq",
+                "category": "HATS",
+                "start": 11.0,
+                "end": 12.0
+            },
+            {
+                "name": "003 Hat Zips - @aq",
+                "category": "HATS",
+                "start": 12.0,
+                "end": 13.0
+            },
+            {
+                "name": "004 Hat Rifle - @aq",
+                "category": "HATS",
+                "start": 13.0,
+                "end": 14.0
+            },
+            {
+                "name": "005 Hat Wire - @aq",
+                "category": "HATS",
+                "start": 14.0,
+                "end": 15.0
+            },
+            {
+                "name": "001 Perc Gong - @aq",
+                "category": "PERCS",
+                "start": 15.0,
+                "end": 16.0
+            },
+            {
+                "name": "002 Perc Bell - @aq",
+                "category": "PERCS",
+                "start": 16.0,
+                "end": 17.0
+            },
+            {
+                "name": "003 Perc Cymbal - @aq",
+                "category": "PERCS",
+                "start": 17.0,
+                "end": 18.0
+            },
+            {
+                "name": "004 Perc Tinkle - @aq",
+                "category": "PERCS",
+                "start": 18.0,
+                "end": 19.0
+            },
+            {
+                "name": "005 Perc Clack - @aq",
+                "category": "PERCS",
+                "start": 19.0,
+                "end": 20.0
+            },
+            {
+                "name": "001 Fx Rupture - @aq",
+                "category": "FX",
+                "start": 20.0,
+                "end": 22.5
+            },
+            {
+                "name": "002 Fx Scrape - @aq",
+                "category": "FX",
+                "start": 22.5,
+                "end": 24.948979591836736
+            },
+            {
+                "name": "003 Fx Venom - @aq",
+                "category": "FX",
+                "start": 24.948979591836736,
+                "end": 26.615646258503403
+            },
+            {
+                "name": "004 Fx Rust - @aq",
+                "category": "FX",
+                "start": 26.615646258503403,
+                "end": 28.837868480725625
+            },
+            {
+                "name": "005 Fx Shard - @aq",
+                "category": "FX",
+                "start": 28.837868480725625,
+                "end": 31.060090702947846
+            },
+            {
+                "name": "001 Melodic Rust - @aq",
+                "category": "MELODICS",
+                "start": 31.060090702947846,
+                "end": 32.837868480725625
+            },
+            {
+                "name": "002 Melodic Haze - @aq",
+                "category": "MELODICS",
+                "start": 32.837868480725625,
+                "end": 33.94897959183674
+            },
+            {
+                "name": "003 Melodic Gloom - @aq",
+                "category": "MELODICS",
+                "start": 33.94897959183674,
+                "end": 35.76716553287982
+            },
+            {
+                "name": "004 Melodic Gash - @aq",
+                "category": "MELODICS",
+                "start": 35.76716553287982,
+                "end": 38.216145124716554
+            },
+            {
+                "name": "005 Melodic Venom - @aq",
+                "category": "MELODICS",
+                "start": 38.216145124716554,
+                "end": 39.216145124716554
+            }
+        ]
     }
 ]
