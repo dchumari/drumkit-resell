@@ -4630,5 +4630,52 @@
                 "end": 61.348447963718826
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-8910869984841580214",
+        "name": "Arqive Eco Lejano",
+        "genre": "Reggaeton",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADY2ph5wABF2th4UtDg4EvUtiLH01vcAAC9RgAAtySEVMfk6X7NPPyLD0E",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADY2ph5wABF2th4UtDg4EvUtiLH01vcAAC9RgAAtySEVMfk6X7NPPyLD0E"
+        ],
+        "stars_price": 150,
+        "youtube_id": "jVou01ruJEc",
+        "tg_invoice_link": "https://t.me/c/3737519537/61",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-23T10:04:10.801723",
+        "markers": [
+            {
+                "name": "001 Perreo Loop Neon - @aq",
+                "category": "PERREO LOOPS",
+                "start": 0.0,
+                "end": 9.795918367346939
+            },
+            {
+                "name": "002 Perreo Loop Zenith - @aq",
+                "category": "PERREO LOOPS",
+                "start": 9.795918367346939,
+                "end": 19.591836734693878
+            },
+            {
+                "name": "003 Perreo Loop Vortex - @aq",
+                "category": "PERREO LOOPS",
+                "start": 19.591836734693878,
+                "end": 29.387755102040817
+            },
+            {
+                "name": "004 Perreo Loop Mirage - @aq",
+                "category": "PERREO LOOPS",
+                "start": 29.387755102040817,
+                "end": 39.183673469387756
+            },
+            {
+                "name": "005 Perreo Loop Pulse - @aq",
+                "category": "PERREO LOOPS",
+                "start": 39.183673469387756,
+                "end": 48.9795918367347
+            }
+        ]
     }
 ]
