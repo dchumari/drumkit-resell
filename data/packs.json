@@ -4677,5 +4677,232 @@
                 "end": 48.9795918367347
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-2170319124333475479",
+        "name": "Arqive Mesh Vol. 2",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADZWpixoRnNCXmguO7uVwt6EBWaU6qAAIlHgAC3JIRU7YH0WbG4frmPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADZWpixoRnNCXmguO7uVwt6EBWaU6qAAIlHgAC3JIRU7YH0WbG4frmPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": null,
+        "tg_invoice_link": "https://t.me/c/3737519537/2",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-24T01:57:30.869439",
+        "markers": [
+            {
+                "name": "001 Kick Boulder - @aq",
+                "category": "KICKS",
+                "start": 0.0,
+                "end": 1.0
+            },
+            {
+                "name": "002 Kick Quake - @aq",
+                "category": "KICKS",
+                "start": 1.0,
+                "end": 2.0
+            },
+            {
+                "name": "003 Kick Thud - @aq",
+                "category": "KICKS",
+                "start": 2.0,
+                "end": 3.0
+            },
+            {
+                "name": "004 Kick Crush - @aq",
+                "category": "KICKS",
+                "start": 3.0,
+                "end": 4.0
+            },
+            {
+                "name": "005 Kick Hammer - @aq",
+                "category": "KICKS",
+                "start": 4.0,
+                "end": 5.0
+            },
+            {
+                "name": "001 Snare Crack - @aq",
+                "category": "SNARES",
+                "start": 5.0,
+                "end": 7.5
+            },
+            {
+                "name": "002 Snare Snap - @aq",
+                "category": "SNARES",
+                "start": 7.5,
+                "end": 8.5
+            },
+            {
+                "name": "003 Snare Rattle - @aq",
+                "category": "SNARES",
+                "start": 8.5,
+                "end": 9.5
+            },
+            {
+                "name": "004 Snare Clack - @aq",
+                "category": "SNARES",
+                "start": 9.5,
+                "end": 10.5
+            },
+            {
+                "name": "005 Snare Tap - @aq",
+                "category": "SNARES",
+                "start": 10.5,
+                "end": 13.0
+            },
+            {
+                "name": "001 Clap Rupture - @aq",
+                "category": "CLAPS",
+                "start": 13.0,
+                "end": 15.5
+            },
+            {
+                "name": "002 Clap Grime - @aq",
+                "category": "CLAPS",
+                "start": 15.5,
+                "end": 16.5
+            },
+            {
+                "name": "003 Clap Shard - @aq",
+                "category": "CLAPS",
+                "start": 16.5,
+                "end": 17.5
+            },
+            {
+                "name": "004 Clap Rust - @aq",
+                "category": "CLAPS",
+                "start": 17.5,
+                "end": 18.5
+            },
+            {
+                "name": "005 Clap Venom - @aq",
+                "category": "CLAPS",
+                "start": 18.5,
+                "end": 19.5
+            },
+            {
+                "name": "001 Hat Slate - @aq",
+                "category": "HATS",
+                "start": 19.5,
+                "end": 22.0
+            },
+            {
+                "name": "002 Hat Wire - @aq",
+                "category": "HATS",
+                "start": 22.0,
+                "end": 24.5
+            },
+            {
+                "name": "003 Hat Shard - @aq",
+                "category": "HATS",
+                "start": 24.5,
+                "end": 27.0
+            },
+            {
+                "name": "004 Hat Glitch - @aq",
+                "category": "HATS",
+                "start": 27.0,
+                "end": 29.5
+            },
+            {
+                "name": "005 Hat Hiss - @aq",
+                "category": "HATS",
+                "start": 29.5,
+                "end": 34.5
+            },
+            {
+                "name": "001 Perc Gore - @aq",
+                "category": "PERCS",
+                "start": 34.5,
+                "end": 35.5
+            },
+            {
+                "name": "002 Perc Rust - @aq",
+                "category": "PERCS",
+                "start": 35.5,
+                "end": 36.5
+            },
+            {
+                "name": "003 Perc Haze - @aq",
+                "category": "PERCS",
+                "start": 36.5,
+                "end": 37.5
+            },
+            {
+                "name": "004 Perc Static - @aq",
+                "category": "PERCS",
+                "start": 37.5,
+                "end": 38.5
+            },
+            {
+                "name": "005 Perc Sizzle - @aq",
+                "category": "PERCS",
+                "start": 38.5,
+                "end": 39.5
+            },
+            {
+                "name": "001 Ride Drift - @aq",
+                "category": "RIDES",
+                "start": 39.5,
+                "end": 40.5
+            },
+            {
+                "name": "002 Ride Glide - @aq",
+                "category": "RIDES",
+                "start": 40.5,
+                "end": 41.999319727891155
+            },
+            {
+                "name": "003 Ride Cruise - @aq",
+                "category": "RIDES",
+                "start": 41.999319727891155,
+                "end": 42.999319727891155
+            },
+            {
+                "name": "004 Ride Haze - @aq",
+                "category": "RIDES",
+                "start": 42.999319727891155,
+                "end": 43.999319727891155
+            },
+            {
+                "name": "005 Ride Rush - @aq",
+                "category": "RIDES",
+                "start": 43.999319727891155,
+                "end": 44.999319727891155
+            },
+            {
+                "name": "001 Ukulele Chord Loop Chime - @aq",
+                "category": "UKULELE CHORD LOOPS",
+                "start": 44.999319727891155,
+                "end": 47.999319727891155
+            },
+            {
+                "name": "002 Ukulele Chord Loop Boom - @aq",
+                "category": "UKULELE CHORD LOOPS",
+                "start": 47.999319727891155,
+                "end": 50.999319727891155
+            },
+            {
+                "name": "003 Ukulele Chord Loop Rush - @aq",
+                "category": "UKULELE CHORD LOOPS",
+                "start": 50.999319727891155,
+                "end": 53.999319727891155
+            },
+            {
+                "name": "004 Ukulele Chord Loop Dust - @aq",
+                "category": "UKULELE CHORD LOOPS",
+                "start": 53.999319727891155,
+                "end": 56.999319727891155
+            },
+            {
+                "name": "005 Ukulele Chord Loop Haze - @aq",
+                "category": "UKULELE CHORD LOOPS",
+                "start": 56.999319727891155,
+                "end": 59.999319727891155
+            }
+        ]
     }
 ]
