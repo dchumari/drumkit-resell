@@ -4951,5 +4951,52 @@
                 "end": 55.31548752834467
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-5828652011900411859",
+        "name": "Arqive Fiber",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADaWpkF5Q6jXOhOPdFVs1p0YZcW7dRAAJ1HgACDncgU2jdFPGDZFCDPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADaWpkF5Q6jXOhOPdFVs1p0YZcW7dRAAJ1HgACDncgU2jdFPGDZFCDPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "gfEUbWfu1PM",
+        "tg_invoice_link": "https://t.me/c/3737519537/66",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-25T01:55:54.182122",
+        "markers": [
+            {
+                "name": "001 Vintage Sample Grit - @aq",
+                "category": "VINTAGE SAMPLES",
+                "start": 0.0,
+                "end": 12.0
+            },
+            {
+                "name": "002 Vintage Sample Rust - @aq",
+                "category": "VINTAGE SAMPLES",
+                "start": 12.0,
+                "end": 24.0
+            },
+            {
+                "name": "003 Vintage Sample Filth - @aq",
+                "category": "VINTAGE SAMPLES",
+                "start": 24.0,
+                "end": 36.0
+            },
+            {
+                "name": "004 Vintage Sample Brine - @aq",
+                "category": "VINTAGE SAMPLES",
+                "start": 36.0,
+                "end": 45.7102947845805
+            },
+            {
+                "name": "005 Vintage Sample Ash - @aq",
+                "category": "VINTAGE SAMPLES",
+                "start": 45.7102947845805,
+                "end": 57.7102947845805
+            }
+        ]
     }
 ]
