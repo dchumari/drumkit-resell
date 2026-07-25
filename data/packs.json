@@ -4998,5 +4998,52 @@
                 "end": 57.7102947845805
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-6155989661758446777",
+        "name": "Arqive Cable",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADa2pkiAE59DzO1QKZx5Fm8F0K53uMAAKdHgACDncgU92vnqKFhonUPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADa2pkiAE59DzO1QKZx5Fm8F0K53uMAAKdHgACDncgU92vnqKFhonUPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "j_S6cdesZ54",
+        "tg_invoice_link": "https://t.me/c/3737519537/67",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-25T09:55:48.086516",
+        "markers": [
+            {
+                "name": "001 Vol.57 Guitar Loop Rust - @aq",
+                "category": "VOL.57 GUITAR LOOPS",
+                "start": 0.0,
+                "end": 8.205124716553287
+            },
+            {
+                "name": "002 Vol.57 Guitar Loop Riot - @aq",
+                "category": "VOL.57 GUITAR LOOPS",
+                "start": 8.205124716553287,
+                "end": 15.589750566893423
+            },
+            {
+                "name": "003 Vol.57 Guitar Loop Razor - @aq",
+                "category": "VOL.57 GUITAR LOOPS",
+                "start": 15.589750566893423,
+                "end": 25.189750566893423
+            },
+            {
+                "name": "004 Vol.57 Guitar Loop Rumble - @aq",
+                "category": "VOL.57 GUITAR LOOPS",
+                "start": 25.189750566893423,
+                "end": 32.04689342403628
+            },
+            {
+                "name": "005 Vol.57 Guitar Loop Ravage - @aq",
+                "category": "VOL.57 GUITAR LOOPS",
+                "start": 32.04689342403628,
+                "end": 39.72689342403628
+            }
+        ]
     }
 ]
