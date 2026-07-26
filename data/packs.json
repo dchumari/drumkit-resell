@@ -5242,5 +5242,232 @@
                 "end": 39.097314000000004
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-4014915318036977731",
+        "name": "Arqive Mesh Vol. 4",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADb2pl3ONh5B88dQS41NvOXmVD-QPhAAJ5GgACVuoxU1o0uYWPM6fQPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADb2pl3ONh5B88dQS41NvOXmVD-QPhAAJ5GgACVuoxU1o0uYWPM6fQPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "WNP67Aj9vF4",
+        "tg_invoice_link": "https://t.me/c/3737519537/69",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-26T10:09:58.438736",
+        "markers": [
+            {
+                "name": "001 808 Blaze - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 0.990295
+            },
+            {
+                "name": "002 808 Brute - @aq",
+                "category": "808S",
+                "start": 0.990295,
+                "end": 2.532721
+            },
+            {
+                "name": "003 808 Corrode - @aq",
+                "category": "808S",
+                "start": 2.532721,
+                "end": 5.267052
+            },
+            {
+                "name": "004 808 Curse - @aq",
+                "category": "808S",
+                "start": 5.267052,
+                "end": 6.819001999999999
+            },
+            {
+                "name": "005 808 Dread - @aq",
+                "category": "808S",
+                "start": 6.819001999999999,
+                "end": 8.081723
+            },
+            {
+                "name": "001 Kick Boom - @aq",
+                "category": "KICKS",
+                "start": 8.081723,
+                "end": 9.081723
+            },
+            {
+                "name": "002 Kick Brute - @aq",
+                "category": "KICKS",
+                "start": 9.081723,
+                "end": 10.081723
+            },
+            {
+                "name": "003 Kick Cave - @aq",
+                "category": "KICKS",
+                "start": 10.081723,
+                "end": 11.081723
+            },
+            {
+                "name": "004 Kick Clash - @aq",
+                "category": "KICKS",
+                "start": 11.081723,
+                "end": 12.081723
+            },
+            {
+                "name": "005 Kick Crank - @aq",
+                "category": "KICKS",
+                "start": 12.081723,
+                "end": 13.081723
+            },
+            {
+                "name": "001 Clap Bolt - @aq",
+                "category": "CLAPS",
+                "start": 13.081723,
+                "end": 14.081723
+            },
+            {
+                "name": "002 Clap Break - @aq",
+                "category": "CLAPS",
+                "start": 14.081723,
+                "end": 15.081723
+            },
+            {
+                "name": "003 Clap Crash - @aq",
+                "category": "CLAPS",
+                "start": 15.081723,
+                "end": 16.081723
+            },
+            {
+                "name": "004 Clap Dread - @aq",
+                "category": "CLAPS",
+                "start": 16.081723,
+                "end": 17.081723
+            },
+            {
+                "name": "005 Clap Edge - @aq",
+                "category": "CLAPS",
+                "start": 17.081723,
+                "end": 18.081723
+            },
+            {
+                "name": "001 Hat Ash - @aq",
+                "category": "HATS",
+                "start": 18.081723,
+                "end": 19.081723
+            },
+            {
+                "name": "002 Hat Blade - @aq",
+                "category": "HATS",
+                "start": 19.081723,
+                "end": 20.081723
+            },
+            {
+                "name": "003 Hat Blur - @aq",
+                "category": "HATS",
+                "start": 20.081723,
+                "end": 21.081723
+            },
+            {
+                "name": "004 Hat Cinder - @aq",
+                "category": "HATS",
+                "start": 21.081723,
+                "end": 22.081723
+            },
+            {
+                "name": "005 Hat Crisp - @aq",
+                "category": "HATS",
+                "start": 22.081723,
+                "end": 23.081723
+            },
+            {
+                "name": "001 Perc Bite - @aq",
+                "category": "PERCS",
+                "start": 23.081723,
+                "end": 24.081723
+            },
+            {
+                "name": "002 Perc Blade - @aq",
+                "category": "PERCS",
+                "start": 24.081723,
+                "end": 25.081723
+            },
+            {
+                "name": "003 Perc Blind - @aq",
+                "category": "PERCS",
+                "start": 25.081723,
+                "end": 26.081723
+            },
+            {
+                "name": "004 Perc Bolt - @aq",
+                "category": "PERCS",
+                "start": 26.081723,
+                "end": 27.081723
+            },
+            {
+                "name": "005 Perc Break - @aq",
+                "category": "PERCS",
+                "start": 27.081723,
+                "end": 28.081723
+            },
+            {
+                "name": "001 Vox Bane - @aq",
+                "category": "VOX",
+                "start": 28.081723,
+                "end": 29.29814023356009
+            },
+            {
+                "name": "002 Vox Bark - @aq",
+                "category": "VOX",
+                "start": 29.29814023356009,
+                "end": 30.63346903174603
+            },
+            {
+                "name": "003 Vox Bite - @aq",
+                "category": "VOX",
+                "start": 30.63346903174603,
+                "end": 31.8336050861678
+            },
+            {
+                "name": "004 Vox Blind - @aq",
+                "category": "VOX",
+                "start": 31.8336050861678,
+                "end": 32.8336050861678
+            },
+            {
+                "name": "005 Vox Bolt - @aq",
+                "category": "VOX",
+                "start": 32.8336050861678,
+                "end": 34.03251665079365
+            },
+            {
+                "name": "001 Sound Bass - @aq",
+                "category": "SOUNDS",
+                "start": 34.03251665079365,
+                "end": 35.994421412698415
+            },
+            {
+                "name": "002 Sound Bite - @aq",
+                "category": "SOUNDS",
+                "start": 35.994421412698415,
+                "end": 37.369410074829936
+            },
+            {
+                "name": "003 Sound Blind - @aq",
+                "category": "SOUNDS",
+                "start": 37.369410074829936,
+                "end": 38.81009034693878
+            },
+            {
+                "name": "004 Sound Bolt - @aq",
+                "category": "SOUNDS",
+                "start": 38.81009034693878,
+                "end": 39.81009034693878
+            },
+            {
+                "name": "005 Sound Brute - @aq",
+                "category": "SOUNDS",
+                "start": 39.81009034693878,
+                "end": 41.26843501814059
+            }
+        ]
     }
 ]
