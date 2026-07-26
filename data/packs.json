@@ -5045,5 +5045,202 @@
                 "end": 39.72689342403628
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-3775949534892655832",
+        "name": "Arqive Mesh Vol. 3",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADbWplajMpdCTimwgEN1tympM5phGPAAKsGgACVuopU4XU9AfryNYHPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADbWplajMpdCTimwgEN1tympM5phGPAAKsGgACVuopU4XU9AfryNYHPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "SWunY7P6SAc",
+        "tg_invoice_link": "https://t.me/c/3737519537/68",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-26T02:00:35.034889",
+        "markers": [
+            {
+                "name": "001 808 Rust - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 2.607438
+            },
+            {
+                "name": "002 808 Venom - @aq",
+                "category": "808S",
+                "start": 2.607438,
+                "end": 3.5448760000000004
+            },
+            {
+                "name": "003 808 Brine - @aq",
+                "category": "808S",
+                "start": 3.5448760000000004,
+                "end": 9.005105
+            },
+            {
+                "name": "004 808 Choke - @aq",
+                "category": "808S",
+                "start": 9.005105,
+                "end": 10.719397
+            },
+            {
+                "name": "005 808 Shard - @aq",
+                "category": "808S",
+                "start": 10.719397,
+                "end": 13.625043000000002
+            },
+            {
+                "name": "001 Kick Impact - @aq",
+                "category": "KICKS",
+                "start": 13.625043000000002,
+                "end": 14.625043000000002
+            },
+            {
+                "name": "002 Kick Hammer - @aq",
+                "category": "KICKS",
+                "start": 14.625043000000002,
+                "end": 15.625043000000002
+            },
+            {
+                "name": "003 Kick Brim - @aq",
+                "category": "KICKS",
+                "start": 15.625043000000002,
+                "end": 16.625043
+            },
+            {
+                "name": "004 Kick Depth - @aq",
+                "category": "KICKS",
+                "start": 16.625043,
+                "end": 17.625043
+            },
+            {
+                "name": "005 Kick Steel - @aq",
+                "category": "KICKS",
+                "start": 17.625043,
+                "end": 18.625043
+            },
+            {
+                "name": "001 Snare Snap - @aq",
+                "category": "SNARES",
+                "start": 18.625043,
+                "end": 19.625043
+            },
+            {
+                "name": "002 Snare Crack - @aq",
+                "category": "SNARES",
+                "start": 19.625043,
+                "end": 20.625043
+            },
+            {
+                "name": "003 Snare Rattle - @aq",
+                "category": "SNARES",
+                "start": 20.625043,
+                "end": 21.625043
+            },
+            {
+                "name": "004 Snare Snarl - @aq",
+                "category": "SNARES",
+                "start": 21.625043,
+                "end": 22.625043
+            },
+            {
+                "name": "005 Snare Grind - @aq",
+                "category": "SNARES",
+                "start": 22.625043,
+                "end": 23.625043
+            },
+            {
+                "name": "001 Clap Sunder - @aq",
+                "category": "CLAPS",
+                "start": 23.625043,
+                "end": 24.625043
+            },
+            {
+                "name": "002 Clap Snarl - @aq",
+                "category": "CLAPS",
+                "start": 24.625043,
+                "end": 25.625043
+            },
+            {
+                "name": "003 Clap Crack - @aq",
+                "category": "CLAPS",
+                "start": 25.625043,
+                "end": 26.625043
+            },
+            {
+                "name": "004 Clap Ravage - @aq",
+                "category": "CLAPS",
+                "start": 26.625043,
+                "end": 27.625043
+            },
+            {
+                "name": "005 Clap Blitz - @aq",
+                "category": "CLAPS",
+                "start": 27.625043,
+                "end": 28.625043
+            },
+            {
+                "name": "001 Hat Glitch - @aq",
+                "category": "HATS",
+                "start": 28.625043,
+                "end": 29.625043
+            },
+            {
+                "name": "002 Hat Hiss - @aq",
+                "category": "HATS",
+                "start": 29.625043,
+                "end": 30.625043
+            },
+            {
+                "name": "003 Hat Buzz - @aq",
+                "category": "HATS",
+                "start": 30.625043,
+                "end": 31.625043
+            },
+            {
+                "name": "004 Hat Silk - @aq",
+                "category": "HATS",
+                "start": 31.625043,
+                "end": 32.625043000000005
+            },
+            {
+                "name": "005 Hat Static - @aq",
+                "category": "HATS",
+                "start": 32.625043000000005,
+                "end": 33.625043000000005
+            },
+            {
+                "name": "001 Perc Jolt - @aq",
+                "category": "PERCS",
+                "start": 33.625043000000005,
+                "end": 34.625043000000005
+            },
+            {
+                "name": "002 Perc Snap - @aq",
+                "category": "PERCS",
+                "start": 34.625043000000005,
+                "end": 36.097314000000004
+            },
+            {
+                "name": "003 Perc Crack - @aq",
+                "category": "PERCS",
+                "start": 36.097314000000004,
+                "end": 37.097314000000004
+            },
+            {
+                "name": "004 Perc Blitz - @aq",
+                "category": "PERCS",
+                "start": 37.097314000000004,
+                "end": 38.097314000000004
+            },
+            {
+                "name": "005 Perc Scrape - @aq",
+                "category": "PERCS",
+                "start": 38.097314000000004,
+                "end": 39.097314000000004
+            }
+        ]
     }
 ]
