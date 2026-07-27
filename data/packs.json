@@ -5516,5 +5516,52 @@
                 "end": 60.0
             }
         ]
+    },
+    {
+        "reddit_id": "tag:blogger.com,1999:blog-2501376589456711257.post-363425472728966113",
+        "name": "Arqive Mesh Vol. 5",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADc2pnLRtkzTTqyAWl04Cr-KW-FxlIAAJoHQACnAg5UxNEO2rtHW7aPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADc2pnLRtkzTTqyAWl04Cr-KW-FxlIAAJoHQACnAg5UxNEO2rtHW7aPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "jmg8fHMvqBc",
+        "tg_invoice_link": "https://t.me/c/3737519537/71",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-27T10:04:29.588584",
+        "markers": [
+            {
+                "name": "001 Fx Rupture - @aq",
+                "category": "FX",
+                "start": 0.0,
+                "end": 1.0
+            },
+            {
+                "name": "002 Fx Fracture - @aq",
+                "category": "FX",
+                "start": 1.0,
+                "end": 2.0
+            },
+            {
+                "name": "003 Fx Blitz - @aq",
+                "category": "FX",
+                "start": 2.0,
+                "end": 3.492199546485261
+            },
+            {
+                "name": "004 Fx Quake - @aq",
+                "category": "FX",
+                "start": 3.492199546485261,
+                "end": 5.934943310657596
+            },
+            {
+                "name": "005 Fx Gutter - @aq",
+                "category": "FX",
+                "start": 5.934943310657596,
+                "end": 8.434943310657596
+            }
+        ]
     }
 ]
