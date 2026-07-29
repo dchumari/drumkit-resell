@@ -5610,5 +5610,214 @@
                 "end": 22.433378684807252
             }
         ]
+    },
+    {
+        "reddit_id": "1v86hup",
+        "name": "Arqive Pier",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADd2ppXWRQXXc8Hk9k7FjWhGorOr1AAAIBHgACONFIU-WZ1aDxol26PQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADd2ppXWRQXXc8Hk9k7FjWhGorOr1AAAIBHgACONFIU-WZ1aDxol26PQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "QUCytMwoKyg",
+        "tg_invoice_link": "https://t.me/c/3737519537/73",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-29T01:55:03.867290",
+        "markers": [
+            {
+                "name": "001 Kick Maul - @aq",
+                "category": "KICKS",
+                "start": 0.0,
+                "end": 1.0
+            },
+            {
+                "name": "002 Kick Knurl - @aq",
+                "category": "KICKS",
+                "start": 1.0,
+                "end": 2.0
+            },
+            {
+                "name": "003 Kick Rot - @aq",
+                "category": "KICKS",
+                "start": 2.0,
+                "end": 3.0
+            },
+            {
+                "name": "004 Kick Gash - @aq",
+                "category": "KICKS",
+                "start": 3.0,
+                "end": 4.0
+            },
+            {
+                "name": "005 Kick Bolt - @aq",
+                "category": "KICKS",
+                "start": 4.0,
+                "end": 5.0
+            },
+            {
+                "name": "001 Snare Steel - @aq",
+                "category": "SNARES",
+                "start": 5.0,
+                "end": 6.714285714285714
+            },
+            {
+                "name": "002 Snare Rupture - @aq",
+                "category": "SNARES",
+                "start": 6.714285714285714,
+                "end": 8.428571428571429
+            },
+            {
+                "name": "003 Snare Grave - @aq",
+                "category": "SNARES",
+                "start": 8.428571428571429,
+                "end": 10.142857142857142
+            },
+            {
+                "name": "004 Snare Warps - @aq",
+                "category": "SNARES",
+                "start": 10.142857142857142,
+                "end": 11.857142857142856
+            },
+            {
+                "name": "005 Snare Carrion - @aq",
+                "category": "SNARES",
+                "start": 11.857142857142856,
+                "end": 13.575895691609976
+            },
+            {
+                "name": "001 Hat Glare - @aq",
+                "category": "HATS",
+                "start": 13.575895691609976,
+                "end": 14.575895691609976
+            },
+            {
+                "name": "002 Hat Scorn - @aq",
+                "category": "HATS",
+                "start": 14.575895691609976,
+                "end": 15.575895691609976
+            },
+            {
+                "name": "003 Hat Razor - @aq",
+                "category": "HATS",
+                "start": 15.575895691609976,
+                "end": 17.29018140589569
+            },
+            {
+                "name": "004 Hat Shard - @aq",
+                "category": "HATS",
+                "start": 17.29018140589569,
+                "end": 18.29018140589569
+            },
+            {
+                "name": "005 Hat Grief - @aq",
+                "category": "HATS",
+                "start": 18.29018140589569,
+                "end": 19.29018140589569
+            },
+            {
+                "name": "001 Perc Jolt - @aq",
+                "category": "PERCS",
+                "start": 19.29018140589569,
+                "end": 20.29018140589569
+            },
+            {
+                "name": "002 Perc Crack - @aq",
+                "category": "PERCS",
+                "start": 20.29018140589569,
+                "end": 21.29018140589569
+            },
+            {
+                "name": "003 Perc Snap - @aq",
+                "category": "PERCS",
+                "start": 21.29018140589569,
+                "end": 23.008934240362812
+            },
+            {
+                "name": "004 Perc Drone - @aq",
+                "category": "PERCS",
+                "start": 23.008934240362812,
+                "end": 24.008934240362812
+            },
+            {
+                "name": "005 Perc Quake - @aq",
+                "category": "PERCS",
+                "start": 24.008934240362812,
+                "end": 25.008934240362812
+            },
+            {
+                "name": "001 Vox Dread - @aq",
+                "category": "VOX",
+                "start": 25.008934240362812,
+                "end": 26.008934240362812
+            },
+            {
+                "name": "002 Vox Rite - @aq",
+                "category": "VOX",
+                "start": 26.008934240362812,
+                "end": 27.008934240362812
+            },
+            {
+                "name": "003 Vox Mask - @aq",
+                "category": "VOX",
+                "start": 27.008934240362812,
+                "end": 28.008934240362812
+            },
+            {
+                "name": "004 Vox Wraith - @aq",
+                "category": "VOX",
+                "start": 28.008934240362812,
+                "end": 29.008934240362812
+            },
+            {
+                "name": "001 8 Rust - @aq",
+                "category": "8S",
+                "start": 29.008934240362812,
+                "end": 30.705465240362813
+            },
+            {
+                "name": "002 8 Venom - @aq",
+                "category": "8S",
+                "start": 30.705465240362813,
+                "end": 33.20546524036281
+            },
+            {
+                "name": "003 8 Gore - @aq",
+                "category": "8S",
+                "start": 33.20546524036281,
+                "end": 34.45099812018141
+            },
+            {
+                "name": "004 8 Blight - @aq",
+                "category": "8S",
+                "start": 34.45099812018141,
+                "end": 36.95099812018141
+            },
+            {
+                "name": "001 Klopss Clank - @aq",
+                "category": "KLOPSS",
+                "start": 36.95099812018141,
+                "end": 37.95099812018141
+            },
+            {
+                "name": "002 Klopss Thud - @aq",
+                "category": "KLOPSS",
+                "start": 37.95099812018141,
+                "end": 38.95099812018141
+            },
+            {
+                "name": "003 Klopss Knife - @aq",
+                "category": "KLOPSS",
+                "start": 38.95099812018141,
+                "end": 40.66528412018141
+            },
+            {
+                "name": "004 Klopss Rattle - @aq",
+                "category": "KLOPSS",
+                "start": 40.66528412018141,
+                "end": 41.66528412018141
+            }
+        ]
     }
 ]
