@@ -5819,5 +5819,52 @@
                 "end": 41.66528412018141
             }
         ]
+    },
+    {
+        "reddit_id": "1v9no7j",
+        "name": "Arqive Black Out",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADeWppzYeePVJtSNDUroQSVLncf4C3AAK7IAACONFQU3JW4uGPD94hPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADeWppzYeePVJtSNDUroQSVLncf4C3AAK7IAACONFQU3JW4uGPD94hPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "dly5yPpcqlc",
+        "tg_invoice_link": "https://t.me/c/3737519537/74",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-29T09:53:35.731116",
+        "markers": [
+            {
+                "name": "001 Midi Toxic - @aq",
+                "category": "MIDI",
+                "start": 0.0,
+                "end": 6.591134
+            },
+            {
+                "name": "002 Midi Chord - @aq",
+                "category": "MIDI",
+                "start": 6.591134,
+                "end": 9.091134
+            },
+            {
+                "name": "003 Midi Pattern - @aq",
+                "category": "MIDI",
+                "start": 9.091134,
+                "end": 10.091134
+            },
+            {
+                "name": "004 Midi Abyss - @aq",
+                "category": "MIDI",
+                "start": 10.091134,
+                "end": 11.091134
+            },
+            {
+                "name": "005 Midi Hollow - @aq",
+                "category": "MIDI",
+                "start": 11.091134,
+                "end": 12.091134
+            }
+        ]
     }
 ]
