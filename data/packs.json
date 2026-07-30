@@ -5866,5 +5866,250 @@
                 "end": 12.091134
             }
         ]
+    },
+    {
+        "reddit_id": "1uyf9gj",
+        "name": "Arqive Brace",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADe2pqrm5Se-YucBtp5KtfY4sJJdXhAAJGHQACONFYUypgJ8wUWbv1PQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADe2pqrm5Se-YucBtp5KtfY4sJJdXhAAJGHQACONFYUypgJ8wUWbv1PQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "hAdBB3Ak5Zo",
+        "tg_invoice_link": "https://t.me/c/3737519537/75",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-07-30T01:53:07.256605",
+        "markers": [
+            {
+                "name": "001 808 808 - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 12.0
+            },
+            {
+                "name": "002 808 Bass - @aq",
+                "category": "808S",
+                "start": 12.0,
+                "end": 15.647415
+            },
+            {
+                "name": "003 808 Rumble - @aq",
+                "category": "808S",
+                "start": 15.647415,
+                "end": 18.587687000000003
+            },
+            {
+                "name": "004 808 Growl - @aq",
+                "category": "808S",
+                "start": 18.587687000000003,
+                "end": 19.445737
+            },
+            {
+                "name": "005 808 Weight - @aq",
+                "category": "808S",
+                "start": 19.445737,
+                "end": 21.176395
+            },
+            {
+                "name": "001 Kick Thump - @aq",
+                "category": "KICKS",
+                "start": 21.176395,
+                "end": 22.176395
+            },
+            {
+                "name": "002 Kick Boom - @aq",
+                "category": "KICKS",
+                "start": 22.176395,
+                "end": 23.176395
+            },
+            {
+                "name": "003 Kick Smash - @aq",
+                "category": "KICKS",
+                "start": 23.176395,
+                "end": 24.176395
+            },
+            {
+                "name": "004 Kick Kick - @aq",
+                "category": "KICKS",
+                "start": 24.176395,
+                "end": 25.176395
+            },
+            {
+                "name": "005 Kick Drive - @aq",
+                "category": "KICKS",
+                "start": 25.176395,
+                "end": 26.176395
+            },
+            {
+                "name": "001 Snare Crack - @aq",
+                "category": "SNARES",
+                "start": 26.176395,
+                "end": 27.176395
+            },
+            {
+                "name": "002 Snare Snap - @aq",
+                "category": "SNARES",
+                "start": 27.176395,
+                "end": 28.176395
+            },
+            {
+                "name": "003 Snare Rattle - @aq",
+                "category": "SNARES",
+                "start": 28.176395,
+                "end": 29.176395
+            },
+            {
+                "name": "004 Snare Scrape - @aq",
+                "category": "SNARES",
+                "start": 29.176395,
+                "end": 30.176395
+            },
+            {
+                "name": "005 Snare Buzz - @aq",
+                "category": "SNARES",
+                "start": 30.176395,
+                "end": 31.176395
+            },
+            {
+                "name": "001 Clap Clap - @aq",
+                "category": "CLAPS",
+                "start": 31.176395,
+                "end": 32.176395
+            },
+            {
+                "name": "002 Clap Snap - @aq",
+                "category": "CLAPS",
+                "start": 32.176395,
+                "end": 33.176395
+            },
+            {
+                "name": "003 Clap Crack - @aq",
+                "category": "CLAPS",
+                "start": 33.176395,
+                "end": 34.176395
+            },
+            {
+                "name": "004 Clap Beat - @aq",
+                "category": "CLAPS",
+                "start": 34.176395,
+                "end": 35.176395
+            },
+            {
+                "name": "005 Clap Strike - @aq",
+                "category": "CLAPS",
+                "start": 35.176395,
+                "end": 36.176395
+            },
+            {
+                "name": "001 Hat Hiss - @aq",
+                "category": "HATS",
+                "start": 36.176395,
+                "end": 37.176395
+            },
+            {
+                "name": "002 Hat Shh - @aq",
+                "category": "HATS",
+                "start": 37.176395,
+                "end": 38.176395
+            },
+            {
+                "name": "003 Hat Ring - @aq",
+                "category": "HATS",
+                "start": 38.176395,
+                "end": 39.176395
+            },
+            {
+                "name": "004 Hat Zing - @aq",
+                "category": "HATS",
+                "start": 39.176395,
+                "end": 40.176395
+            },
+            {
+                "name": "005 Hat Sss - @aq",
+                "category": "HATS",
+                "start": 40.176395,
+                "end": 41.176395
+            },
+            {
+                "name": "001 Perc Perc - @aq",
+                "category": "PERCS",
+                "start": 41.176395,
+                "end": 42.176395
+            },
+            {
+                "name": "002 Perc Tick - @aq",
+                "category": "PERCS",
+                "start": 42.176395,
+                "end": 43.176395
+            },
+            {
+                "name": "003 Perc Tap - @aq",
+                "category": "PERCS",
+                "start": 43.176395,
+                "end": 44.176395
+            },
+            {
+                "name": "004 Perc Click - @aq",
+                "category": "PERCS",
+                "start": 44.176395,
+                "end": 45.176395
+            },
+            {
+                "name": "005 Perc Ping - @aq",
+                "category": "PERCS",
+                "start": 45.176395,
+                "end": 46.176395
+            },
+            {
+                "name": "001 Fx Fuzz - @aq",
+                "category": "FX",
+                "start": 46.176395,
+                "end": 47.176395
+            },
+            {
+                "name": "002 Fx Rust - @aq",
+                "category": "FX",
+                "start": 47.176395,
+                "end": 48.783152
+            },
+            {
+                "name": "003 Fx Haze - @aq",
+                "category": "FX",
+                "start": 48.783152,
+                "end": 49.783152
+            },
+            {
+                "name": "004 Fx Static - @aq",
+                "category": "FX",
+                "start": 49.783152,
+                "end": 51.407360000000004
+            },
+            {
+                "name": "005 Fx Sizzle - @aq",
+                "category": "FX",
+                "start": 51.407360000000004,
+                "end": 53.907360000000004
+            },
+            {
+                "name": "001 Vox Vox - @aq",
+                "category": "VOX",
+                "start": 53.907360000000004,
+                "end": 54.907360000000004
+            },
+            {
+                "name": "002 Vox Curse - @aq",
+                "category": "VOX",
+                "start": 54.907360000000004,
+                "end": 55.907360000000004
+            },
+            {
+                "name": "003 Vox Rant - @aq",
+                "category": "VOX",
+                "start": 55.907360000000004,
+                "end": 56.907360000000004
+            }
+        ]
     }
 ]
