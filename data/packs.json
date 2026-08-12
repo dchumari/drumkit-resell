@@ -6248,5 +6248,52 @@
                 "end": 52.479433
             }
         ]
+    },
+    {
+        "reddit_id": "1vm512t",
+        "name": "Arqive Dust",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADf2p8QgfcvWIlWpzP5fsenTrTtwvDAAIVGwACdyXhUy8rF5Ftfw-4PQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADf2p8QgfcvWIlWpzP5fsenTrTtwvDAAIVGwACdyXhUy8rF5Ftfw-4PQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "FmWJ1lF9Qrc",
+        "tg_invoice_link": "https://t.me/c/3737519537/89",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-08-12T09:51:19.651240",
+        "markers": [
+            {
+                "name": "001 Midi Rust - @aq",
+                "category": "MIDI",
+                "start": 0.0,
+                "end": 2.5
+            },
+            {
+                "name": "002 Midi Gore - @aq",
+                "category": "MIDI",
+                "start": 2.5,
+                "end": 5.0
+            },
+            {
+                "name": "003 Midi Rift - @aq",
+                "category": "MIDI",
+                "start": 5.0,
+                "end": 6.0
+            },
+            {
+                "name": "004 Midi Quake - @aq",
+                "category": "MIDI",
+                "start": 6.0,
+                "end": 7.0
+            },
+            {
+                "name": "005 Midi Slag - @aq",
+                "category": "MIDI",
+                "start": 7.0,
+                "end": 8.0
+            }
+        ]
     }
 ]
