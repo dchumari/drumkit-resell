@@ -6510,5 +6510,142 @@
                 "end": 48.418537780045355
             }
         ]
+    },
+    {
+        "reddit_id": "1vm98t0",
+        "name": "Arqive Crew",
+        "genre": "Phonk",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADg2p9I0HMlClZOCk5x1l04dLCuxNKAALJIgAC3LDpU0lTg4AGl1jdPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADg2p9I0HMlClZOCk5x1l04dLCuxNKAALJIgAC3LDpU0lTg4AGl1jdPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "s19-A0Ti8eE",
+        "tg_invoice_link": "https://t.me/c/3737519537/91",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-08-13T01:52:33.105302",
+        "markers": [
+            {
+                "name": "001 Kick Quake - @aq",
+                "category": "KICKS",
+                "start": 0.0,
+                "end": 1.045079
+            },
+            {
+                "name": "002 Kick Boulder - @aq",
+                "category": "KICKS",
+                "start": 1.045079,
+                "end": 2.157573
+            },
+            {
+                "name": "003 Kick Maul - @aq",
+                "category": "KICKS",
+                "start": 2.157573,
+                "end": 3.2156000000000002
+            },
+            {
+                "name": "004 Kick Thump - @aq",
+                "category": "KICKS",
+                "start": 3.2156000000000002,
+                "end": 4.273809
+            },
+            {
+                "name": "005 Kick Rumble - @aq",
+                "category": "KICKS",
+                "start": 4.273809,
+                "end": 5.360408
+            },
+            {
+                "name": "001 Snare Snarl - @aq",
+                "category": "SNARES",
+                "start": 5.360408,
+                "end": 6.360408
+            },
+            {
+                "name": "002 Snare Scrape - @aq",
+                "category": "SNARES",
+                "start": 6.360408,
+                "end": 7.680952
+            },
+            {
+                "name": "003 Snare Rattle - @aq",
+                "category": "SNARES",
+                "start": 7.680952,
+                "end": 8.735873
+            },
+            {
+                "name": "004 Snare Jagged - @aq",
+                "category": "SNARES",
+                "start": 8.735873,
+                "end": 9.806417
+            },
+            {
+                "name": "005 Snare Grit - @aq",
+                "category": "SNARES",
+                "start": 9.806417,
+                "end": 10.905533
+            },
+            {
+                "name": "001 Hat Glitch - @aq",
+                "category": "HATS",
+                "start": 10.905533,
+                "end": 11.905533
+            },
+            {
+                "name": "002 Hat Static - @aq",
+                "category": "HATS",
+                "start": 11.905533,
+                "end": 12.995714
+            },
+            {
+                "name": "003 Hat Shards - @aq",
+                "category": "HATS",
+                "start": 12.995714,
+                "end": 13.995714
+            },
+            {
+                "name": "004 Hat Needle - @aq",
+                "category": "HATS",
+                "start": 13.995714,
+                "end": 14.995714
+            },
+            {
+                "name": "005 Hat Flicker - @aq",
+                "category": "HATS",
+                "start": 14.995714,
+                "end": 16.043923
+            },
+            {
+                "name": "001 Bass Gore - @aq",
+                "category": "BASS",
+                "start": 16.043923,
+                "end": 18.543923
+            },
+            {
+                "name": "002 Bass Rust - @aq",
+                "category": "BASS",
+                "start": 18.543923,
+                "end": 26.32517
+            },
+            {
+                "name": "003 Bass Brine - @aq",
+                "category": "BASS",
+                "start": 26.32517,
+                "end": 28.82517
+            },
+            {
+                "name": "004 Bass Scrape - @aq",
+                "category": "BASS",
+                "start": 28.82517,
+                "end": 31.32517
+            },
+            {
+                "name": "005 Bass Quake - @aq",
+                "category": "BASS",
+                "start": 31.32517,
+                "end": 33.82517
+            }
+        ]
     }
 ]
