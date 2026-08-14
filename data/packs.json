@@ -6647,5 +6647,262 @@
                 "end": 33.82517
             }
         ]
+    },
+    {
+        "reddit_id": "1vnjjhr",
+        "name": "Arqive Grave",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADhWp-dYy_oGCOPRENxf28N2hPMH9BAAKTHwAC3LDxU6zRRE2CWZc7PQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADhWp-dYy_oGCOPRENxf28N2hPMH9BAAKTHwAC3LDxU6zRRE2CWZc7PQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "4TXdPb-fAl8",
+        "tg_invoice_link": "https://t.me/c/3737519537/2",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-08-14T01:56:06.427507",
+        "markers": [
+            {
+                "name": "001 808 Gloom - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 2.7901814058956917
+            },
+            {
+                "name": "002 808 Rust - @aq",
+                "category": "808S",
+                "start": 2.7901814058956917,
+                "end": 4.561020405895691
+            },
+            {
+                "name": "003 808 Venom - @aq",
+                "category": "808S",
+                "start": 4.561020405895691,
+                "end": 8.795170405895691
+            },
+            {
+                "name": "004 808 Wreck - @aq",
+                "category": "808S",
+                "start": 8.795170405895691,
+                "end": 9.772857480725623
+            },
+            {
+                "name": "005 808 Gash - @aq",
+                "category": "808S",
+                "start": 9.772857480725623,
+                "end": 13.085351480725624
+            },
+            {
+                "name": "001 Kick Hammer - @aq",
+                "category": "KICKS",
+                "start": 13.085351480725624,
+                "end": 14.085351480725624
+            },
+            {
+                "name": "002 Kick Clash - @aq",
+                "category": "KICKS",
+                "start": 14.085351480725624,
+                "end": 15.085351480725624
+            },
+            {
+                "name": "003 Kick Depth - @aq",
+                "category": "KICKS",
+                "start": 15.085351480725624,
+                "end": 16.085351480725624
+            },
+            {
+                "name": "004 Kick Thud - @aq",
+                "category": "KICKS",
+                "start": 16.085351480725624,
+                "end": 17.085351480725624
+            },
+            {
+                "name": "005 Kick Rumble - @aq",
+                "category": "KICKS",
+                "start": 17.085351480725624,
+                "end": 18.085351480725624
+            },
+            {
+                "name": "001 Snare Snap - @aq",
+                "category": "SNARES",
+                "start": 18.085351480725624,
+                "end": 19.085351480725624
+            },
+            {
+                "name": "002 Snare Scrape - @aq",
+                "category": "SNARES",
+                "start": 19.085351480725624,
+                "end": 20.085351480725624
+            },
+            {
+                "name": "003 Snare Rattle - @aq",
+                "category": "SNARES",
+                "start": 20.085351480725624,
+                "end": 21.085351480725624
+            },
+            {
+                "name": "004 Snare Grit - @aq",
+                "category": "SNARES",
+                "start": 21.085351480725624,
+                "end": 22.085351480725624
+            },
+            {
+                "name": "005 Snare Steel - @aq",
+                "category": "SNARES",
+                "start": 22.085351480725624,
+                "end": 23.085351480725624
+            },
+            {
+                "name": "001 Clap Impact - @aq",
+                "category": "CLAPS",
+                "start": 23.085351480725624,
+                "end": 25.585351480725624
+            },
+            {
+                "name": "002 Clap Shard - @aq",
+                "category": "CLAPS",
+                "start": 25.585351480725624,
+                "end": 26.585351480725624
+            },
+            {
+                "name": "003 Clap Stone - @aq",
+                "category": "CLAPS",
+                "start": 26.585351480725624,
+                "end": 27.585351480725624
+            },
+            {
+                "name": "004 Clap Iron - @aq",
+                "category": "CLAPS",
+                "start": 27.585351480725624,
+                "end": 28.585351480725624
+            },
+            {
+                "name": "005 Clap Bolt - @aq",
+                "category": "CLAPS",
+                "start": 28.585351480725624,
+                "end": 29.585351480725624
+            },
+            {
+                "name": "001 Hat Slip - @aq",
+                "category": "HATS",
+                "start": 29.585351480725624,
+                "end": 30.585351480725624
+            },
+            {
+                "name": "002 Hat Glass - @aq",
+                "category": "HATS",
+                "start": 30.585351480725624,
+                "end": 32.304104315192745
+            },
+            {
+                "name": "003 Hat Flash - @aq",
+                "category": "HATS",
+                "start": 32.304104315192745,
+                "end": 33.304104315192745
+            },
+            {
+                "name": "004 Hat Wire - @aq",
+                "category": "HATS",
+                "start": 33.304104315192745,
+                "end": 34.304104315192745
+            },
+            {
+                "name": "005 Hat Edge - @aq",
+                "category": "HATS",
+                "start": 34.304104315192745,
+                "end": 35.304104315192745
+            },
+            {
+                "name": "001 Fx Razor - @aq",
+                "category": "FX",
+                "start": 35.304104315192745,
+                "end": 36.304104315192745
+            },
+            {
+                "name": "002 Fx Hiss - @aq",
+                "category": "FX",
+                "start": 36.304104315192745,
+                "end": 37.304104315192745
+            },
+            {
+                "name": "003 Fx Vanish - @aq",
+                "category": "FX",
+                "start": 37.304104315192745,
+                "end": 38.487146315192746
+            },
+            {
+                "name": "004 Fx Crack - @aq",
+                "category": "FX",
+                "start": 38.487146315192746,
+                "end": 40.987146315192746
+            },
+            {
+                "name": "005 Fx Tremor - @aq",
+                "category": "FX",
+                "start": 40.987146315192746,
+                "end": 41.987146315192746
+            },
+            {
+                "name": "001 Vox Rage - @aq",
+                "category": "VOX",
+                "start": 41.987146315192746,
+                "end": 42.987146315192746
+            },
+            {
+                "name": "002 Vox Host - @aq",
+                "category": "VOX",
+                "start": 42.987146315192746,
+                "end": 45.487146315192746
+            },
+            {
+                "name": "003 Vox Curse - @aq",
+                "category": "VOX",
+                "start": 45.487146315192746,
+                "end": 46.487146315192746
+            },
+            {
+                "name": "004 Vox Veil - @aq",
+                "category": "VOX",
+                "start": 46.487146315192746,
+                "end": 58.487146315192746
+            },
+            {
+                "name": "005 Vox Hush - @aq",
+                "category": "VOX",
+                "start": 58.487146315192746,
+                "end": 59.487146315192746
+            },
+            {
+                "name": "001 Goofy Pest - @aq",
+                "category": "GOOFIES",
+                "start": 59.487146315192746,
+                "end": 61.487146315192746
+            },
+            {
+                "name": "002 Goofy Rogue - @aq",
+                "category": "GOOFIES",
+                "start": 61.487146315192746,
+                "end": 62.487146315192746
+            },
+            {
+                "name": "003 Goofy Dread - @aq",
+                "category": "GOOFIES",
+                "start": 62.487146315192746,
+                "end": 63.487146315192746
+            },
+            {
+                "name": "004 Goofy Smog - @aq",
+                "category": "GOOFIES",
+                "start": 63.487146315192746,
+                "end": 64.48714631519275
+            },
+            {
+                "name": "005 Goofy Gash - @aq",
+                "category": "GOOFIES",
+                "start": 64.48714631519275,
+                "end": 65.48714631519275
+            }
+        ]
     }
 ]
