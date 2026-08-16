@@ -6904,5 +6904,82 @@
                 "end": 65.48714631519275
             }
         ]
+    },
+    {
+        "reddit_id": "1vpfj4q",
+        "name": "Arqive Tapestry",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADh2qBGB2m_Sf5UgRioF_RDJukj9G_AAKmHAACC2EJUL7zpzMf4mxFPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADh2qBGB2m_Sf5UgRioF_RDJukj9G_AAKmHAACC2EJUL7zpzMf4mxFPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "A1cSaapVqng",
+        "tg_invoice_link": "https://t.me/c/3737519537/96",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-08-16T01:53:54.953559",
+        "markers": [
+            {
+                "name": "001 Hiphopkit06 Slag - @aq",
+                "category": "HIPHOPKIT06S",
+                "start": 0.0,
+                "end": 2.3214285714285716
+            },
+            {
+                "name": "002 Hiphopkit06 Havoc - @aq",
+                "category": "HIPHOPKIT06S",
+                "start": 2.3214285714285716,
+                "end": 4.040181405895692
+            },
+            {
+                "name": "003 Hiphopkit06 Razor - @aq",
+                "category": "HIPHOPKIT06S",
+                "start": 4.040181405895692,
+                "end": 5.758934240362812
+            },
+            {
+                "name": "004 Hiphopkit06 Vendetta - @aq",
+                "category": "HIPHOPKIT06S",
+                "start": 5.758934240362812,
+                "end": 7.477687074829932
+            },
+            {
+                "name": "005 Hiphopkit06 Grimm - @aq",
+                "category": "HIPHOPKIT06S",
+                "start": 7.477687074829932,
+                "end": 9.196439909297052
+            },
+            {
+                "name": "001 Tyler Rust - @aq",
+                "category": "TYLERS",
+                "start": 9.196439909297052,
+                "end": 10.196439909297052
+            },
+            {
+                "name": "002 Tyler Brute - @aq",
+                "category": "TYLERS",
+                "start": 10.196439909297052,
+                "end": 21.879591836734694
+            },
+            {
+                "name": "003 Tyler Gore - @aq",
+                "category": "TYLERS",
+                "start": 21.879591836734694,
+                "end": 24.379591836734694
+            },
+            {
+                "name": "004 Tyler Rapture - @aq",
+                "category": "TYLERS",
+                "start": 24.379591836734694,
+                "end": 25.379591836734694
+            },
+            {
+                "name": "005 Tyler Quake - @aq",
+                "category": "TYLERS",
+                "start": 25.379591836734694,
+                "end": 26.379591836734694
+            }
+        ]
     }
 ]
