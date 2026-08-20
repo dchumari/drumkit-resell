@@ -6981,5 +6981,232 @@
                 "end": 26.379591836734694
             }
         ]
+    },
+    {
+        "reddit_id": "1vsvb0c",
+        "name": "Arqive Inferno",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADiWqGXc9NiBaRYztkYYtpgRDJni2nAALiIAACmAkxUEWzcNjH3OihPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADiWqGXc9NiBaRYztkYYtpgRDJni2nAALiIAACmAkxUEWzcNjH3OihPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "COIF09QihWM",
+        "tg_invoice_link": "https://t.me/c/3737519537/104",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-08-20T01:52:39.289089",
+        "markers": [
+            {
+                "name": "001 808 Rust - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 0.9609583333333334
+            },
+            {
+                "name": "002 808 Venom - @aq",
+                "category": "808S",
+                "start": 0.9609583333333334,
+                "end": 1.8491875
+            },
+            {
+                "name": "003 808 Brine - @aq",
+                "category": "808S",
+                "start": 1.8491875,
+                "end": 3.9294583333333337
+            },
+            {
+                "name": "004 808 Smut - @aq",
+                "category": "808S",
+                "start": 3.9294583333333337,
+                "end": 6.476687500000001
+            },
+            {
+                "name": "005 808 Scrape - @aq",
+                "category": "808S",
+                "start": 6.476687500000001,
+                "end": 8.419291666666668
+            },
+            {
+                "name": "001 Kick Boulder - @aq",
+                "category": "KICKS",
+                "start": 8.419291666666668,
+                "end": 9.419291666666668
+            },
+            {
+                "name": "002 Kick Hammer - @aq",
+                "category": "KICKS",
+                "start": 9.419291666666668,
+                "end": 10.419291666666668
+            },
+            {
+                "name": "003 Kick Quake - @aq",
+                "category": "KICKS",
+                "start": 10.419291666666668,
+                "end": 11.419291666666668
+            },
+            {
+                "name": "004 Kick Thud - @aq",
+                "category": "KICKS",
+                "start": 11.419291666666668,
+                "end": 12.419291666666668
+            },
+            {
+                "name": "005 Kick Rumble - @aq",
+                "category": "KICKS",
+                "start": 12.419291666666668,
+                "end": 13.419291666666668
+            },
+            {
+                "name": "001 Snare Scrape - @aq",
+                "category": "SNARES",
+                "start": 13.419291666666668,
+                "end": 14.419291666666668
+            },
+            {
+                "name": "002 Snare Jolt - @aq",
+                "category": "SNARES",
+                "start": 14.419291666666668,
+                "end": 15.419291666666668
+            },
+            {
+                "name": "003 Snare Rust - @aq",
+                "category": "SNARES",
+                "start": 15.419291666666668,
+                "end": 16.419291666666666
+            },
+            {
+                "name": "004 Snare Snap - @aq",
+                "category": "SNARES",
+                "start": 16.419291666666666,
+                "end": 27.408416666666668
+            },
+            {
+                "name": "005 Snare Clamp - @aq",
+                "category": "SNARES",
+                "start": 27.408416666666668,
+                "end": 28.642395833333335
+            },
+            {
+                "name": "001 Clap Sunder - @aq",
+                "category": "CLAPS",
+                "start": 28.642395833333335,
+                "end": 29.642395833333335
+            },
+            {
+                "name": "002 Clap Rift - @aq",
+                "category": "CLAPS",
+                "start": 29.642395833333335,
+                "end": 30.642395833333335
+            },
+            {
+                "name": "003 Clap Knell - @aq",
+                "category": "CLAPS",
+                "start": 30.642395833333335,
+                "end": 31.642395833333335
+            },
+            {
+                "name": "004 Clap Gash - @aq",
+                "category": "CLAPS",
+                "start": 31.642395833333335,
+                "end": 32.851145833333334
+            },
+            {
+                "name": "005 Clap Shunt - @aq",
+                "category": "CLAPS",
+                "start": 32.851145833333334,
+                "end": 33.851145833333334
+            },
+            {
+                "name": "001 Hat Glint - @aq",
+                "category": "HATS",
+                "start": 33.851145833333334,
+                "end": 34.851145833333334
+            },
+            {
+                "name": "002 Hat Shade - @aq",
+                "category": "HATS",
+                "start": 34.851145833333334,
+                "end": 35.851145833333334
+            },
+            {
+                "name": "003 Hat Razor - @aq",
+                "category": "HATS",
+                "start": 35.851145833333334,
+                "end": 36.851145833333334
+            },
+            {
+                "name": "004 Hat Static - @aq",
+                "category": "HATS",
+                "start": 36.851145833333334,
+                "end": 37.851145833333334
+            },
+            {
+                "name": "005 Hat Veil - @aq",
+                "category": "HATS",
+                "start": 37.851145833333334,
+                "end": 38.851145833333334
+            },
+            {
+                "name": "001 Perc Gang - @aq",
+                "category": "PERCS",
+                "start": 38.851145833333334,
+                "end": 39.851145833333334
+            },
+            {
+                "name": "001 Fx Warp - @aq",
+                "category": "FX",
+                "start": 39.851145833333334,
+                "end": 41.188375
+            },
+            {
+                "name": "002 Fx Quell - @aq",
+                "category": "FX",
+                "start": 41.188375,
+                "end": 42.188375
+            },
+            {
+                "name": "003 Fx Rupture - @aq",
+                "category": "FX",
+                "start": 42.188375,
+                "end": 43.188375
+            },
+            {
+                "name": "004 Fx Tide - @aq",
+                "category": "FX",
+                "start": 43.188375,
+                "end": 44.188375
+            },
+            {
+                "name": "001 Texture Smut - @aq",
+                "category": "TEXTURES",
+                "start": 44.188375,
+                "end": 45.90264583333333
+            },
+            {
+                "name": "002 Texture Grit - @aq",
+                "category": "TEXTURES",
+                "start": 45.90264583333333,
+                "end": 48.40264583333333
+            },
+            {
+                "name": "003 Texture Filth - @aq",
+                "category": "TEXTURES",
+                "start": 48.40264583333333,
+                "end": 50.90264583333333
+            },
+            {
+                "name": "004 Texture Ash - @aq",
+                "category": "TEXTURES",
+                "start": 50.90264583333333,
+                "end": 53.40264583333333
+            },
+            {
+                "name": "005 Texture Rust - @aq",
+                "category": "TEXTURES",
+                "start": 53.40264583333333,
+                "end": 65.40264583333334
+            }
+        ]
     }
 ]
