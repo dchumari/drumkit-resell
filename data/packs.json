@@ -7208,5 +7208,52 @@
                 "end": 65.40264583333334
             }
         ]
+    },
+    {
+        "reddit_id": "1w4igl4",
+        "name": "Arqive Crunch Vol. 2",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADi2qXgSMk6kPMm1WuoVK3yja7J9_CAAKfHQACBLS4UBBfINLVhSvwPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADi2qXgSMk6kPMm1WuoVK3yja7J9_CAAKfHQACBLS4UBBfINLVhSvwPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "SptCk2GKZ0A",
+        "tg_invoice_link": "https://t.me/c/3737519537/116",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-09-02T01:51:52.608682",
+        "markers": [
+            {
+                "name": "001 808 Creep - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 2.5539455782312923
+            },
+            {
+                "name": "002 808 Meatgrinder - @aq",
+                "category": "808S",
+                "start": 2.5539455782312923,
+                "end": 5.698956578231292
+            },
+            {
+                "name": "003 808 Trauma - @aq",
+                "category": "808S",
+                "start": 5.698956578231292,
+                "end": 10.841813721088435
+            },
+            {
+                "name": "004 808 Hollow - @aq",
+                "category": "808S",
+                "start": 10.841813721088435,
+                "end": 14.363083721088435
+            },
+            {
+                "name": "005 808 Voodoo - @aq",
+                "category": "808S",
+                "start": 14.363083721088435,
+                "end": 19.289183494331066
+            }
+        ]
     }
 ]
