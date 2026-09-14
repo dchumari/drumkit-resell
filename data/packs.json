@@ -7320,5 +7320,256 @@
                 "end": 10.734263
             }
         ]
+    },
+    {
+        "reddit_id": "1wfygll",
+        "name": "Arqive Phantom",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADj2qnxErQ2pZWEh7OxC-XFtfnDIFeAAJtHQAC0OhAUbbFNHmV9vjKPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADj2qnxErQ2pZWEh7OxC-XFtfnDIFeAAJtHQAC0OhAUbbFNHmV9vjKPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "_UuRi1woMh8",
+        "tg_invoice_link": "https://t.me/c/3737519537/130",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-09-14T09:54:46.869356",
+        "markers": [
+            {
+                "name": "001 808 Explode - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 1.790635
+            },
+            {
+                "name": "002 808 Venom - @aq",
+                "category": "808S",
+                "start": 1.790635,
+                "end": 7.790635
+            },
+            {
+                "name": "003 808 Toxic - @aq",
+                "category": "808S",
+                "start": 7.790635,
+                "end": 11.219198
+            },
+            {
+                "name": "004 808 Sludge - @aq",
+                "category": "808S",
+                "start": 11.219198,
+                "end": 13.949856
+            },
+            {
+                "name": "005 808 Grave - @aq",
+                "category": "808S",
+                "start": 13.949856,
+                "end": 15.911126000000001
+            },
+            {
+                "name": "001 Kick Hard - @aq",
+                "category": "KICKS",
+                "start": 15.911126000000001,
+                "end": 16.911126000000003
+            },
+            {
+                "name": "002 Kick Titan - @aq",
+                "category": "KICKS",
+                "start": 16.911126000000003,
+                "end": 17.911126000000003
+            },
+            {
+                "name": "003 Kick Thump - @aq",
+                "category": "KICKS",
+                "start": 17.911126000000003,
+                "end": 18.911126000000003
+            },
+            {
+                "name": "004 Kick Knockout - @aq",
+                "category": "KICKS",
+                "start": 18.911126000000003,
+                "end": 19.911126000000003
+            },
+            {
+                "name": "005 Kick Battering - @aq",
+                "category": "KICKS",
+                "start": 19.911126000000003,
+                "end": 20.911126000000003
+            },
+            {
+                "name": "011 Snare Static - @aq",
+                "category": "SNARES",
+                "start": 20.911126000000003,
+                "end": 21.911126000000003
+            },
+            {
+                "name": "012 Snare Sharp - @aq",
+                "category": "SNARES",
+                "start": 21.911126000000003,
+                "end": 22.911126000000003
+            },
+            {
+                "name": "013 Snare Sting - @aq",
+                "category": "SNARES",
+                "start": 22.911126000000003,
+                "end": 23.911126000000003
+            },
+            {
+                "name": "014 Snare Trigger - @aq",
+                "category": "SNARES",
+                "start": 23.911126000000003,
+                "end": 24.911126000000003
+            },
+            {
+                "name": "015 Snare Cut - @aq",
+                "category": "SNARES",
+                "start": 24.911126000000003,
+                "end": 25.911126000000003
+            },
+            {
+                "name": "001 Clap Trauma - @aq",
+                "category": "CLAPS",
+                "start": 25.911126000000003,
+                "end": 26.911126000000003
+            },
+            {
+                "name": "002 Clap Spit - @aq",
+                "category": "CLAPS",
+                "start": 26.911126000000003,
+                "end": 27.911126000000003
+            },
+            {
+                "name": "003 Clap Static - @aq",
+                "category": "CLAPS",
+                "start": 27.911126000000003,
+                "end": 28.911126000000003
+            },
+            {
+                "name": "004 Clap Heavy - @aq",
+                "category": "CLAPS",
+                "start": 28.911126000000003,
+                "end": 29.911126000000003
+            },
+            {
+                "name": "001 Hat Sludge - @aq",
+                "category": "HATS",
+                "start": 29.911126000000003,
+                "end": 31.911126000000003
+            },
+            {
+                "name": "002 Hat Creep - @aq",
+                "category": "HATS",
+                "start": 31.911126000000003,
+                "end": 34.411126
+            },
+            {
+                "name": "003 Hat Hollow - @aq",
+                "category": "HATS",
+                "start": 34.411126,
+                "end": 35.411126
+            },
+            {
+                "name": "004 Hat Explode - @aq",
+                "category": "HATS",
+                "start": 35.411126,
+                "end": 36.411126
+            },
+            {
+                "name": "005 Hat Cut - @aq",
+                "category": "HATS",
+                "start": 36.411126,
+                "end": 37.411126
+            },
+            {
+                "name": "001 Perc Triangle - @aq",
+                "category": "PERCS",
+                "start": 37.411126,
+                "end": 38.411126
+            },
+            {
+                "name": "002 Perc Cabasa - @aq",
+                "category": "PERCS",
+                "start": 38.411126,
+                "end": 39.411126
+            },
+            {
+                "name": "003 Perc Clack - @aq",
+                "category": "PERCS",
+                "start": 39.411126,
+                "end": 40.411126
+            },
+            {
+                "name": "004 Perc Guiro - @aq",
+                "category": "PERCS",
+                "start": 40.411126,
+                "end": 41.411126
+            },
+            {
+                "name": "005 Perc Bongo - @aq",
+                "category": "PERCS",
+                "start": 41.411126,
+                "end": 42.411126
+            },
+            {
+                "name": "001 Fx Toxic - @aq",
+                "category": "FX",
+                "start": 42.411126,
+                "end": 48.411126
+            },
+            {
+                "name": "002 Fx Buzz - @aq",
+                "category": "FX",
+                "start": 48.411126,
+                "end": 50.421217000000006
+            },
+            {
+                "name": "003 Fx Crash - @aq",
+                "category": "FX",
+                "start": 50.421217000000006,
+                "end": 51.421217000000006
+            },
+            {
+                "name": "004 Fx Slasher - @aq",
+                "category": "FX",
+                "start": 51.421217000000006,
+                "end": 53.921217000000006
+            },
+            {
+                "name": "005 Fx Stutter - @aq",
+                "category": "FX",
+                "start": 53.921217000000006,
+                "end": 54.921217000000006
+            },
+            {
+                "name": "001 Vox Hollow - @aq",
+                "category": "VOX",
+                "start": 54.921217000000006,
+                "end": 56.652396
+            },
+            {
+                "name": "002 Vox Cry - @aq",
+                "category": "VOX",
+                "start": 56.652396,
+                "end": 59.152396
+            },
+            {
+                "name": "003 Vox Whisper - @aq",
+                "category": "VOX",
+                "start": 59.152396,
+                "end": 61.652396
+            },
+            {
+                "name": "004 Vox Abyss - @aq",
+                "category": "VOX",
+                "start": 61.652396,
+                "end": 62.652396
+            },
+            {
+                "name": "005 Vox Abyss 2 - @aq",
+                "category": "VOX",
+                "start": 62.652396,
+                "end": 63.652781000000004
+            }
+        ]
     }
 ]
