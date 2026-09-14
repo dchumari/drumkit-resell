@@ -7571,5 +7571,112 @@
                 "end": 63.652781000000004
             }
         ]
+    },
+    {
+        "reddit_id": "1wgaiox",
+        "name": "Arqive Static",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADkWqoNO8jimvPxqu8koIkwWJrad8gAAIbHgAC0OhAUXZNmeu5UguUPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADkWqoNO8jimvPxqu8koIkwWJrad8gAAIbHgAC0OhAUXZNmeu5UguUPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "m65v7trNzD4",
+        "tg_invoice_link": "https://t.me/c/3737519537/131",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-09-14T17:55:20.063663",
+        "markers": [
+            {
+                "name": "001 Accent Abyss - @aq",
+                "category": "ACCENTS",
+                "start": 0.0,
+                "end": 6.732176870748299
+            },
+            {
+                "name": "002 Accent Cinder - @aq",
+                "category": "ACCENTS",
+                "start": 6.732176870748299,
+                "end": 8.262562358276643
+            },
+            {
+                "name": "003 Accent Wave - @aq",
+                "category": "ACCENTS",
+                "start": 8.262562358276643,
+                "end": 10.762562358276643
+            },
+            {
+                "name": "004 Accent Sample - @aq",
+                "category": "ACCENTS",
+                "start": 10.762562358276643,
+                "end": 13.262562358276643
+            },
+            {
+                "name": "005 Accent Toxic - @aq",
+                "category": "ACCENTS",
+                "start": 13.262562358276643,
+                "end": 15.111655328798186
+            },
+            {
+                "name": "001 Key Loop Venom - @aq",
+                "category": "KEY LOOPS",
+                "start": 15.111655328798186,
+                "end": 21.055963718820863
+            },
+            {
+                "name": "002 Key Loop Smooth - @aq",
+                "category": "KEY LOOPS",
+                "start": 21.055963718820863,
+                "end": 24.771156462585036
+            },
+            {
+                "name": "003 Key Loop Synth - @aq",
+                "category": "KEY LOOPS",
+                "start": 24.771156462585036,
+                "end": 27.743310657596375
+            },
+            {
+                "name": "004 Key Loop Creep - @aq",
+                "category": "KEY LOOPS",
+                "start": 27.743310657596375,
+                "end": 30.715464852607713
+            },
+            {
+                "name": "005 Key Loop Toxic - @aq",
+                "category": "KEY LOOPS",
+                "start": 30.715464852607713,
+                "end": 33.68761904761905
+            },
+            {
+                "name": "001 Synth Loop Grave - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 33.68761904761905,
+                "end": 38.14585034013606
+            },
+            {
+                "name": "002 Synth Loop Hollow - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 38.14585034013606,
+                "end": 41.11800453514739
+            },
+            {
+                "name": "003 Synth Loop Sharp - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 41.11800453514739,
+                "end": 43.3471201814059
+            },
+            {
+                "name": "004 Synth Loop Abyss - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 43.3471201814059,
+                "end": 47.805351473922904
+            },
+            {
+                "name": "005 Synth Loop Cinder - @aq",
+                "category": "SYNTH LOOPS",
+                "start": 47.805351473922904,
+                "end": 59.805351473922904
+            }
+        ]
     }
 ]
