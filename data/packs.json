@@ -7678,5 +7678,166 @@
                 "end": 59.805351473922904
             }
         ]
+    },
+    {
+        "reddit_id": "1wnr7kb",
+        "name": "Arqive Gleam",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADk2qzMg4qwOHmwRx1QhkSyWwcae_VAAI9HQAC6LeYUcI5gVF1p1NnPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADk2qzMg4qwOHmwRx1QhkSyWwcae_VAAI9HQAC6LeYUcI5gVF1p1NnPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "Y7O_slEuoeA",
+        "tg_invoice_link": "https://t.me/c/3737519537/145",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-09-23T01:58:33.169608",
+        "markers": [
+            {
+                "name": "001 808 God - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 1.78125
+            },
+            {
+                "name": "002 808 Quake - @aq",
+                "category": "808S",
+                "start": 1.78125,
+                "end": 3.84375
+            },
+            {
+                "name": "003 808 Reaper - @aq",
+                "category": "808S",
+                "start": 3.84375,
+                "end": 7.96875
+            },
+            {
+                "name": "004 808 Venom - @aq",
+                "category": "808S",
+                "start": 7.96875,
+                "end": 10.6875
+            },
+            {
+                "name": "005 808 Pluto - @aq",
+                "category": "808S",
+                "start": 10.6875,
+                "end": 12.553577
+            },
+            {
+                "name": "001 Kick Battering - @aq",
+                "category": "KICKS",
+                "start": 12.553577,
+                "end": 13.553577
+            },
+            {
+                "name": "002 Kick Slam - @aq",
+                "category": "KICKS",
+                "start": 13.553577,
+                "end": 14.553577
+            },
+            {
+                "name": "003 Kick Anvil - @aq",
+                "category": "KICKS",
+                "start": 14.553577,
+                "end": 15.553577
+            },
+            {
+                "name": "004 Kick Titan - @aq",
+                "category": "KICKS",
+                "start": 15.553577,
+                "end": 16.553577
+            },
+            {
+                "name": "001 Snare Slam - @aq",
+                "category": "SNARES",
+                "start": 16.553577,
+                "end": 17.553577
+            },
+            {
+                "name": "002 Snare Slash - @aq",
+                "category": "SNARES",
+                "start": 17.553577,
+                "end": 18.553577
+            },
+            {
+                "name": "003 Snare Crush - @aq",
+                "category": "SNARES",
+                "start": 18.553577,
+                "end": 19.553577
+            },
+            {
+                "name": "004 Snare Bite - @aq",
+                "category": "SNARES",
+                "start": 19.553577,
+                "end": 20.553577
+            },
+            {
+                "name": "005 Snare Spit - @aq",
+                "category": "SNARES",
+                "start": 20.553577,
+                "end": 21.553577
+            },
+            {
+                "name": "001 Clap Bite - @aq",
+                "category": "CLAPS",
+                "start": 21.553577,
+                "end": 22.553577
+            },
+            {
+                "name": "002 Clap Spit - @aq",
+                "category": "CLAPS",
+                "start": 22.553577,
+                "end": 23.553577
+            },
+            {
+                "name": "003 Clap Tear - @aq",
+                "category": "CLAPS",
+                "start": 23.553577,
+                "end": 24.553577
+            },
+            {
+                "name": "004 Clap Toxic - @aq",
+                "category": "CLAPS",
+                "start": 24.553577,
+                "end": 25.553577
+            },
+            {
+                "name": "005 Clap Gritty - @aq",
+                "category": "CLAPS",
+                "start": 25.553577,
+                "end": 26.553577
+            },
+            {
+                "name": "001 Hat Riot - @aq",
+                "category": "HATS",
+                "start": 26.553577,
+                "end": 27.553577
+            },
+            {
+                "name": "002 Hat Sting - @aq",
+                "category": "HATS",
+                "start": 27.553577,
+                "end": 28.553577
+            },
+            {
+                "name": "003 Hat Toxic - @aq",
+                "category": "HATS",
+                "start": 28.553577,
+                "end": 29.553577
+            },
+            {
+                "name": "004 Hat Slasher - @aq",
+                "category": "HATS",
+                "start": 29.553577,
+                "end": 30.553577
+            },
+            {
+                "name": "005 Hat Gritty - @aq",
+                "category": "HATS",
+                "start": 30.553577,
+                "end": 31.553577
+            }
+        ]
     }
 ]
