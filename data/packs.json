@@ -8302,5 +8302,292 @@
                 "end": 37.46877083333334
             }
         ]
+    },
+    {
+        "reddit_id": "1xbz98n",
+        "name": "Arqive Anarchy",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADn2rZbHV_nb60pcwofYp1F-D-QKgGAAJyHgACxnfIUiGVXTxiFYL1PQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADn2rZbHV_nb60pcwofYp1F-D-QKgGAAJyHgACxnfIUiGVXTxiFYL1PQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "wur27s-RwGw",
+        "tg_invoice_link": "",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-10-22T01:53:40.073718",
+        "markers": [
+            {
+                "name": "001 808 Viscera - @aq",
+                "category": "808S",
+                "start": 0.0,
+                "end": 2.697256
+            },
+            {
+                "name": "002 808 Hades - @aq",
+                "category": "808S",
+                "start": 2.697256,
+                "end": 4.718095
+            },
+            {
+                "name": "003 808 Explode - @aq",
+                "category": "808S",
+                "start": 4.718095,
+                "end": 6.519297
+            },
+            {
+                "name": "004 808 Hollow - @aq",
+                "category": "808S",
+                "start": 6.519297,
+                "end": 8.151224
+            },
+            {
+                "name": "005 808 Voodoo - @aq",
+                "category": "808S",
+                "start": 8.151224,
+                "end": 10.594852
+            },
+            {
+                "name": "001 Kick Force - @aq",
+                "category": "KICKS",
+                "start": 10.594852,
+                "end": 11.594852
+            },
+            {
+                "name": "002 Kick Abyss - @aq",
+                "category": "KICKS",
+                "start": 11.594852,
+                "end": 12.594852
+            },
+            {
+                "name": "003 Kick Goliath - @aq",
+                "category": "KICKS",
+                "start": 12.594852,
+                "end": 13.594852
+            },
+            {
+                "name": "004 Kick Hammer - @aq",
+                "category": "KICKS",
+                "start": 13.594852,
+                "end": 14.594852
+            },
+            {
+                "name": "001 Snare Clack - @aq",
+                "category": "SNARES",
+                "start": 14.594852,
+                "end": 15.594852
+            },
+            {
+                "name": "002 Snare Shred - @aq",
+                "category": "SNARES",
+                "start": 15.594852,
+                "end": 16.594852
+            },
+            {
+                "name": "003 Snare Sniper - @aq",
+                "category": "SNARES",
+                "start": 16.594852,
+                "end": 17.594852
+            },
+            {
+                "name": "004 Snare Shot - @aq",
+                "category": "SNARES",
+                "start": 17.594852,
+                "end": 18.594852
+            },
+            {
+                "name": "005 Snare Cut - @aq",
+                "category": "SNARES",
+                "start": 18.594852,
+                "end": 19.594852
+            },
+            {
+                "name": "001 Clap Doom - @aq",
+                "category": "CLAPS",
+                "start": 19.594852,
+                "end": 20.594852
+            },
+            {
+                "name": "002 Clap Slash - @aq",
+                "category": "CLAPS",
+                "start": 20.594852,
+                "end": 21.594852
+            },
+            {
+                "name": "003 Clap Cut - @aq",
+                "category": "CLAPS",
+                "start": 21.594852,
+                "end": 22.594852
+            },
+            {
+                "name": "001 Hat Reaper - @aq",
+                "category": "HATS",
+                "start": 22.594852,
+                "end": 24.413922
+            },
+            {
+                "name": "002 Hat Spit - @aq",
+                "category": "HATS",
+                "start": 24.413922,
+                "end": 25.413922
+            },
+            {
+                "name": "003 Hat Harsh - @aq",
+                "category": "HATS",
+                "start": 25.413922,
+                "end": 26.413922
+            },
+            {
+                "name": "004 Hat Venom - @aq",
+                "category": "HATS",
+                "start": 26.413922,
+                "end": 27.413922
+            },
+            {
+                "name": "005 Hat Blast - @aq",
+                "category": "HATS",
+                "start": 27.413922,
+                "end": 28.413922
+            },
+            {
+                "name": "001 Perc Tambourine - @aq",
+                "category": "PERCS",
+                "start": 28.413922,
+                "end": 30.913922
+            },
+            {
+                "name": "002 Perc Conga - @aq",
+                "category": "PERCS",
+                "start": 30.913922,
+                "end": 31.913922
+            },
+            {
+                "name": "003 Perc Bongo - @aq",
+                "category": "PERCS",
+                "start": 31.913922,
+                "end": 32.913922
+            },
+            {
+                "name": "004 Perc Snap - @aq",
+                "category": "PERCS",
+                "start": 32.913922,
+                "end": 33.913922
+            },
+            {
+                "name": "005 Perc Cinder - @aq",
+                "category": "PERCS",
+                "start": 33.913922,
+                "end": 34.913922
+            },
+            {
+                "name": "001 Fx Crash - @aq",
+                "category": "FX",
+                "start": 34.913922,
+                "end": 35.913922
+            },
+            {
+                "name": "002 Fx Glitch - @aq",
+                "category": "FX",
+                "start": 35.913922,
+                "end": 38.413922
+            },
+            {
+                "name": "003 Fx Buzz - @aq",
+                "category": "FX",
+                "start": 38.413922,
+                "end": 39.878207714285715
+            },
+            {
+                "name": "004 Fx Sludge - @aq",
+                "category": "FX",
+                "start": 39.878207714285715,
+                "end": 42.07367271428571
+            },
+            {
+                "name": "005 Fx Doom - @aq",
+                "category": "FX",
+                "start": 42.07367271428571,
+                "end": 43.07367271428571
+            },
+            {
+                "name": "001 Vox Gasp - @aq",
+                "category": "VOX",
+                "start": 43.07367271428571,
+                "end": 45.083082714285716
+            },
+            {
+                "name": "002 Vox Creep - @aq",
+                "category": "VOX",
+                "start": 45.083082714285716,
+                "end": 46.083082714285716
+            },
+            {
+                "name": "003 Vox Grunt - @aq",
+                "category": "VOX",
+                "start": 46.083082714285716,
+                "end": 47.083082714285716
+            },
+            {
+                "name": "004 Vox Phantom - @aq",
+                "category": "VOX",
+                "start": 47.083082714285716,
+                "end": 48.083082714285716
+            },
+            {
+                "name": "005 Vox Abyss - @aq",
+                "category": "VOX",
+                "start": 48.083082714285716,
+                "end": 49.086960714285716
+            },
+            {
+                "name": "001 909 OneShot - @aq",
+                "category": "909S",
+                "start": 49.086960714285716,
+                "end": 50.77129171428572
+            },
+            {
+                "name": "001 Bass Pluck - @aq",
+                "category": "BASS",
+                "start": 50.77129171428572,
+                "end": 51.77129171428572
+            },
+            {
+                "name": "002 Bass Creep - @aq",
+                "category": "BASS",
+                "start": 51.77129171428572,
+                "end": 52.85612171428571
+            },
+            {
+                "name": "003 Bass Reaper - @aq",
+                "category": "BASS",
+                "start": 52.85612171428571,
+                "end": 53.85612171428571
+            },
+            {
+                "name": "004 Bass Growl - @aq",
+                "category": "BASS",
+                "start": 53.85612171428571,
+                "end": 55.06593471428571
+            },
+            {
+                "name": "001 Log Drum Cinder - @aq",
+                "category": "LOG DRUMS",
+                "start": 55.06593471428571,
+                "end": 56.06593471428571
+            },
+            {
+                "name": "001 Reverse Drone - @aq",
+                "category": "REVERSES",
+                "start": 56.06593471428571,
+                "end": 57.07761271428571
+            },
+            {
+                "name": "002 Reverse OneShot - @aq",
+                "category": "REVERSES",
+                "start": 57.07761271428571,
+                "end": 59.07169471428571
+            }
+        ]
     }
 ]
