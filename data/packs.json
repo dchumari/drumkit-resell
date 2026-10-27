@@ -8984,5 +8984,82 @@
                 "end": 104.70999800000001
             }
         ]
+    },
+    {
+        "reddit_id": "1xgiybj",
+        "name": "Arqive Mesh Vol. 7",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADo2rgeAakKiuft-IDXiGyc-JreRzkAAItHQACs9AIU_9f41D8NcwAAT0E",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADo2rgeAakKiuft-IDXiGyc-JreRzkAAItHQACs9AIU_9f41D8NcwAAT0E"
+        ],
+        "stars_price": 150,
+        "youtube_id": "FAnPQ-2fl90",
+        "tg_invoice_link": "https://t.me/c/3737519537/185",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-10-27T10:08:56.490813",
+        "markers": [
+            {
+                "name": "001 Kick Goliath - @aq",
+                "category": "KICKS",
+                "start": 0.0,
+                "end": 2.5
+            },
+            {
+                "name": "002 Kick Abyss - @aq",
+                "category": "KICKS",
+                "start": 2.5,
+                "end": 5.0
+            },
+            {
+                "name": "003 Kick Batter - @aq",
+                "category": "KICKS",
+                "start": 5.0,
+                "end": 7.5
+            },
+            {
+                "name": "004 Kick Beast - @aq",
+                "category": "KICKS",
+                "start": 7.5,
+                "end": 10.0
+            },
+            {
+                "name": "005 Kick Mammoth - @aq",
+                "category": "KICKS",
+                "start": 10.0,
+                "end": 12.5
+            },
+            {
+                "name": "001 Part Sound - @aq",
+                "category": "PARTS",
+                "start": 12.5,
+                "end": 15.0
+            },
+            {
+                "name": "002 Part Hollow - @aq",
+                "category": "PARTS",
+                "start": 15.0,
+                "end": 17.5
+            },
+            {
+                "name": "003 Part Beep - @aq",
+                "category": "PARTS",
+                "start": 17.5,
+                "end": 20.0
+            },
+            {
+                "name": "004 Part Creep - @aq",
+                "category": "PARTS",
+                "start": 20.0,
+                "end": 22.5
+            },
+            {
+                "name": "005 Part Cinder - @aq",
+                "category": "PARTS",
+                "start": 22.5,
+                "end": 25.0
+            }
+        ]
     }
 ]
