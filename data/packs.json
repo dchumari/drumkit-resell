@@ -9061,5 +9061,262 @@
                 "end": 25.0
             }
         ]
+    },
+    {
+        "reddit_id": "1xgj3vp",
+        "name": "Arqive Jingle",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADpWrg5kl4BR9665O0LZ1HR8wWq5pPAALbKQACnqgJUy8p1zoWCJ6cPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADpWrg5kl4BR9665O0LZ1HR8wWq5pPAALbKQACnqgJUy8p1zoWCJ6cPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "P_DX6xdwbgU",
+        "tg_invoice_link": "",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-10-27T17:59:04.369981",
+        "markers": [
+            {
+                "name": "001 Ritsu 1 Line\u901a\u77e5 Tone - @aq",
+                "category": "RITSU 1 LINE\u901a\u77e5S",
+                "start": 0.0,
+                "end": 1.7619954648526077
+            },
+            {
+                "name": "001 Ritsu 10 \u30a8\u30e9\u30fc\u97f3 Click - @aq",
+                "category": "RITSU 10 \u30a8\u30e9\u30fc\u97f3S",
+                "start": 1.7619954648526077,
+                "end": 3.670498866213152
+            },
+            {
+                "name": "001 Ritsu 11 \u30b7\u30e3\u30c3\u30c8\u30bf\u3099\u30a6\u30f3 Crack - @aq",
+                "category": "RITSU 11 \u30b7\u30e3\u30c3\u30c8\u30bf\u3099\u30a6\u30f3S",
+                "start": 3.670498866213152,
+                "end": 5.659160997732426
+            },
+            {
+                "name": "001 Ritsu 12 \u30cf\u3099\u30c3\u30c6\u30ea\u30fc\u4f4e\u4e0b Pulse - @aq",
+                "category": "RITSU 12 \u30cf\u3099\u30c3\u30c6\u30ea\u30fc\u4f4e\u4e0bS",
+                "start": 5.659160997732426,
+                "end": 8.159160997732426
+            },
+            {
+                "name": "001 Ritsu 13 \u8d77\u52d5\u97f3 Sludge - @aq",
+                "category": "RITSU 13 \u8d77\u52d5\u97f3S",
+                "start": 8.159160997732426,
+                "end": 9.466575963718821
+            },
+            {
+                "name": "001 Ritsu 14 \u30a2\u30e9\u30fc\u30e0 Sample - @aq",
+                "category": "RITSU 14 \u30a2\u30e9\u30fc\u30e0S",
+                "start": 9.466575963718821,
+                "end": 11.855963718820862
+            },
+            {
+                "name": "001 Ritsu 15 \u30a2\u30e9\u30fc\u30e0 Note - @aq",
+                "category": "RITSU 15 \u30a2\u30e9\u30fc\u30e0S",
+                "start": 11.855963718820862,
+                "end": 13.488979591836735
+            },
+            {
+                "name": "001 Ritsu 16 \u30a2\u30e9\u30fc\u30e0 Abyss - @aq",
+                "category": "RITSU 16 \u30a2\u30e9\u30fc\u30e0S",
+                "start": 13.488979591836735,
+                "end": 15.121995464852608
+            },
+            {
+                "name": "001 Ritsu 2 X\u901a\u77e5 Pulse - @aq",
+                "category": "RITSU 2 X\u901a\u77e5S",
+                "start": 15.121995464852608,
+                "end": 17.6215873015873
+            },
+            {
+                "name": "001 Ritsu 3 Youtube\u914d\u4fe1\u544a\u77e5 Drone - @aq",
+                "category": "RITSU 3 YOUTUBE\u914d\u4fe1\u544a\u77e5S",
+                "start": 17.6215873015873,
+                "end": 20.1215873015873
+            },
+            {
+                "name": "001 Ritsu 4 \u30e1\u30fc\u30eb\u901a\u77e5 Noise - @aq",
+                "category": "RITSU 4 \u30e1\u30fc\u30eb\u901a\u77e5S",
+                "start": 20.1215873015873,
+                "end": 21.985011337868478
+            },
+            {
+                "name": "001 Ritsu 5 \u30e1\u30fc\u30eb\u9001\u4fe1\u97f3 Pop - @aq",
+                "category": "RITSU 5 \u30e1\u30fc\u30eb\u9001\u4fe1\u97f3S",
+                "start": 21.985011337868478,
+                "end": 24.264195011337865
+            },
+            {
+                "name": "001 Ritsu 6 \u7740\u4fe1 OneShot - @aq",
+                "category": "RITSU 6 \u7740\u4fe1S",
+                "start": 24.264195011337865,
+                "end": 26.764195011337865
+            },
+            {
+                "name": "001 Ritsu 7 \u7740\u4fe1 Sample - @aq",
+                "category": "RITSU 7 \u7740\u4fe1S",
+                "start": 26.764195011337865,
+                "end": 29.264195011337865
+            },
+            {
+                "name": "001 Ritsu 8 \u30a8\u30e9\u30fc\u97f3 Abyss - @aq",
+                "category": "RITSU 8 \u30a8\u30e9\u30fc\u97f3S",
+                "start": 29.264195011337865,
+                "end": 31.212789115646256
+            },
+            {
+                "name": "001 Ritsu 9 \u30a8\u30e9\u30fc\u97f3 Sound - @aq",
+                "category": "RITSU 9 \u30a8\u30e9\u30fc\u97f3S",
+                "start": 31.212789115646256,
+                "end": 33.71278911564626
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 0\u6642 Note - @aq",
+                "category": "RITSU \u6642\u5831 0\u6642S",
+                "start": 33.71278911564626,
+                "end": 36.21278911564626
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 10\u6642 Abyss - @aq",
+                "category": "RITSU \u6642\u5831 10\u6642S",
+                "start": 36.21278911564626,
+                "end": 41.72857142857143
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 11\u6642 Tone - @aq",
+                "category": "RITSU \u6642\u5831 11\u6642S",
+                "start": 41.72857142857143,
+                "end": 47.1371201814059
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 12\u6642 Slasher - @aq",
+                "category": "RITSU \u6642\u5831 12\u6642S",
+                "start": 47.1371201814059,
+                "end": 52.850589569161
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 13\u6642 Re Snap - @aq",
+                "category": "RITSU \u6642\u5831 13\u6642 RES",
+                "start": 52.850589569161,
+                "end": 61.622834467120185
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 14\u6642 Re Crack - @aq",
+                "category": "RITSU \u6642\u5831 14\u6642 RES",
+                "start": 61.622834467120185,
+                "end": 67.73369614512472
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 15\u6642 Pulse - @aq",
+                "category": "RITSU \u6642\u5831 15\u6642S",
+                "start": 67.73369614512472,
+                "end": 70.23369614512472
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 16\u6642 Abyss - @aq",
+                "category": "RITSU \u6642\u5831 16\u6642S",
+                "start": 70.23369614512472,
+                "end": 75.77435374149661
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 17\u6642 Cinder - @aq",
+                "category": "RITSU \u6642\u5831 17\u6642S",
+                "start": 75.77435374149661,
+                "end": 78.27435374149661
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 18\u6642 Re OneShot - @aq",
+                "category": "RITSU \u6642\u5831 18\u6642 RES",
+                "start": 78.27435374149661,
+                "end": 86.0607709750567
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 19\u6642 Chirp - @aq",
+                "category": "RITSU \u6642\u5831 19\u6642S",
+                "start": 86.0607709750567,
+                "end": 91.27836734693878
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 1\u6642 Re Abyss - @aq",
+                "category": "RITSU \u6642\u5831 1\u6642 RES",
+                "start": 91.27836734693878,
+                "end": 97.87151927437642
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 20\u6642 Re Abyss - @aq",
+                "category": "RITSU \u6642\u5831 20\u6642 RES",
+                "start": 97.87151927437642,
+                "end": 106.43408163265306
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 21\u6642 Cinder - @aq",
+                "category": "RITSU \u6642\u5831 21\u6642S",
+                "start": 106.43408163265306,
+                "end": 111.72607709750567
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 22\u6642 Note - @aq",
+                "category": "RITSU \u6642\u5831 22\u6642S",
+                "start": 111.72607709750567,
+                "end": 114.22607709750567
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 23\u6642 Re Tone - @aq",
+                "category": "RITSU \u6642\u5831 23\u6642 RES",
+                "start": 114.22607709750567,
+                "end": 123.48759637188208
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 2\u6642 Pop - @aq",
+                "category": "RITSU \u6642\u5831 2\u6642S",
+                "start": 123.48759637188208,
+                "end": 125.98759637188208
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 3\u6642 Toxic - @aq",
+                "category": "RITSU \u6642\u5831 3\u6642S",
+                "start": 125.98759637188208,
+                "end": 132.04145124716553
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 4\u6642 Note - @aq",
+                "category": "RITSU \u6642\u5831 4\u6642S",
+                "start": 132.04145124716553,
+                "end": 137.4226984126984
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 5\u6642 Tone - @aq",
+                "category": "RITSU \u6642\u5831 5\u6642S",
+                "start": 137.4226984126984,
+                "end": 139.9226984126984
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 6\u6642 Blip - @aq",
+                "category": "RITSU \u6642\u5831 6\u6642S",
+                "start": 139.9226984126984,
+                "end": 146.90718820861676
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 7\u6642 Sludge - @aq",
+                "category": "RITSU \u6642\u5831 7\u6642S",
+                "start": 146.90718820861676,
+                "end": 149.40718820861676
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 8\u6642 Sludge - @aq",
+                "category": "RITSU \u6642\u5831 8\u6642S",
+                "start": 149.40718820861676,
+                "end": 151.90718820861676
+            },
+            {
+                "name": "001 Ritsu \u6642\u5831 9\u6642 Snap - @aq",
+                "category": "RITSU \u6642\u5831 9\u6642S",
+                "start": 151.90718820861676,
+                "end": 157.15253968253967
+            }
+        ]
     }
 ]
