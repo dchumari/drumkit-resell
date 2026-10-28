@@ -9318,5 +9318,52 @@
                 "end": 157.15253968253967
             }
         ]
+    },
+    {
+        "reddit_id": "1xgwcqz",
+        "name": "Arqive Remnant",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADpmrhVUzReFGEwyRR0C8OyrTagCzgAAJTHAACnqgRU7M0p-GFjLMePQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADpmrhVUzReFGEwyRR0C8OyrTagCzgAAJTHAACnqgRU7M0p-GFjLMePQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "ZbczpjYe-t8",
+        "tg_invoice_link": "https://t.me/c/3737519537/186",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-10-28T01:52:33.761421",
+        "markers": [
+            {
+                "name": "001 Mbl Oxygen House Demo Hollow - @aq",
+                "category": "MBL OXYGEN HOUSE DEMOS",
+                "start": 0.0,
+                "end": 1.0
+            },
+            {
+                "name": "002 Mbl Oxygen House Demo Sound - @aq",
+                "category": "MBL OXYGEN HOUSE DEMOS",
+                "start": 1.0,
+                "end": 2.0
+            },
+            {
+                "name": "003 Mbl Oxygen House Demo Sludge - @aq",
+                "category": "MBL OXYGEN HOUSE DEMOS",
+                "start": 2.0,
+                "end": 4.5
+            },
+            {
+                "name": "004 Mbl Oxygen House Demo Venom - @aq",
+                "category": "MBL OXYGEN HOUSE DEMOS",
+                "start": 4.5,
+                "end": 7.0
+            },
+            {
+                "name": "005 Mbl Oxygen House Demo Click - @aq",
+                "category": "MBL OXYGEN HOUSE DEMOS",
+                "start": 7.0,
+                "end": 9.5
+            }
+        ]
     }
 ]
