@@ -9598,5 +9598,52 @@
                 "end": 175.73013605442176
             }
         ]
+    },
+    {
+        "reddit_id": "1xhpcfo",
+        "name": "Arqive Mesh Vol. 8",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADqWriNzTYdPr-8T1D_c8JSAVGwq9DAALWIAACnqgZU6Iq8YWY6FTePQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADqWriNzTYdPr-8T1D_c8JSAVGwq9DAALWIAACnqgZU6Iq8YWY6FTePQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "RQrkq-Lo_jc",
+        "tg_invoice_link": "https://t.me/c/3737519537/187",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-10-28T17:56:23.968240",
+        "markers": [
+            {
+                "name": "001 Fx Impact - @aq",
+                "category": "FX",
+                "start": 0.0,
+                "end": 2.5
+            },
+            {
+                "name": "002 Fx Chirp - @aq",
+                "category": "FX",
+                "start": 2.5,
+                "end": 5.0
+            },
+            {
+                "name": "003 Fx Toxic - @aq",
+                "category": "FX",
+                "start": 5.0,
+                "end": 10.113291666666667
+            },
+            {
+                "name": "004 Fx Swell - @aq",
+                "category": "FX",
+                "start": 10.113291666666667,
+                "end": 16.1829375
+            },
+            {
+                "name": "005 Fx Texture - @aq",
+                "category": "FX",
+                "start": 16.1829375,
+                "end": 23.567270833333335
+            }
+        ]
     }
 ]
