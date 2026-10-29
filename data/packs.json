@@ -9645,5 +9645,82 @@
                 "end": 23.567270833333335
             }
         ]
+    },
+    {
+        "reddit_id": "1xi3afv",
+        "name": "Arqive Substance",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADq2rip8qwUgeoL809y4rmbqhe8LNEAAJgIQACnqgZU4-0O6yzaIaAPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADq2rip8qwUgeoL809y4rmbqhe8LNEAAJgIQACnqgZU4-0O6yzaIaAPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "Mb1xqGUu1Us",
+        "tg_invoice_link": "https://t.me/c/3737519537/188",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-10-29T01:56:59.744629",
+        "markers": [
+            {
+                "name": "001 Arpeggio Night Airport Loop Signal - @aq",
+                "category": "ARPEGGIO NIGHT AIRPORT LOOPS",
+                "start": 0.0,
+                "end": 8.0
+            },
+            {
+                "name": "002 Arpeggio Night Airport Loop Drone - @aq",
+                "category": "ARPEGGIO NIGHT AIRPORT LOOPS",
+                "start": 8.0,
+                "end": 16.0
+            },
+            {
+                "name": "003 Arpeggio Night Airport Loop Sample - @aq",
+                "category": "ARPEGGIO NIGHT AIRPORT LOOPS",
+                "start": 16.0,
+                "end": 24.0
+            },
+            {
+                "name": "004 Arpeggio Night Airport Loop Tone - @aq",
+                "category": "ARPEGGIO NIGHT AIRPORT LOOPS",
+                "start": 24.0,
+                "end": 32.0
+            },
+            {
+                "name": "005 Arpeggio Night Airport Loop Beep - @aq",
+                "category": "ARPEGGIO NIGHT AIRPORT LOOPS",
+                "start": 32.0,
+                "end": 40.0
+            },
+            {
+                "name": "001 Bass Slasher - @aq",
+                "category": "BASS",
+                "start": 40.0,
+                "end": 46.40002267573696
+            },
+            {
+                "name": "002 Bass Sludge - @aq",
+                "category": "BASS",
+                "start": 46.40002267573696,
+                "end": 47.40002267573696
+            },
+            {
+                "name": "003 Bass Toxic - @aq",
+                "category": "BASS",
+                "start": 47.40002267573696,
+                "end": 48.40002267573696
+            },
+            {
+                "name": "004 Bass Creep - @aq",
+                "category": "BASS",
+                "start": 48.40002267573696,
+                "end": 49.40002267573696
+            },
+            {
+                "name": "005 Bass Reese - @aq",
+                "category": "BASS",
+                "start": 49.40002267573696,
+                "end": 50.40002267573696
+            }
+        ]
     }
 ]
