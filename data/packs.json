@@ -9722,5 +9722,262 @@
                 "end": 50.40002267573696
             }
         ]
+    },
+    {
+        "reddit_id": "1xgj534",
+        "name": "Arqive Scrap Vol. 2",
+        "genre": "Trap",
+        "file_id": "BQACAgQAAyEGAAMBCB2sAwADrWrj-libqRzeSdm8e5HYECv7AslLAAK5HwAClPMhUzTRt9S8swIYPQQ",
+        "file_ids": [
+            "BQACAgQAAyEGAAMBCB2sAwADrWrj-libqRzeSdm8e5HYECv7AslLAAK5HwAClPMhUzTRt9S8swIYPQQ"
+        ],
+        "stars_price": 150,
+        "youtube_id": "Hv1kNARC_sU",
+        "tg_invoice_link": "https://t.me/c/3737519537/2",
+        "rating": 0.0,
+        "ratings_count": 0,
+        "timestamp": "2026-10-30T02:01:22.046770",
+        "markers": [
+            {
+                "name": "001 Yuno 1 Line\u901a\u77e5 Creep - @aq",
+                "category": "YUNO 1 LINE\u901a\u77e5S",
+                "start": 0.0,
+                "end": 1.9680045351473923
+            },
+            {
+                "name": "001 Yuno 10 \u30a8\u30e9\u30fc\u97f3 Buzz - @aq",
+                "category": "YUNO 10 \u30a8\u30e9\u30fc\u97f3S",
+                "start": 1.9680045351473923,
+                "end": 3.0547845804988665
+            },
+            {
+                "name": "001 Yuno 11 \u30b7\u30e3\u30c3\u30c8\u30bf\u3099\u30a6\u30f3 Abyss - @aq",
+                "category": "YUNO 11 \u30b7\u30e3\u30c3\u30c8\u30bf\u3099\u30a6\u30f3S",
+                "start": 3.0547845804988665,
+                "end": 5.5547845804988665
+            },
+            {
+                "name": "001 Yuno 12 \u30cf\u3099\u30c3\u30c6\u30ea\u30fc\u4f4e\u4e0b Note - @aq",
+                "category": "YUNO 12 \u30cf\u3099\u30c3\u30c6\u30ea\u30fc\u4f4e\u4e0bS",
+                "start": 5.5547845804988665,
+                "end": 8.054784580498866
+            },
+            {
+                "name": "001 Yuno 13 \u8d77\u52d5\u97f3 Snap - @aq",
+                "category": "YUNO 13 \u8d77\u52d5\u97f3S",
+                "start": 8.054784580498866,
+                "end": 10.554784580498866
+            },
+            {
+                "name": "001 Yuno 14 \u30a2\u30e9\u30fc\u30e0 Pulse - @aq",
+                "category": "YUNO 14 \u30a2\u30e9\u30fc\u30e0S",
+                "start": 10.554784580498866,
+                "end": 12.195986394557824
+            },
+            {
+                "name": "001 Yuno 15 \u30a2\u30e9\u30fc\u30e0 Hollow - @aq",
+                "category": "YUNO 15 \u30a2\u30e9\u30fc\u30e0S",
+                "start": 12.195986394557824,
+                "end": 14.284603174603175
+            },
+            {
+                "name": "001 Yuno 16 \u30a2\u30e9\u30fc\u30e0 Toxic - @aq",
+                "category": "YUNO 16 \u30a2\u30e9\u30fc\u30e0S",
+                "start": 14.284603174603175,
+                "end": 16.275464852607712
+            },
+            {
+                "name": "001 Yuno 2 X\u901a\u77e5 Re Note - @aq",
+                "category": "YUNO 2 X\u901a\u77e5 RES",
+                "start": 16.275464852607712,
+                "end": 21.326507936507937
+            },
+            {
+                "name": "001 Yuno 3 Youtube\u914d\u4fe1\u901a\u77e5 Re Abyss - @aq",
+                "category": "YUNO 3 YOUTUBE\u914d\u4fe1\u901a\u77e5 RES",
+                "start": 21.326507936507937,
+                "end": 27.863786848072564
+            },
+            {
+                "name": "001 Yuno 4 \u30e1\u30fc\u30eb\u901a\u77e5 Beep - @aq",
+                "category": "YUNO 4 \u30e1\u30fc\u30eb\u901a\u77e5S",
+                "start": 27.863786848072564,
+                "end": 29.70934240362812
+            },
+            {
+                "name": "001 Yuno 5 \u30e1\u30fc\u30eb\u9001\u4fe1\u97f3 Noise - @aq",
+                "category": "YUNO 5 \u30e1\u30fc\u30eb\u9001\u4fe1\u97f3S",
+                "start": 29.70934240362812,
+                "end": 31.96512471655329
+            },
+            {
+                "name": "001 Yuno 6 \u7740\u4fe1 Sound - @aq",
+                "category": "YUNO 6 \u7740\u4fe1S",
+                "start": 31.96512471655329,
+                "end": 39.905306122448984
+            },
+            {
+                "name": "001 Yuno 7 \u7740\u4fe1 Re Sludge - @aq",
+                "category": "YUNO 7 \u7740\u4fe1 RES",
+                "start": 39.905306122448984,
+                "end": 48.95521541950114
+            },
+            {
+                "name": "001 Yuno 8 \u30a8\u30e9\u30fc\u97f3 Phantom - @aq",
+                "category": "YUNO 8 \u30a8\u30e9\u30fc\u97f3S",
+                "start": 48.95521541950114,
+                "end": 51.45521541950114
+            },
+            {
+                "name": "001 Yuno 9 \u30a8\u30e9\u30fc\u97f3 Tone - @aq",
+                "category": "YUNO 9 \u30a8\u30e9\u30fc\u97f3S",
+                "start": 51.45521541950114,
+                "end": 53.95521541950114
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 0\u6642 Snap - @aq",
+                "category": "YUNO \u6642\u5831 0\u6642S",
+                "start": 53.95521541950114,
+                "end": 56.45521541950114
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 10\u6642 Re Venom - @aq",
+                "category": "YUNO \u6642\u5831 10\u6642 RES",
+                "start": 56.45521541950114,
+                "end": 65.22746031746033
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 11\u6642 Snap - @aq",
+                "category": "YUNO \u6642\u5831 11\u6642S",
+                "start": 65.22746031746033,
+                "end": 67.06623582766441
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 12\u6642 Blip - @aq",
+                "category": "YUNO \u6642\u5831 12\u6642S",
+                "start": 67.06623582766441,
+                "end": 69.09605442176873
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 13\u6642 Noise - @aq",
+                "category": "YUNO \u6642\u5831 13\u6642S",
+                "start": 69.09605442176873,
+                "end": 71.59605442176873
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 14\u6642 Hollow - @aq",
+                "category": "YUNO \u6642\u5831 14\u6642S",
+                "start": 71.59605442176873,
+                "end": 74.09605442176873
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 15\u6642 Hiss - @aq",
+                "category": "YUNO \u6642\u5831 15\u6642S",
+                "start": 74.09605442176873,
+                "end": 76.59605442176873
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 16\u6642 Blip - @aq",
+                "category": "YUNO \u6642\u5831 16\u6642S",
+                "start": 76.59605442176873,
+                "end": 79.09605442176873
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 17\u6642 Wave - @aq",
+                "category": "YUNO \u6642\u5831 17\u6642S",
+                "start": 79.09605442176873,
+                "end": 84.3565986394558
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 18\u6642 Hiss - @aq",
+                "category": "YUNO \u6642\u5831 18\u6642S",
+                "start": 84.3565986394558,
+                "end": 86.8565986394558
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 19\u6642 Re Phantom - @aq",
+                "category": "YUNO \u6642\u5831 19\u6642 RES",
+                "start": 86.8565986394558,
+                "end": 93.62043083900228
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 1\u6642 Hiss - @aq",
+                "category": "YUNO \u6642\u5831 1\u6642S",
+                "start": 93.62043083900228,
+                "end": 96.12043083900228
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 20\u6642 Re Hum - @aq",
+                "category": "YUNO \u6642\u5831 20\u6642 RES",
+                "start": 96.12043083900228,
+                "end": 105.49614512471656
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 21\u6642 Click - @aq",
+                "category": "YUNO \u6642\u5831 21\u6642S",
+                "start": 105.49614512471656,
+                "end": 111.91746031746032
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 22\u6642 Hollow - @aq",
+                "category": "YUNO \u6642\u5831 22\u6642S",
+                "start": 111.91746031746032,
+                "end": 114.41746031746032
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 23\u6642 Abyss - @aq",
+                "category": "YUNO \u6642\u5831 23\u6642S",
+                "start": 114.41746031746032,
+                "end": 119.78031746031746
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 2\u6642 Cinder - @aq",
+                "category": "YUNO \u6642\u5831 2\u6642S",
+                "start": 119.78031746031746,
+                "end": 122.28031746031746
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 3\u6642 Crack - @aq",
+                "category": "YUNO \u6642\u5831 3\u6642S",
+                "start": 122.28031746031746,
+                "end": 124.78031746031746
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 4\u6642 Noise - @aq",
+                "category": "YUNO \u6642\u5831 4\u6642S",
+                "start": 124.78031746031746,
+                "end": 127.28031746031746
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 5\u6642 Note - @aq",
+                "category": "YUNO \u6642\u5831 5\u6642S",
+                "start": 127.28031746031746,
+                "end": 129.78031746031746
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 6\u6642 Pop - @aq",
+                "category": "YUNO \u6642\u5831 6\u6642S",
+                "start": 129.78031746031746,
+                "end": 136.65065759637187
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 7\u6642 Buzz - @aq",
+                "category": "YUNO \u6642\u5831 7\u6642S",
+                "start": 136.65065759637187,
+                "end": 139.15065759637187
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 8\u6642 Re Buzz - @aq",
+                "category": "YUNO \u6642\u5831 8\u6642 RES",
+                "start": 139.15065759637187,
+                "end": 146.28020408163263
+            },
+            {
+                "name": "001 Yuno \u6642\u5831 9\u6642 Beep - @aq",
+                "category": "YUNO \u6642\u5831 9\u6642S",
+                "start": 146.28020408163263,
+                "end": 148.65390022675734
+            }
+        ]
     }
 ]
